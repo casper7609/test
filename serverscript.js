@@ -11,7 +11,7 @@ handlers.CloudSetTitleData = function (args) {
     var serverTitleData = server.GetTitleData({"Keys": []});
     log.info("serverTitleData " + JSON.stringify(serverTitleData));
 
-    var biasInInt = serverTitleData.data.Data[bias];
+    var biasInInt = serverTitleData.Data[bias];
     log.info("Previous bias " + bias + " " + biasInInt);
     biasInInt += args[bias];
     log.info("args[bias] " + bias + " " + args[bias]);
