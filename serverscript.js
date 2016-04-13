@@ -17,7 +17,7 @@ handlers.CloudSetTitleData = function (args) {
     log.info("args[bias] " + bias + " " + args[bias]);
     log.info("Current bias " + bias + " " + biasInInt);
 
-    server.LogEvent(args);
+    //server.LogEvent(args);
 
     return server.SetTitleData({
         "Key": bias,
