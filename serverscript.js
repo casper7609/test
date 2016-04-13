@@ -2,6 +2,30 @@ var openGames = "Async_LFG_Queue"; // put new and partial games here
 var fullGames = "Async_IP_Queue"; // put full and complete games here
 
 
+handlers.CloudSetTitleData = function (args) {
+    log.info("PlayFabId " + currentPlayerId);
+    log.info("Bias " + args.Bias);
+
+    var bias = args.Bias;
+
+    var serverTitleData = server.GetTitleData({
+        "Keys": [bias]
+    });
+
+    var biasInInt = serverTitleData.data.Data[bias];
+    log.info("Previous bias " + bias + " " + biasInInt);
+    biasInInt += args[bias];
+    log.info("args[bias] " + bias + " " + args[bias]);
+    log.info("Current bias " + bias + " " + biasInInt);
+
+    server.LogEvent(args);
+
+    return server.SetTitleData({
+        "Key": bias,
+        "Value": biasInInt
+    });
+};
+
 // Initialize and add a new game with the requesting player to the openGames lobby
 // Returns JoinGameResult back to Unity
 handlers.CloudUpdateUserInventoryItemCustomData = function (args)
