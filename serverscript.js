@@ -5,6 +5,15 @@ handlers.CloudLoot = function (args) {
     var killedNpc = args.KilledNpc;
     var characterId = args.CharacterId;
     var catalogVersion = args.CatalogVersion;
+
+    var catalogItems = server.GetCatalogItems({
+        "CatalogVersion" : catalogVersion
+    });
+
+
+
+
+
     if (killedNpc == "Wolf")
     {
         var gold = rand(50, 140);
@@ -25,7 +34,7 @@ handlers.CloudLoot = function (args) {
             ]
         });
     }
-    return { "GoldGainResult": goldGainResult, "ItemGainResult": itemGainResult };
+    return { "GoldGainResult": goldGainResult, "ItemGainResult": itemGainResult, "CatalogItems": catalogItems };
 };
 
 function rand(from, to)
