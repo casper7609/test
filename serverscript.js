@@ -1,6 +1,34 @@
 var openGames = "Async_LFG_Queue"; // put new and partial games here
 var fullGames = "Async_IP_Queue"; // put full and complete games here
 
+handlers.CloudLoot = function (args) {
+    var killedNpc = args.KilledNpc;
+    var characterId = args.CharacterId;
+    if (killedNpc == "Wolf")
+    {
+        var gold = rand(50, 140);
+        var goldGainResult = server.AddCharacterVirtualCurrency({
+            "PlayFabId": currentPlayerId,
+            "CharacterId": characterId,
+            "VirtualCurrency": "GD",
+            "Amount": gold
+        });
+
+        var itemGainResult = server.GrantItemsToCharacter({
+            "PlayFabId": currentPlayerId,
+            "CharacterId": characterId,
+            "Annotation": "Loot " + killedNpc,
+            "ItemIds": [
+                killedNpc + "DropTable"
+            ]
+        });
+    }
+};
+
+function rand(from, to)
+{
+    return Math.floor((Math.random() * to) + from);
+}
 
 handlers.CloudSetTitleData = function (args) {
     log.info("PlayFabId " + currentPlayerId);
