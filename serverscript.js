@@ -4,6 +4,7 @@ var fullGames = "Async_IP_Queue"; // put full and complete games here
 handlers.CloudLoot = function (args) {
     var killedNpc = args.KilledNpc;
     var characterId = args.CharacterId;
+    var catalogVersion = args.CatalogVersion;
     if (killedNpc == "Wolf")
     {
         var gold = rand(50, 140);
@@ -15,6 +16,7 @@ handlers.CloudLoot = function (args) {
         });
 
         var itemGainResult = server.GrantItemsToCharacter({
+            "CatalogVersion" : catalogVersion,
             "PlayFabId": currentPlayerId,
             "CharacterId": characterId,
             "Annotation": "Loot " + killedNpc,
@@ -23,6 +25,7 @@ handlers.CloudLoot = function (args) {
             ]
         });
     }
+    return { "GoldGainResult": goldGainResult, "ItemGainResult": itemGainResult };
 };
 
 function rand(from, to)
