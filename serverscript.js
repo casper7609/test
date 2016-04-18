@@ -10,13 +10,25 @@ handlers.CloudLoot = function (args) {
         "CatalogVersion" : catalogVersion
     });
 
-
-
-
-
-    if (killedNpc == "Wolf")
+    var entityFound = false;
+    var minGold = 0;
+    var maxGold = 0;
+    var gold = 0;
+    for (var i = 0; i < catalogItems.Catalog.length; i++)
     {
-        var gold = rand(50, 140);
+        var item = catalogItems.Catalog[i];
+        if (item.ItemId == killedNpc)
+        {
+            var customData = JSON.parse(item.CustomData);
+            minGold = parseInt(customData.MinGold);
+            maxGold = parseInt(customData.MaxGold);
+            gold = rand(minGold, maxGold);
+            entityFound = true;
+            break;
+        }
+    }
+    if (entityFound)
+    {
         var goldGainResult = server.AddCharacterVirtualCurrency({
             "PlayFabId": currentPlayerId,
             "CharacterId": characterId,
@@ -25,7 +37,7 @@ handlers.CloudLoot = function (args) {
         });
 
         var itemGainResult = server.GrantItemsToCharacter({
-            "CatalogVersion" : catalogVersion,
+            "CatalogVersion": catalogVersion,
             "PlayFabId": currentPlayerId,
             "CharacterId": characterId,
             "Annotation": "Loot " + killedNpc,
@@ -33,8 +45,12 @@ handlers.CloudLoot = function (args) {
                 killedNpc + "DropTable"
             ]
         });
+        return { "GoldGainResult": goldGainResult, "ItemGainResult": itemGainResult};
     }
-    return { "GoldGainResult": goldGainResult, "ItemGainResult": itemGainResult, "CatalogItems": catalogItems };
+    else
+    {
+        return { "Error": "Entity not found" };
+    }
 };
 
 function rand(from, to)
