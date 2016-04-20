@@ -90,11 +90,13 @@ handlers.CloudUpdateUserInventoryItemCustomData = function (args)
     log.info("ItemInstanceId " + args.ItemInstanceId);
     log.info("Data " + JSON.stringify(args.Data));
     log.info("KeysToRemove " + args.KeysToRemove);
+    log.info("RevisionSelection " + args.RevisionSelection);
     server.LogEvent(args);
     return server.UpdateUserInventoryItemCustomData({
         PlayFabId: currentPlayerId,
         CharacterId: args.CharacterId,
         ItemInstanceId: args.ItemInstanceId,
+        RevisionSelection: args.RevisionSelection,
         Data: args.Data,
     });
 };
