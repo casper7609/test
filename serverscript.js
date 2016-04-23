@@ -97,7 +97,7 @@ handlers.CloudUpdateUserInventoryItemCustomData = function (args)
         PlayFabId: currentPlayerId,
         CharacterId: args.CharacterId,
         ItemInstanceId: args.ItemInstanceId,
-        Data: customData,
+        Data: args.Data,
     });
 };
 
