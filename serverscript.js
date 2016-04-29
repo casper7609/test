@@ -26,7 +26,12 @@ handlers.CloudSellItem = function (args) {
             log.info("catalogItems itemId " + item.ItemId);
             if (item.ItemId == itemId)
             {
-                gold += parseInt(item.VirtualCurrencyPrices.GD);
+                var storePrice = parseInt(item.VirtualCurrencyPrices.GD);
+                if (storePrice == 0)
+                    storePrice = 1;//free item gets 1 gold price when resell...
+                else
+                    storePrice = storePrice / 2;
+                gold += storePrice;
                 log.info("gold " + gold);
                 var consumeItemResult = server.ConsumeItem({
                     "PlayFabId": currentPlayerId,
