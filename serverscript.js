@@ -17,6 +17,8 @@ handlers.CloudEnchantItem = function (args) {
     var catalogVersion = args.CatalogVersion;
 
     var characterInventory = server.GetCharacterInventory({
+        "PlayFabId": currentPlayerId,
+        "CharacterId": characterId,
         "CatalogVersion": catalogVersion
     });
     var itemToEnchant = null;
@@ -84,9 +86,6 @@ handlers.CloudEnchantItem = function (args) {
             });
             enchantResult = 2;
         }
-
-
-        
     }
     else
     {
