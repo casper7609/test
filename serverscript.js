@@ -5,22 +5,24 @@ handlers.CloudSellItem = function (args) {
     var characterId = args.CharacterId;
     var items = JSON.parse(args.Items);
 
-    var characterInventory = server.GetCharacterInventory({
-        "PlayFabId": currentPlayerId,
-        "CharacterId": characterId
+    var catalogItems = server.GetCatalogItems({
+        "CatalogVersion": catalogVersion
     });
+
 
     var gold = 0;
 
-    for (var k = 0; k < items.length; k++) {
-        var itemInstanceId = items[k];
-        for (var i = 0; i < characterInventory.Inventory.length; i++) {
-            var item = characterInventory.Inventory[i];
-            if (item.ItemInstanceId == itemInstanceId && item.UnitCurrency == "GD") {
-                gold += parseInt(item.UnitPrice);
+    for (var i = 0; i < catalogItems.Catalog.length; i++) {
+        var item = catalogItems.Catalog[i];
+        for (var k = 0; k < items.length; k++) {
+            var itemId = items[k].ItemId;
+            var itemInstanceId = items[k].InstanceId;
+            if (item.ItemId == itemId)
+            {
+                gold += parseInt(item.VirtualCurrencyPrices.GD);
                 var consumeItemResult = server.ConsumeItem({
                     "PlayFabId": currentPlayerId,
-                    "ItemInstanceId":itemInstanceId,
+                    "ItemInstanceId": itemInstanceId,
                     "CharacterId": characterId,
                     "ConsumeCount": 1
                 });
