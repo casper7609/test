@@ -4,6 +4,7 @@ var fullGames = "Async_IP_Queue"; // put full and complete games here
 handlers.CloudSellItem = function (args) {
     var characterId = args.CharacterId;
     var items = JSON.parse(args.Items);
+    var catalogVersion = args.CatalogVersion;
     log.info("characterId " + characterId);
     log.info("items " + items.length);
 
