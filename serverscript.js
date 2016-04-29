@@ -1,6 +1,46 @@
 var openGames = "Async_LFG_Queue"; // put new and partial games here
 var fullGames = "Async_IP_Queue"; // put full and complete games here
 
+handlers.CloudSellItem = function (args) {
+    var characterId = args.CharacterId;
+    var items = JSON.parse(args.Items);
+
+    var characterInventory = server.GetCharacterInventory({
+        "PlayFabId": currentPlayerId,
+        "CharacterId": characterId
+    });
+
+    var gold = 0;
+
+    for (var k = 0; k < items.length; k++) {
+        var itemInstanceId = items[k];
+        for (var i = 0; i < characterInventory.Inventory.length; i++) {
+            var item = characterInventory.Inventory[i];
+            if (item.ItemInstanceId == itemInstanceId && item.UnitCurrency == "GD") {
+                gold += parseInt(item.UnitPrice);
+                var consumeItemResult = server.ConsumeItem({
+                    "PlayFabId": currentPlayerId,
+                    "ItemInstanceId":itemInstanceId,
+                    "CharacterId": characterId,
+                    "ConsumeCount": 1
+                });
+                break;
+            }
+        }
+    }
+    
+    var goldGainResult = server.AddCharacterVirtualCurrency({
+        "PlayFabId": currentPlayerId,
+        "CharacterId": characterId,
+        "VirtualCurrency": "GD",
+        "Amount": gold
+    });
+   
+    return { "GoldGainResult": goldGainResult, "ItemSoldResult": args.Items };
+};
+
+
+
 handlers.CloudLoot = function (args) {
     var killedNpc = args.KilledNpc;
     var characterId = args.CharacterId;
