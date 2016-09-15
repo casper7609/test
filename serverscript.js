@@ -50,15 +50,18 @@ handlers.ClearDungeon = function (args) {
 
     var mobs = args.Mobs;
     var totalExp = 0;
+    var totalGold = 0;
     for (var i = 0; i < mobs.length; i++) 
     {
         if (mobs[i].Name == "Wolf")
         {
             totalExp += 40 * mobs[i].Count;
+            totalGold += 4 * mobs[i].Count;
         }
         else if(mobs[i].Name == "SilverFang")
         {
             totalExp += 120 * mobs[i].Count;
+            totalGold += 12 * mobs[i].Count;
         }
     }
 
@@ -83,6 +86,14 @@ handlers.ClearDungeon = function (args) {
         );
         log.info("eachExp " + totalExp + " for " + partyMembers[i]);
     }
+
+    server.AddUserVirtualCurrency(
+        {
+            "PlayFabId": currentPlayerId,
+            "VirtualCurrency": "GD",
+            "Amount": totalGold
+        }
+    );
 };
 
 handlers.CloudEnchantItem = function (args) {
