@@ -58,13 +58,13 @@ handlers.ClearDungeon = function (args) {
         {
             totalExp += 40 * mobs[i].Count;
             totalGold += 4 * mobs[i].Count;
-            totalAlignment += 1;
+            totalAlignment += 1 * mobs[i].Count;
         }
         else if(mobs[i].Name == "SilverFang")
         {
             totalExp += 120 * mobs[i].Count;
             totalGold += 12 * mobs[i].Count;
-            totalAlignment += 2;
+            totalAlignment += 2 * mobs[i].Count;
         }
     }
 
