@@ -64,14 +64,22 @@ handlers.ClearDungeon = function (args) {
 
     for (var i = 0; i < partyMembers.length; i++)
     {
+        var charStat = server.GetCharacterStatistics(
+            {
+                "PlayFabId": currentPlayerId,
+                "CharacterId": partyMembers[i]
+            }
+        );
+        var previousExp = charStat.CharacterStatistics.AccumulatedXP;
+
         server.UpdateCharacterStatistics(
-           {
-               "PlayFabId": currentPlayerId,
-               "CharacterId": partyMembers[i],
-               "CharacterStatistics": {
-                   "AccumulatedXP": totalExp,
-               }
-           }
+            {
+                "PlayFabId": currentPlayerId,
+                "CharacterId": partyMembers[i],
+                "CharacterStatistics": {
+                    "AccumulatedXP": previousExp + totalExp,
+                }
+            }
         );
         log.info("eachExp " + totalExp + " for " + partyMembers[i]);
     }
