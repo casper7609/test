@@ -12,10 +12,12 @@ handlers.InstantClearDungeon = function (args) {
     log.info("TownId " + args.TownId);
     var partyMembers = JSON.parse(args.CharacterIds);
     var townId = args.TownId;
+    var townIdStr = "Town_" + townId;
     var townInfo = server.GetTitleData({
-        "Keys": ["Town_" + townId]
+        "Keys": [townIdStr]
     });;
     var townInfoData = townInfo.Data;
+    townInfoData = townInfoData[townIdStr];
     log.info("Got TownInfo " + JSON.stringify(townInfoData));
     var mobs = townInfoData.Mobs;
     for (var i = 0; i < mobs.length; i++) {
