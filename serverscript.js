@@ -15,7 +15,7 @@ handlers.InstantClearDungeon = function (args) {
     var townInfo = server.GetTitleData({
         "Keys": ["Town_" + townId]
     });;
-    var townInfoData = JSON.parse(townInfo.Data);
+    var townInfoData = townInfo.Data;
     log.info("Got TownInfo " + JSON.stringify(townInfoData));
     var mobs = townInfoData.Mobs;
     for (var i = 0; i < mobs.length; i++) {
