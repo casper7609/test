@@ -97,6 +97,7 @@ handlers.ClearDungeon = function (args) {
             "Amount": totalGold
         }
     );
+    log.info("totalGold " + totalGold);
 
     server.UpdatePlayerStatistics(
         {
@@ -109,6 +110,7 @@ handlers.ClearDungeon = function (args) {
             ]
         }
     );
+    log.info("totalAlignment " + totalAlignment);
 };
 
 handlers.CloudEnchantItem = function (args) {
