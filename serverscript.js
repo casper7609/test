@@ -79,7 +79,11 @@ handlers.ClearDungeon = function (args) {
             }
         );
         var previousExp = charStat.CharacterStatistics.AccumulatedXP;
-
+        //fresh character
+        if (previousExp == null)
+        {
+            previousExp = 0;
+        }
         server.UpdateCharacterStatistics(
             {
                 "PlayFabId": currentPlayerId,
@@ -351,8 +355,6 @@ handlers.CloudSetTitleData = function (args) {
     });
 };
 
-// Initialize and add a new game with the requesting player to the openGames lobby
-// Returns JoinGameResult back to Unity
 handlers.CloudUpdateUserInventoryItemCustomData = function (args)
 {
     log.info("PlayFabId " + args.PlayFabId);
