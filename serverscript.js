@@ -17,7 +17,6 @@ handlers.InstantClearDungeon = function (args) {
     //log.info("InstantClearDungeon called PlayFabId " + currentPlayerId);
     //log.info("CharacterIds " + args.CharacterIds);
     //log.info("TownId " + args.TownId);
-    var partyMembers = JSON.parse(args.CharacterIds);
     var townId = args.TownId;
     var townIdStr = "Town_" + townId;
     var townInfo = server.GetTitleData({
@@ -45,75 +44,37 @@ handlers.ClearDungeon = function (args) {
     //town1_chaotic
     //house_alignment
     //gold
-    //
-
-
     //currentPlayerId
-    log.info("PlayFabId " + currentPlayerId);
+    log.info("ClearDungeon " + currentPlayerId);
     var partyMembers = JSON.parse(args.CharacterIds);
-    var exp = args.Exp;
-    var gold = args.Gold;
-    var boxCount = args.BoxCount;
-    var alignment = args.Alignment;
-    var alignmentAmount = args.AlignmentAmount;
-    var townId = args.TownId;
 
-    var eachExp = exp / partyMembers.length;
-
-    for (var i = 0; i < partyMembers.length; i++) {
-        server.UpdateCharacterStatistics(
-            {
-                "PlayFabId": currentPlayerId,
-                "CharacterId": partyMembers[i],
-                "CharacterStatistics": {
-                    "AccumulatedXP": eachExp,
-                }
-            }
-        );
-        log.info("eachExp " + eachExp + " for " + partyMembers[i]);
+    var mobs = args.Mobs;
+    var totalExp = 0;
+    for (var i = 0; i < mobs.length; i++) 
+    {
+        if (mobs[i].Name == "Wolf")
+        {
+            totalExp += 40 * mobs[i].Count;
+        }
+        else if(mobs[i].Name == "SilverFang")
+        {
+            totalExp += 120 * mobs[i].Count;
+        }
     }
 
-    //Gold
-
-    server.AddUserVirtualCurrency(
-        {
-            "PlayFabId": currentPlayerId,
-            "VirtualCurrency": "GD",
-            "Amount": gold
-        }
-    );
-
-    log.info("Gold " + gold);
-
-    var itemGainResult = server.GrantItemsToUser({
-        "PlayFabId": currentPlayerId,
-        "Annotation": "Loot town " + townId + " box",
-        "ItemIds": [
-            "BoxLevel_" + townId + "_DropTable"
-        ]
-    });
-
-    //Town Occupation
-    //Town_0_Lawful
-    var townOccupation = "Town_" + townId + "_" + alignment;
-
-    server.UpdatePlayerStatistics(
-        {
-            "PlayFabId": currentPlayerId,
-            "Statistics": [
-                {
-                    "StatisticName": townOccupation,
-                    "Value": AlignmentAmount
-                },
-                {
-                    "StatisticName": alignment,
-                    "Value": AlignmentAmount
-                }
-            ]
-        }
-    );
-
-    return { "GoldGainResult": goldGainResult, "ItemGainResult": itemGainResult };
+    for (var i = 0; i < partyMembers.length; i++)
+    {
+        server.UpdateCharacterStatistics(
+           {
+               "PlayFabId": currentPlayerId,
+               "CharacterId": partyMembers[i],
+               "CharacterStatistics": {
+                   "AccumulatedXP": totalExp,
+               }
+           }
+        );
+        log.info("eachExp " + totalExp + " for " + partyMembers[i]);
+    }
 };
 
 handlers.CloudEnchantItem = function (args) {
