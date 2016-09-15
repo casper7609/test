@@ -12,6 +12,85 @@ handlers.InstantClearDungeon = function (args) {
     log.info("TownId " + args.TownId);
     var partyMembers = JSON.parse(args.CharacterIds);
     var townId = args.TownId;
+    var townInfo = server.GetTitleData({
+        "Keys": ["town_" + townId]
+    });;
+    log.info("Got TownInfo " + JSON.stringify(townInfo));
+
+};
+handlers.ClearDungeon = function (args) {
+    //town1_chaotic
+    //house_alignment
+    //gold
+    //
+
+
+    //currentPlayerId
+    log.info("PlayFabId " + currentPlayerId);
+    var partyMembers = JSON.parse(args.CharacterIds);
+    var exp = args.Exp;
+    var gold = args.Gold;
+    var boxCount = args.BoxCount;
+    var alignment = args.Alignment;
+    var alignmentAmount = args.AlignmentAmount;
+    var townId = args.TownId;
+
+    var eachExp = exp / partyMembers.length;
+
+    for (var i = 0; i < partyMembers.length; i++) {
+        server.UpdateCharacterStatistics(
+            {
+                "PlayFabId": currentPlayerId,
+                "CharacterId": partyMembers[i],
+                "CharacterStatistics": {
+                    "AccumulatedXP": eachExp,
+                }
+            }
+        );
+        log.info("eachExp " + eachExp + " for " + partyMembers[i]);
+    }
+
+    //Gold
+
+    server.AddUserVirtualCurrency(
+        {
+            "PlayFabId": currentPlayerId,
+            "VirtualCurrency": "GD",
+            "Amount": gold
+        }
+    );
+
+    log.info("Gold " + gold);
+
+    var itemGainResult = server.GrantItemsToUser({
+        "PlayFabId": currentPlayerId,
+        "Annotation": "Loot town " + townId + " box",
+        "ItemIds": [
+            "BoxLevel_" + townId + "_DropTable"
+        ]
+    });
+
+    //Town Occupation
+    //Town_0_Lawful
+    var townOccupation = "Town_" + townId + "_" + alignment;
+
+    server.UpdatePlayerStatistics(
+        {
+            "PlayFabId": currentPlayerId,
+            "Statistics": [
+                {
+                    "StatisticName": townOccupation,
+                    "Value": AlignmentAmount
+                },
+                {
+                    "StatisticName": alignment,
+                    "Value": AlignmentAmount
+                }
+            ]
+        }
+    );
+
+    return { "GoldGainResult": goldGainResult, "ItemGainResult": itemGainResult };
 };
 
 handlers.CloudEnchantItem = function (args) {
