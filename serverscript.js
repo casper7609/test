@@ -21,10 +21,10 @@ handlers.InstantClearDungeon = function (args) {
     townInfoData = JSON.parse(townInfoData);
     log.info("Got TownInfo " + townInfoData);
     var mobs = townInfoData.Mobs;
+    var tileAvg = Math.floor((Math.random() * townInfoData.TileMax) + townInfoData.TileMin);
+    log.info("tileAvg " + tileAvg);
     for (var i = 0; i < mobs.length; i++) {
         var mob = mobs[i];
-        var tileAvg = Math.floor((Math.random() * mob.TileMax) + mob.TileMin);
-        log.info(mob.Name + " " + tileAvg);
         var spawnCountPerTile = Math.floor((Math.random() * mob.SpawnMaxCountPerTile) + mob.SpawnMinCountPerTile);
         log.info(mob.Name + " " + spawnCountPerTile);
         var mobCount = mob.IsUnique ? mob.SpawnRatePerDungeon * spawnCountPerTile : tileAvg * mob.SpawnRatePerTile * spawnCountPerTile;
