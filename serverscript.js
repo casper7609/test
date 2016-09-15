@@ -18,6 +18,7 @@ handlers.InstantClearDungeon = function (args) {
     });;
     var townInfoData = townInfo.Data;
     townInfoData = townInfoData[townIdStr];
+    townInfoData = JSON.parse(townInfoData);
     log.info("Got TownInfo " + townInfoData);
     var mobs = townInfoData.Mobs;
     for (var i = 0; i < mobs.length; i++) {
