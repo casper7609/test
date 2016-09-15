@@ -5,7 +5,14 @@ var enchantBrokenChance = 30;
 var enchantNothingChance = 60;
 var enchantSuccessChance = 100;
 var enchantPriceInGold = 100;
-
+function range(min, max)
+{
+    var offset = max - min;
+    return rand(0, offset) + min;
+}
+function rand(from, to) {
+    return Math.floor((Math.random() * to) + from);
+}
 handlers.InstantClearDungeon = function (args) {
     log.info("InstantClearDungeon called PlayFabId " + currentPlayerId);
     log.info("CharacterIds " + args.CharacterIds);
@@ -21,11 +28,11 @@ handlers.InstantClearDungeon = function (args) {
     townInfoData = JSON.parse(townInfoData);
     log.info("Got TownInfo " + townInfoData);
     var mobs = townInfoData.Mobs;
-    var tileAvg = Math.floor((Math.random() * townInfoData.TileMax) + townInfoData.TileMin);
+    var tileAvg = range(townInfoData.TileMin, townInfoData.TileMax);
     log.info("tileAvg " + tileAvg);
     for (var i = 0; i < mobs.length; i++) {
         var mob = mobs[i];
-        var spawnCountPerTile = Math.floor((Math.random() * mob.SpawnMaxCountPerTile) + mob.SpawnMinCountPerTile);
+        var spawnCountPerTile = range(mob.SpawnMinCountPerTile, mob.SpawnMaxCountPerTile);
         log.info(mob.Name + " " + spawnCountPerTile);
         var mobCount = mob.IsUnique ? mob.SpawnRatePerDungeon * spawnCountPerTile : tileAvg * mob.SpawnRatePerTile * spawnCountPerTile;
         log.info(mob.Name + " " + mobCount);
@@ -307,10 +314,7 @@ handlers.CloudLoot = function (args) {
     }
 };
 
-function rand(from, to)
-{
-    return Math.floor((Math.random() * to) + from);
-}
+
 
 handlers.CloudSetTitleData = function (args) {
     log.info("PlayFabId " + currentPlayerId);
