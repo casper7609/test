@@ -110,6 +110,7 @@ handlers.ClearDungeon = function (args) {
     );
     log.info("totalGold " + totalEmblem);
 
+    totalAlignment = parseInt(totalAlignment, 10);
     server.UpdatePlayerStatistics(
         {
             "PlayFabId": currentPlayerId,
