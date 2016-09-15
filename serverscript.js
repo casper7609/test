@@ -13,7 +13,7 @@ handlers.InstantClearDungeon = function (args) {
     var partyMembers = JSON.parse(args.CharacterIds);
     var townId = args.TownId;
     var townInfo = server.GetTitleData({
-        "Keys": ["town_" + townId]
+        "Keys": ["Town_" + townId]
     });;
     log.info("Got TownInfo " + JSON.stringify(townInfo));
 
