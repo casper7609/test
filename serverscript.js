@@ -51,17 +51,20 @@ handlers.ClearDungeon = function (args) {
     var mobs = args.Mobs;
     var totalExp = 0;
     var totalGold = 0;
+    var totalAlignment = 0;
     for (var i = 0; i < mobs.length; i++) 
     {
         if (mobs[i].Name == "Wolf")
         {
             totalExp += 40 * mobs[i].Count;
             totalGold += 4 * mobs[i].Count;
+            totalAlignment += 1;
         }
         else if(mobs[i].Name == "SilverFang")
         {
             totalExp += 120 * mobs[i].Count;
             totalGold += 12 * mobs[i].Count;
+            totalAlignment += 2;
         }
     }
 
@@ -92,6 +95,18 @@ handlers.ClearDungeon = function (args) {
             "PlayFabId": currentPlayerId,
             "VirtualCurrency": "GD",
             "Amount": totalGold
+        }
+    );
+
+    server.UpdatePlayerStatistics(
+        {
+            "PlayFabId": currentPlayerId,
+            "Statistics": [
+                {
+                    "StatisticName": "Alignment",
+                    "Value": totalAlignment
+                }
+            ]
         }
     );
 };
