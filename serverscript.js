@@ -15,8 +15,16 @@ handlers.InstantClearDungeon = function (args) {
     var townInfo = server.GetTitleData({
         "Keys": ["Town_" + townId]
     });;
-    log.info("Got TownInfo " + JSON.stringify(townInfo));
-
+    var townInfoData = JSON.parse(townInfo.Data);
+    log.info("Got TownInfo " + JSON.stringify(townInfoData));
+    var mobs = townInfoData.Mobs;
+    for (var i = 0; i < mobs.length; i++) {
+        var mob = mobs[i];
+        var tileAvg = Math.floor((Math.random() * mob.TileMax) + mob.TileMin);
+        var spawnCountPerTile = Math.floor((Math.random() * mob.SpawnMaxCountPerTile) + mob.SpawnMinCountPerTile);
+        var mobCount = mob.IsUnique ? mob.SpawnRatePerDungeon * spawnCountPerTile : tileAvg * mob.SpawnRatePerTile * spawnCountPerTile;
+        log.info(mob.Name + " " + mobCount);
+    }
 };
 handlers.ClearDungeon = function (args) {
     //town1_chaotic
