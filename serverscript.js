@@ -38,6 +38,7 @@ handlers.InstantClearDungeon = function (args) {
         log.info(mob.Name + " " + mobCount);
         args.Mobs.push({"Name":mob.Name, "Count":mobCount});
     }
+    args.EmblemCount = townInfoData.EmblemCount;
     return handlers.ClearDungeon(args);
 };
 handlers.ClearDungeon = function (args) {
@@ -52,6 +53,7 @@ handlers.ClearDungeon = function (args) {
     var totalExp = 0;
     var totalGold = 0;
     var totalAlignment = 0;
+    var totalEmblem = range(1, args.EmblemCount);
     for (var i = 0; i < mobs.length; i++) 
     {
         if (mobs[i].Name == "Wolf")
@@ -98,6 +100,15 @@ handlers.ClearDungeon = function (args) {
         }
     );
     log.info("totalGold " + totalGold);
+
+    server.AddUserVirtualCurrency(
+        {
+            "PlayFabId": currentPlayerId,
+            "VirtualCurrency": "EB",
+            "Amount": totalEmblem
+        }
+    );
+    log.info("totalGold " + totalEmblem);
 
     server.UpdatePlayerStatistics(
         {
