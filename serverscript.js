@@ -14,9 +14,9 @@ function rand(from, to) {
     return Math.floor((Math.random() * to) + from);
 }
 handlers.InstantClearDungeon = function (args) {
-    log.info("InstantClearDungeon called PlayFabId " + currentPlayerId);
-    log.info("CharacterIds " + args.CharacterIds);
-    log.info("TownId " + args.TownId);
+    //log.info("InstantClearDungeon called PlayFabId " + currentPlayerId);
+    //log.info("CharacterIds " + args.CharacterIds);
+    //log.info("TownId " + args.TownId);
     var partyMembers = JSON.parse(args.CharacterIds);
     var townId = args.TownId;
     var townIdStr = "Town_" + townId;
@@ -26,17 +26,20 @@ handlers.InstantClearDungeon = function (args) {
     var townInfoData = townInfo.Data;
     townInfoData = townInfoData[townIdStr];
     townInfoData = JSON.parse(townInfoData);
-    log.info("Got TownInfo " + townInfoData);
+    //log.info("Got TownInfo " + townInfoData);
     var mobs = townInfoData.Mobs;
     var tileAvg = range(townInfoData.TileMin, townInfoData.TileMax);
     log.info("tileAvg " + tileAvg);
+    args.Mobs = [];
     for (var i = 0; i < mobs.length; i++) {
         var mob = mobs[i];
         var spawnCountPerTile = range(mob.SpawnMinCountPerTile, mob.SpawnMaxCountPerTile);
         log.info(mob.Name + " " + spawnCountPerTile);
         var mobCount = mob.IsUnique ? mob.SpawnRatePerDungeon * spawnCountPerTile : tileAvg * mob.SpawnRatePerTile * spawnCountPerTile;
         log.info(mob.Name + " " + mobCount);
+        args.Mobs.push({"Name":mob.Name, "Count":mobCount});
     }
+    return ClearDungeon(args);
 };
 handlers.ClearDungeon = function (args) {
     //town1_chaotic
