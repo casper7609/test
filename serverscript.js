@@ -66,7 +66,7 @@ handlers.ClearDungeon = function (args) {
 
             for (var k = 0; k < mobs[i].Count; k++)
             {
-                var item = server.EvaluateRandomResultTable(
+                var randomItem = server.EvaluateRandomResultTable(
                     {
                        "CatalogVersion": catalogVersion,
                        "PlayFabId": currentPlayerId,
@@ -74,9 +74,9 @@ handlers.ClearDungeon = function (args) {
                     }
                 );
 
-                if (item.ResultItemId != "Nothing") {
-                    log.info("item " + JSON.stringify(item));
-                    items.push(item.ResultItemId);
+                if (randomItem.ResultItemId != "Nothing") {
+                    log.info("item " + JSON.stringify(randomItem));
+                    items.push(randomItem.ResultItemId);
                 }
             }
         }
@@ -87,6 +87,13 @@ handlers.ClearDungeon = function (args) {
             totalAlignment += 2 * mobs[i].Count;
         }
     }
+
+    var realItem = server.GrantItemsToUser(
+        {
+            "PlayFabId": currentPlayerId,
+            "ItemIds": items
+        }
+    );
 
     for (var i = 0; i < partyMembers.length; i++)
     {
