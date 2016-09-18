@@ -5,6 +5,7 @@ var enchantBrokenChance = 30;
 var enchantNothingChance = 60;
 var enchantSuccessChance = 100;
 var enchantPriceInGold = 100;
+var catalogVersion = "0.9";
 function range(min, max)
 {
     var offset = max - min;
@@ -65,6 +66,7 @@ handlers.ClearDungeon = function (args) {
 
             var item = server.GrantItemsToUser(
                 {
+                    "CatalogVersion": catalogVersion,
                     "PlayFabId": currentPlayerId,
                     "ItemIds": [
                         "WolfDropTable"
