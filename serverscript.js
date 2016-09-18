@@ -64,13 +64,11 @@ handlers.ClearDungeon = function (args) {
             totalAlignment += 1 * mobs[i].Count;
 
 
-            var item = server.GrantItemsToUser(
+            var item = server.EvaluateRandomResultTable(
                 {
                     "CatalogVersion": catalogVersion,
                     "PlayFabId": currentPlayerId,
-                    "ItemIds": [
-                        "WolfDropTable"
-                    ]
+                    "TableId": "WolfDropTable"
                 }
             );
             
