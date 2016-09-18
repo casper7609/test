@@ -61,6 +61,21 @@ handlers.ClearDungeon = function (args) {
             totalExp += 40 * mobs[i].Count;
             totalGold += 4 * mobs[i].Count;
             totalAlignment += 1 * mobs[i].Count;
+
+
+            var item = server.GrantItemsToUser(
+                {
+                    "PlayFabId": currentPlayerId,
+                    "ItemIds": [
+                        "WolfDropTable"
+                    ]
+                }
+            );
+            
+            log.info("item " + JSON.stringify(item));
+
+
+
         }
         else if(mobs[i].Name == "SilverFang")
         {
@@ -112,7 +127,7 @@ handlers.ClearDungeon = function (args) {
             "Amount": totalEmblem
         }
     );
-    log.info("totalGold " + totalEmblem);
+    log.info("totalEmblem " + totalEmblem);
 
     totalAlignment = parseInt(totalAlignment, 10);
     server.UpdatePlayerStatistics(
