@@ -90,6 +90,7 @@ handlers.ClearDungeon = function (args) {
 
     var realItem = server.GrantItemsToUser(
         {
+            "CatalogVersion": catalogVersion,
             "PlayFabId": currentPlayerId,
             "ItemIds": items
         }
