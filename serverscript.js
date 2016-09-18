@@ -55,7 +55,7 @@ handlers.ClearDungeon = function (args) {
     var totalGold = 0;
     var totalAlignment = 0;
     var totalEmblem = range(1, args.EmblemCount);
-    var items = ["Dagger_0"];
+    var items = ["Dagger_00"];
     for (var i = 0; i < mobs.length; i++) 
     {
         if (mobs[i].Name == "Wolf")
