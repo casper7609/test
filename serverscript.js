@@ -49,8 +49,8 @@ handlers.ClearDungeon = function (args) {
     //currentPlayerId
     log.info("ClearDungeon " + currentPlayerId);
     var partyMembers = JSON.parse(args.CharacterIds);
-
     var mobs = args.Mobs;
+
     var totalExp = 0;
     var totalGold = 0;
     var totalAlignment = 0;
@@ -145,6 +145,14 @@ handlers.ClearDungeon = function (args) {
         }
     );
     log.info("totalAlignment " + totalAlignment);
+
+    return {
+        "TotalExp": totalExp,
+        "TotalGold": totalGold,
+        "TotalAlignment": totalAlignment,
+        "TotalEmblem": totalEmblem,
+        "Items": items
+    };
 };
 
 handlers.CloudEnchantItem = function (args) {
