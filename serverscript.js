@@ -55,6 +55,7 @@ handlers.ClearDungeon = function (args) {
     var totalGold = 0;
     var totalAlignment = 0;
     var totalEmblem = range(1, args.EmblemCount);
+    var items = [];
     for (var i = 0; i < mobs.length; i++) 
     {
         if (mobs[i].Name == "Wolf")
@@ -63,19 +64,21 @@ handlers.ClearDungeon = function (args) {
             totalGold += 4 * mobs[i].Count;
             totalAlignment += 1 * mobs[i].Count;
 
+            for (var k = 0; k < mobs[i].Count; k++)
+            {
+                var item = server.EvaluateRandomResultTable(
+                    {
+                       "CatalogVersion": catalogVersion,
+                       "PlayFabId": currentPlayerId,
+                       "TableId": "WolfDropTable"
+                    }
+                );
 
-            var item = server.EvaluateRandomResultTable(
-                {
-                    "CatalogVersion": catalogVersion,
-                    "PlayFabId": currentPlayerId,
-                    "TableId": "WolfDropTable"
+                if (item.ResultItemId != "Nothing") {
+                    log.info("item " + JSON.stringify(item));
+                    items.push(item.ResultItemId);
                 }
-            );
-            
-            log.info("item " + JSON.stringify(item));
-
-
-
+            }
         }
         else if(mobs[i].Name == "SilverFang")
         {
