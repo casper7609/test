@@ -215,8 +215,8 @@ handlers.ClearDungeon = function (args) {
         var contentType = "application/json";
 
         // The pre-defined http object makes synchronous HTTP requests
-        //var response = http.request(url, httpMethod, content, contentType, headers);
-        //log.info("response", response);
+        var response = http.request(url, httpMethod, content, contentType, headers);
+        log.info("response", response);
     } catch (err) {
         log.info("err", err.message);
     };
