@@ -204,12 +204,13 @@ handlers.ClearDungeon = function (args) {
         };
 
         var body = {
-            input: args,
+            townId: args.TownId,
             userId: currentPlayerId,
-            mode: "foobar"
+            alignment: "foobar",
+            count: 1
         };
 
-        var url = "http://52.78.158.221:8080/occupation?townId=0&userId=playerA&alignment=Chaotic&count=1";
+        var url = "http://52.78.158.221:8080/occupation";
         var content = JSON.stringify(body);
         var httpMethod = "post";
         var contentType = "application/json";
