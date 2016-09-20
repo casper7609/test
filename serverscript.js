@@ -206,7 +206,8 @@ handlers.ClearDungeon = function (args) {
             ],
         }
     );
-    log.info("userData", JSON.stringify(userData));
+    var alignment = userData.Data.Alignment.Value;
+    //log.info("userData", JSON.stringify(userData));
     try {
         var headers = {
             "X-MyCustomHeader": "Some Value"
@@ -215,7 +216,7 @@ handlers.ClearDungeon = function (args) {
         var body = {
             townId: args.TownId,
             userId: currentPlayerId,
-            alignment: "foobar",
+            alignment: alignment,
             count: 1
         };
 
