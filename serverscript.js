@@ -200,7 +200,6 @@ handlers.ClearDungeon = function (args) {
 
     try {
         var headers = {};
-        headers["Content-Type"] = "application/json";
         var response = http.request(
             "http://52.78.158.221:8080/occupation?townId=0&userId=playerA&alignment=Chaotic&count=1",
             "POST",
