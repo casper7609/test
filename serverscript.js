@@ -198,6 +198,15 @@ handlers.ClearDungeon = function (args) {
     //Town_0_Occupation
     //http://52.78.158.221:8080/occupation?townId=0&userId=playerA&alignment=Chaotic&count=1
 
+    var userData = server.GetUserData(
+        {
+            "PlayFabId": currentPlayerId,
+            "Keys": [
+                "Alignment"
+            ],
+        }
+    );
+    log.info("userData", JSON.stringify(userData));
     try {
         var headers = {
             "X-MyCustomHeader": "Some Value"
