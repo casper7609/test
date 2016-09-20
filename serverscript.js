@@ -14,10 +14,51 @@ function range(min, max)
 function rand(from, to) {
     return Math.floor((Math.random() * to) + from);
 }
+
+//Town_0_Occupy
+handlers.OccupyTown = function (args) {
+    log.info("OccupyTown called PlayFabId " + currentPlayerId);
+    var townId = args.TownId;
+    var townIdStr = "Town_" + townId;
+    
+};
+
+//Town_0_Invest
+handlers.InvestTown = function (args) {
+    log.info("InvestTown called PlayFabId " + currentPlayerId);
+    var townId = args.TownId;
+    var townIdStr = "Town_" + townId;
+    var gold = args.Gold;
+
+    var userInv = server.GetUserInventory({
+        "PlayFabId": currentPlayerId
+    });
+    if (userInv.VirtualCurrency.GD < gold)
+    {
+        return;
+    }
+    townIdStr += "_Invest";
+    server.AddUserVirtualCurrency(
+        {
+            "PlayFabId": currentPlayerId,
+            "VirtualCurrency": "GD",
+            "Amount": -gold
+        }
+    );
+    server.UpdatePlayerStatistics(
+        {
+            "PlayFabId": currentPlayerId,
+            "Statistics": [
+                {
+                    "StatisticName": townIdStr,
+                    "Value": gold
+                }
+            ]
+        }
+    );
+};
+
 handlers.InstantClearDungeon = function (args) {
-    //log.info("InstantClearDungeon called PlayFabId " + currentPlayerId);
-    //log.info("CharacterIds " + args.CharacterIds);
-    //log.info("TownId " + args.TownId);
     var townId = args.TownId;
     var townIdStr = "Town_" + townId;
     var townInfo = server.GetTitleData({
@@ -153,6 +194,25 @@ handlers.ClearDungeon = function (args) {
         }
     );
     log.info("totalAlignment " + totalAlignment);
+
+    //Town_0_Occupation
+    //http://52.78.158.221:8080/occupation?townId=0&userId=playerA&alignment=Chaotic&count=1
+
+    try {
+        var headers = {};
+        headers["Content-Type"] = "application/json";
+        var response = http.request(
+            "http://52.78.158.221:8080/occupation?townId=0&userId=playerA&alignment=Chaotic&count=1",
+            "POST",
+            "",
+            "application/json",
+            headers
+        );
+        result = 1;
+        log.info("response", response);
+    } catch (err) {
+        log.info("err", err.message);
+    };
 
     return {
         "TotalExp": totalExp,
@@ -309,62 +369,6 @@ handlers.CloudSellItem = function (args) {
    
     return { "GoldGainResult": goldGainResult, "ItemSoldResult": args.Items };
 };
-
-
-
-handlers.CloudLoot = function (args) {
-    var killedNpc = args.KilledNpc;
-    var characterId = args.CharacterId;
-    var catalogVersion = args.CatalogVersion;
-
-    var catalogItems = server.GetCatalogItems({
-        "CatalogVersion" : catalogVersion
-    });
-
-    var entityFound = false;
-    var minGold = 0;
-    var maxGold = 0;
-    var gold = 0;
-    for (var i = 0; i < catalogItems.Catalog.length; i++)
-    {
-        var item = catalogItems.Catalog[i];
-        if (item.ItemId == killedNpc)
-        {
-            var customData = JSON.parse(item.CustomData);
-            minGold = parseInt(customData.MinGold);
-            maxGold = parseInt(customData.MaxGold);
-            gold = rand(minGold, maxGold);
-            entityFound = true;
-            break;
-        }
-    }
-    if (entityFound)
-    {
-        var goldGainResult = server.AddCharacterVirtualCurrency({
-            "PlayFabId": currentPlayerId,
-            "CharacterId": characterId,
-            "VirtualCurrency": "GD",
-            "Amount": gold
-        });
-
-        var itemGainResult = server.GrantItemsToCharacter({
-            "CatalogVersion": catalogVersion,
-            "PlayFabId": currentPlayerId,
-            "CharacterId": characterId,
-            "Annotation": "Loot " + killedNpc,
-            "ItemIds": [
-                killedNpc + "DropTable"
-            ]
-        });
-        return { "GoldGainResult": goldGainResult, "ItemGainResult": itemGainResult};
-    }
-    else
-    {
-        return { "Error": "Entity not found" };
-    }
-};
-
-
 
 handlers.CloudSetTitleData = function (args) {
     log.info("PlayFabId " + currentPlayerId);
