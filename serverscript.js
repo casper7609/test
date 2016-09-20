@@ -204,11 +204,10 @@ handlers.ClearDungeon = function (args) {
         var response = http.request(
             "http://52.78.158.221:8080/occupation?townId=0&userId=playerA&alignment=Chaotic&count=1",
             "POST",
-            "",
+            "{}",
             "application/json",
             headers
         );
-        result = 1;
         log.info("response", response);
     } catch (err) {
         log.info("err", err.message);
