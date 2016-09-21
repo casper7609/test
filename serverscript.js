@@ -214,10 +214,10 @@ handlers.ClearDungeon = function (args) {
         };
 
         var body = {
-            TownId: args.TownId,
-            UserId: currentPlayerId,
-            Alignment: alignment,
-            Count: totalAlignment
+            townId: args.TownId,
+            userId: currentPlayerId,
+            alignment: alignment,
+            count: totalAlignment
         };
 
         var url = "http://52.78.158.221:8080/occupation";
