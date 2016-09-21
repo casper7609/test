@@ -27,7 +27,6 @@ handlers.OccupyTown = function (args) {
 handlers.InvestTown = function (args) {
     log.info("InvestTown called PlayFabId " + currentPlayerId);
     var townId = args.TownId;
-    var townIdStr = "Town_" + townId;
     var gold = args.Gold;
 
     var userInv = server.GetUserInventory({
@@ -37,23 +36,54 @@ handlers.InvestTown = function (args) {
     {
         return;
     }
-    townIdStr += "_Invest";
+    //server.UpdatePlayerStatistics(
+    //    {
+    //        "PlayFabId": currentPlayerId,
+    //        "Statistics": [
+    //            {
+    //                "StatisticName": townIdStr,
+    //                "Value": gold
+    //            }
+    //        ]
+    //    }
+    //);
+    var userData = server.GetUserData(
+        {
+            "PlayFabId": currentPlayerId,
+            "Keys": [
+                "Alignment"
+            ],
+        }
+    );
+    var alignment = userData.Data.Alignment.Value;
+    try {
+        var headers = {
+            "X-MyCustomHeader": "Some Value"
+        };
+
+        var body = {
+            townId: townId,
+            userId: currentPlayerId,
+            alignment: alignment,
+            count: gold
+        };
+
+        var url = "http://52.78.158.221:8080/investment";
+        var content = JSON.stringify(body);
+        var httpMethod = "post";
+        var contentType = "application/json";
+
+        // The pre-defined http object makes synchronous HTTP requests
+        var response = http.request(url, httpMethod, content, contentType, headers);
+        log.info("response", response);
+    } catch (err) {
+        log.info("err", err.message);
+    };
     server.AddUserVirtualCurrency(
         {
             "PlayFabId": currentPlayerId,
             "VirtualCurrency": "GD",
             "Amount": -gold
-        }
-    );
-    server.UpdatePlayerStatistics(
-        {
-            "PlayFabId": currentPlayerId,
-            "Statistics": [
-                {
-                    "StatisticName": townIdStr,
-                    "Value": gold
-                }
-            ]
         }
     );
 };
