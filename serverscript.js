@@ -79,11 +79,11 @@ handlers.InvestTown = function (args) {
     } catch (err) {
         log.info("err", err.message);
     };
-    server.AddUserVirtualCurrency(
+    server.SubtractUserVirtualCurrency(
         {
             "PlayFabId": currentPlayerId,
             "VirtualCurrency": "GD",
-            "Amount": -gold
+            "Amount": gold
         }
     );
 };
