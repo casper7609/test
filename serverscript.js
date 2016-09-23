@@ -465,7 +465,7 @@ handlers.EquipItem = function (args) {
     server.MoveItemToCharacterFromUser({
         "PlayFabId": args.PlayFabId,
         "CharacterId": args.CharacterId,
-        "ItemInstanceId": args.args.ItemToEquipInstanceId
+        "ItemInstanceId": args.ItemToEquipInstanceId
     });
 };
 
