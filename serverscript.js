@@ -383,7 +383,6 @@ handlers.CloudSellItem = function (args) {
         "CatalogVersion": catalogVersion
     });
 
-
     var gold = 0;
 
     for (var i = 0; i < catalogItems.Catalog.length; i++) {
@@ -416,13 +415,13 @@ handlers.CloudSellItem = function (args) {
         }
     }
     
-    var goldGainResult = server.AddCharacterVirtualCurrency({
-        "PlayFabId": currentPlayerId,
-        "CharacterId": characterId,
-        "VirtualCurrency": "GD",
-        "Amount": gold
-    });
-   
+    var goldGainResult = server.AddUserVirtualCurrency(
+         {
+             "PlayFabId": currentPlayerId,
+             "VirtualCurrency": "GD",
+             "Amount": gold
+         }
+     );
     return { "GoldGainResult": goldGainResult, "ItemSoldResult": args.Items };
 };
 
