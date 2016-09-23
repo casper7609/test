@@ -327,9 +327,8 @@ handlers.EnchantItem = function (args) {
     var enchantResult = 0;
     var prevEnchant = 0;
     var goldSubtractResult = null;
-    goldSubtractResult = server.SubtractCharacterVirtualCurrency({
+    goldSubtractResult = server.SubtractUserVirtualCurrency({
         "PlayFabId": currentPlayerId,
-        "CharacterId": characterId,
         "VirtualCurrency": "GD",
         "Amount": enchantPriceInGold
     });
