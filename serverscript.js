@@ -36,17 +36,6 @@ handlers.InvestTown = function (args) {
     {
         return;
     }
-    //server.UpdatePlayerStatistics(
-    //    {
-    //        "PlayFabId": currentPlayerId,
-    //        "Statistics": [
-    //            {
-    //                "StatisticName": townIdStr,
-    //                "Value": gold
-    //            }
-    //        ]
-    //    }
-    //);
     var userData = server.GetUserData(
         {
             "PlayFabId": currentPlayerId,
@@ -463,6 +452,31 @@ handlers.CloudUpdateUserInventoryItemCustomData = function (args)
         CharacterId: args.CharacterId,
         ItemInstanceId: args.ItemInstanceId,
         Data: args.Data,
+    });
+};
+
+handlers.EquipItem = function (args) {
+    //unequip
+    if (args.PrevItemInstanceId != "") {
+        handlers.UnEquipItem(args);
+    }
+    log.info("ItemToEquipInstanceId " + args.ItemToEquipInstanceId);
+    //equip
+    server.MoveItemToCharacterFromUser({
+        "PlayFabId": args.PlayFabId,
+        "CharacterId": args.CharacterId,
+        "ItemInstanceId": args.args.ItemToEquipInstanceId
+    });
+};
+
+handlers.UnEquipItem = function (args) {
+    log.info("PlayFabId " + args.PlayFabId);
+    log.info("CharacterId " + args.CharacterId);
+    log.info("PrevItemInstanceId " + args.PrevItemInstanceId);
+    server.MoveItemToUserFromCharacter({
+        "PlayFabId": args.PlayFabId,
+        "CharacterId": args.CharacterId,
+        "ItemInstanceId": args.PrevItemInstanceId
     });
 };
 
