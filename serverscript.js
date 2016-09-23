@@ -407,7 +407,7 @@ handlers.CloudSellItem = function (args) {
                 var consumeItemResult = server.ConsumeItem({
                     "PlayFabId": currentPlayerId,
                     "ItemInstanceId": itemInstanceId,
-                    "CharacterId": characterId,
+                    //"CharacterId": characterId,
                     "ConsumeCount": 1
                 });
                 log.info("consumeItemResult " + consumeItemResult);
