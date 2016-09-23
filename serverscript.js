@@ -271,7 +271,7 @@ handlers.ClearDungeon = function (args) {
     };
 };
 
-handlers.CloudEnchantItem = function (args) {
+handlers.EnchantItem = function (args) {
     log.info("PlayFabId " + args.PlayFabId);
     log.info("CharacterId " + args.CharacterId);
     log.info("ItemInstanceId " + args.ItemInstanceId);
@@ -281,81 +281,90 @@ handlers.CloudEnchantItem = function (args) {
     var itemInstanceId = args.ItemInstanceId;
     var catalogVersion = args.CatalogVersion;
 
-    var characterInventory = server.GetCharacterInventory({
-        "PlayFabId": currentPlayerId,
-        "CharacterId": characterId,
-        "CatalogVersion": catalogVersion
+    var userInventory = server.GetUserInventory({
+        "PlayFabId": currentPlayerId
     });
-    var itemToEnchant = null;
-    for (var i = 0; i < characterInventory.Inventory.length; i++) {
-        var item = characterInventory.Inventory[i];
-        if (item.ItemInstanceId == args.ItemInstanceId)
-        {
-            itemToEnchant = item;
-            break;
-        }
-    }
 
-
-    var enchantResult = 0;
-    var prevEnchant = 0;
-    var goldSubtractResult = null;
-    if(characterInventory.VirtualCurrency == null 
-        || characterInventory.VirtualCurrency.GD == null 
-        || parseInt(characterInventory.VirtualCurrency.GD) < enchantPriceInGold)
-    {
+    //check if sufficient fund
+    if (userInventory.VirtualCurrency == null
+        || userInventory.VirtualCurrency.GD == null
+        || parseInt(userInventory.VirtualCurrency.GD) < enchantPriceInGold) {
         log.info("Insufficient Fund");
         return { "Error": "Insufficient Fund" };
     }
-    else if (itemToEnchant != null) {
 
-        //check if sufficient fund
-
-        goldSubtractResult = server.SubtractCharacterVirtualCurrency({
-            "PlayFabId": currentPlayerId,
-            "CharacterId": characterId,
-            "VirtualCurrency": "GD",
-            "Amount": enchantPriceInGold
-        });
-
-        var odd = Math.floor((Math.random() * 100) + 1);
-        log.info("odd " + odd);
-        if (odd < enchantBrokenChance) {
-            log.info("item broken");
-            var consumeItemResult = server.ConsumeItem({
-                "PlayFabId": currentPlayerId,
-                "ItemInstanceId": itemInstanceId,
-                "CharacterId": characterId,
-                "ConsumeCount": 1
-            });
-            enchantResult = 0;
-        }
-        else if (enchantBrokenChance <= odd && odd <= enchantNothingChance) {
-            log.info("nothing happened");
-            enchantResult = 1;
-        }
-        else
-        {
-            if (itemToEnchant.CustomData != null && itemToEnchant.CustomData.Enchant != null) {
-                prevEnchant = parseInt(itemToEnchant.CustomData.Enchant);
+    var itemToEnchant = null;
+    if (characterId == "") {
+        for (var i = 0; i < userInventory.Inventory.length; i++) {
+            var item = userInventory.Inventory[i];
+            if (item.ItemInstanceId == args.ItemInstanceId) {
+                itemToEnchant = item;
+                break;
             }
-            log.info("enchant success prevEnchant " + prevEnchant);
-            prevEnchant++;
-            log.info("enchant success current enchant " + prevEnchant);
-
-            var enchantSuccessResult = server.UpdateUserInventoryItemCustomData({
-                PlayFabId: currentPlayerId,
-                CharacterId: characterId,
-                ItemInstanceId: itemInstanceId,
-                Data: { "Enchant": prevEnchant },
-            });
-            enchantResult = 2;
         }
     }
     else
     {
-        log.info("Item not found, error or hacking ");
-        return { "Error" : "Item Not Found" };
+        var characterInventory = server.GetCharacterInventory({
+            "PlayFabId": currentPlayerId,
+            "CharacterId": characterId,
+            "CatalogVersion": catalogVersion
+        });
+        for (var i = 0; i < characterInventory.Inventory.length; i++) {
+            var item = characterInventory.Inventory[i];
+            if (item.ItemInstanceId == args.ItemInstanceId) {
+                itemToEnchant = item;
+                break;
+            }
+        }
+    }
+    
+    if (itemToEnchant == null)
+    {
+        return { "Error": "Item Not Found" };
+    }
+
+    var enchantResult = 0;
+    var prevEnchant = 0;
+    var goldSubtractResult = null;
+    goldSubtractResult = server.SubtractCharacterVirtualCurrency({
+        "PlayFabId": currentPlayerId,
+        "CharacterId": characterId,
+        "VirtualCurrency": "GD",
+        "Amount": enchantPriceInGold
+    });
+
+    var odd = Math.floor((Math.random() * 100) + 1);
+    log.info("odd " + odd);
+    if (odd < enchantBrokenChance) {
+        log.info("item broken");
+        var consumeItemResult = server.ConsumeItem({
+            "PlayFabId": currentPlayerId,
+            "ItemInstanceId": itemInstanceId,
+            //"CharacterId": characterId,
+            "ConsumeCount": 1
+        });
+        enchantResult = 0;
+    }
+    else if (enchantBrokenChance <= odd && odd <= enchantNothingChance) {
+        log.info("nothing happened");
+        enchantResult = 1;
+    }
+    else {
+        if (itemToEnchant.CustomData != null && itemToEnchant.CustomData.Enchant != null) {
+            prevEnchant = parseInt(itemToEnchant.CustomData.Enchant);
+        }
+        log.info("enchant success prevEnchant " + prevEnchant);
+        prevEnchant++;
+        log.info("enchant success current enchant " + prevEnchant);
+
+        var enchantSuccessResult = server.UpdateUserInventoryItemCustomData({
+            PlayFabId: currentPlayerId,
+            CharacterId: characterId,
+            ItemInstanceId: itemInstanceId,
+            Data: { "Enchant": prevEnchant },
+        });
+        enchantResult = 2;
     }
     //1. enchant success
     //2. nothing
