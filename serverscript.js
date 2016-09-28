@@ -15,14 +15,6 @@ function rand(from, to) {
     return Math.floor((Math.random() * to) + from);
 }
 
-//Town_0_Occupy
-handlers.OccupyTown = function (args) {
-    log.info("OccupyTown called PlayFabId " + currentPlayerId);
-    var townId = args.TownId;
-    var townIdStr = "Town_" + townId;
-    
-};
-
 //Town_0_Invest
 handlers.InvestTown = function (args) {
     log.info("InvestTown called PlayFabId " + currentPlayerId);
@@ -81,11 +73,10 @@ handlers.InstantClearDungeon = function (args) {
     var townId = args.TownId;
     var townIdStr = "Town_" + townId;
     var townInfo = server.GetTitleData({
-        "Keys": [townIdStr]
+        "Keys": ["Towns"]
     });;
-    var townInfoData = townInfo.Data;
-    townInfoData = townInfoData[townIdStr];
-    townInfoData = JSON.parse(townInfoData);
+    var townInfoDataList = JSON.parse(townInfo.Data);
+    var townInfoData = townInfoDataList[parseInt(townId)];
     //log.info("Got TownInfo " + townInfoData);
     var mobs = townInfoData.Mobs;
     var tileAvg = range(townInfoData.TileMin, townInfoData.TileMax);
@@ -107,6 +98,18 @@ handlers.ClearDungeon = function (args) {
     //house_alignment
     //gold
     //currentPlayerId
+
+    var townId = args.TownId;
+    var townIdStr = "Town_" + townId;
+    var townInfo = server.GetTitleData({
+        "Keys": ["Towns"]
+    });;
+    var townInfoDataList = JSON.parse(townInfo.Data);
+    var townInfoData = townInfoDataList[parseInt(townId)];
+    //log.info("Got TownInfo " + townInfoData);
+    var townMobs = townInfoData.Mobs;
+
+
     log.info("ClearDungeon " + currentPlayerId);
     var partyMembers = JSON.parse(args.CharacterIds);
     var mobs = args.Mobs;
