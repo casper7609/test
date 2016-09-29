@@ -104,8 +104,9 @@ handlers.ClearDungeon = function (args) {
     var townInfo = server.GetTitleData({
         "Keys": ["Towns"]
     });;
-    var townInfoDataList = JSON.parse(townInfo.Data);
     log.info("test " + townInfo.Data);
+    return;
+    var townInfoDataList = JSON.parse(townInfo.Data);
     var townInfoData = townInfoDataList[parseInt(townId)];
     //log.info("Got TownInfo " + townInfoData);
     var townMobs = townInfoData.Mobs;
