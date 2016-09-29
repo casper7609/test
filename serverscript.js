@@ -75,7 +75,7 @@ handlers.InstantClearDungeon = function (args) {
     var townInfo = server.GetTitleData({
         "Keys": ["Towns"]
     });;
-    var townInfoDataList = JSON.parse(townInfo.Data);
+    var townInfoDataList = JSON.parse(townInfo.Data.Towns.replace(/\\/g, ""));
     var townInfoData = townInfoDataList[parseInt(townId)];
     //log.info("Got TownInfo " + townInfoData);
     var mobs = townInfoData.Mobs;
@@ -122,33 +122,29 @@ handlers.ClearDungeon = function (args) {
     var items = ["Dagger_00"];
     for (var i = 0; i < mobs.length; i++) 
     {
-        if (mobs[i].Name == "Wolf")
+        for (var k = 0; k < townMobs.length; k++)
         {
-            totalExp += 40 * mobs[i].Count;
-            totalGold += 4 * mobs[i].Count;
-            totalAlignment += 1 * mobs[i].Count;
-
-            for (var k = 0; k < mobs[i].Count; k++)
+            if (townMobs[k].Name == mobs[i].Name)
             {
-                var randomItem = server.EvaluateRandomResultTable(
-                    {
-                       "CatalogVersion": catalogVersion,
-                       "PlayFabId": currentPlayerId,
-                       "TableId": "WolfDropTable"
-                    }
-                );
+                totalExp += townMobs[k].Exp * mobs[i].Count;
+                totalGold += townMobs[k].Gold * mobs[i].Count;
+                totalAlignment += townMobs[k].Alignment * mobs[i].Count;
+                for (var j = 0; j < mobs[i].Count; j++) {
+                    var randomItem = server.EvaluateRandomResultTable(
+                        {
+                            "CatalogVersion": catalogVersion,
+                            "PlayFabId": currentPlayerId,
+                            "TableId": "WolfDropTable"
+                        }
+                    );
 
-                if (randomItem.ResultItemId != "Nothing") {
-                    log.info("item " + JSON.stringify(randomItem));
-                    items.push(randomItem.ResultItemId);
+                    if (randomItem.ResultItemId != "Nothing") {
+                        log.info("item " + JSON.stringify(randomItem));
+                        items.push(randomItem.ResultItemId);
+                    }
                 }
+                break;
             }
-        }
-        else if(mobs[i].Name == "SilverFang")
-        {
-            totalExp += 120 * mobs[i].Count;
-            totalGold += 12 * mobs[i].Count;
-            totalAlignment += 2 * mobs[i].Count;
         }
     }
 
