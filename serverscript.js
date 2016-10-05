@@ -326,12 +326,24 @@ handlers.EnchantItem = function (args) {
     log.info("odd " + odd);
     if (odd < enchantBrokenChance) {
         log.info("item broken");
-        var consumeItemResult = server.ConsumeItem({
-            "PlayFabId": currentPlayerId,
-            "ItemInstanceId": itemInstanceId,
-            //"CharacterId": characterId,
-            "ConsumeCount": 1
-        });
+        if (characterId == "") {
+            var consumeItemResult = server.ConsumeItem({
+                "PlayFabId": currentPlayerId,
+                "ItemInstanceId": itemInstanceId,
+                //"CharacterId": characterId,
+                "ConsumeCount": 1
+            });
+        }
+        else
+        {
+            var consumeItemResult = server.ConsumeItem({
+                "PlayFabId": currentPlayerId,
+                "ItemInstanceId": itemInstanceId,
+                "CharacterId": characterId,
+                "ConsumeCount": 1
+            });
+        }
+       
         enchantResult = 0;
     }
     else if (enchantBrokenChance <= odd && odd <= enchantNothingChance) {
