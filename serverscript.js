@@ -26,8 +26,7 @@ handlers.GetEnergyPoint = function (args) {
         }
     );
 
-    if (userData.Data.LastEnergyRequestTime == null)
-    {
+    if (userData.Data.LastEnergyRequestTime == null) {
         userData.Data.LastEnergyRequestTime = new Date().getTime();
         log.info("Need to add currentTime as LastEnergyRequestTime " + userData.Data.LastEnergyRequestTime);
         var updatedUserData = server.GetUserData(
@@ -37,6 +36,10 @@ handlers.GetEnergyPoint = function (args) {
                 "LastEnergyRequestTime": userData.Data.LastEnergyRequestTime
             }
         });
+    }
+    else
+    {
+        log.info("LastEnergyRequestTime " + userData.Data.LastEnergyRequestTime.Value);
     }
     var diff = currentTime - lastUserCheckTime;
 
