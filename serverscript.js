@@ -55,7 +55,7 @@ handlers.GetEnergyPoint = function (args) {
     var highestLevel = 4;
 
     var baseEnergy = userInv.VirtualCurrency.BE;
-    var baseEnergyMax = userInv.VirtualCurrencyRechargeTimes.BE.RechargeMax;
+    var baseEnergyMax = 56;
     var additionalEnergy = userInv.VirtualCurrency.AE;
     var additionalEnergyMax = highestLevel * 4;
     log.info("baseEnergy " + baseEnergy);
