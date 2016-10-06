@@ -25,24 +25,27 @@ handlers.GetEnergyPoint = function (args) {
             ],
         }
     );
-
+    var currentTime = new Date().getTime();
+    var lastUserCheckTime;
     if (userData.Data.LastEnergyRequestTime == null) {
-        userData.Data.LastEnergyRequestTime = new Date().getTime();
-        log.info("Need to add currentTime as LastEnergyRequestTime " + userData.Data.LastEnergyRequestTime);
+        log.info("Need to add currentTime as LastEnergyRequestTime " + currentTime);
         var updatedUserData = server.UpdateUserData(
         {
             "PlayFabId": currentPlayerId,
             "Data": {
-                "LastEnergyRequestTime": userData.Data.LastEnergyRequestTime + ''
+                "LastEnergyRequestTime": currentTime + ''
             }
         });
         log.info("UpdateResult " + JSON.stringify(updatedUserData));
+        lastUserCheckTime = currentTime;
     }
     else
     {
         log.info("LastEnergyRequestTime " + userData.Data.LastEnergyRequestTime.Value);
+        lastUserCheckTime = userData.Data.LastEnergyRequestTime.Value + 0;
     }
     var diff = currentTime - lastUserCheckTime;
+    log.info("diff " + diff);
 
     return;
 
