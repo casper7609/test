@@ -14,7 +14,64 @@ function range(min, max)
 function rand(from, to) {
     return Math.floor((Math.random() * to) + from);
 }
+handlers.GetEnergyPoint = function (args) {
+    log.info("GetEnergyPoint called PlayFabId " + currentPlayerId);
+   
+    var userData = server.GetUserData(
+        {
+            "PlayFabId": currentPlayerId,
+            "Keys": [
+                "LastEnergyRequestTime"
+            ],
+        }
+    );
 
+    if (userData.Data.LastEnergyRequestTime == null)
+    {
+        log.info("Need to add currentTime as LastEnergyRequestTime " + new Date().getTime());
+    }
+
+    return;
+
+    var userInv = server.GetUserInventory({
+        "PlayFabId": currentPlayerId
+    });
+    if (userInv.VirtualCurrency.GD < gold) {
+        return;
+    }
+    
+    var alignment = userData.Data.Alignment.Value;
+    try {
+        var headers = {
+            "X-MyCustomHeader": "Some Value"
+        };
+
+        var body = {
+            townId: townId,
+            userId: currentPlayerId,
+            alignment: alignment,
+            count: gold
+        };
+
+        var url = "http://52.78.158.221:8080/investment";
+        var content = JSON.stringify(body);
+        var httpMethod = "post";
+        var contentType = "application/json";
+
+        // The pre-defined http object makes synchronous HTTP requests
+        var response = http.request(url, httpMethod, content, contentType, headers);
+        log.info("response", response);
+    } catch (err) {
+        log.info("err", err.message);
+    };
+    server.SubtractUserVirtualCurrency(
+        {
+            "PlayFabId": currentPlayerId,
+            "VirtualCurrency": "GD",
+            "Amount": gold
+        }
+    );
+};
 //Town_0_Invest
 handlers.InvestTown = function (args) {
     log.info("InvestTown called PlayFabId " + currentPlayerId);
