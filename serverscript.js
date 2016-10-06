@@ -45,7 +45,8 @@ handlers.GetEnergyPoint = function (args) {
         log.info("LastEnergyRequestTime " + lastUserCheckTime);
     }
     var diff = currentTime - lastUserCheckTime;
-    log.info("diff " + diff);
+    var fiveMin = 1000 * 60 * 5;
+    log.info("diff " + diff + " fiveMin " + fiveMin);
 
     return;
 
