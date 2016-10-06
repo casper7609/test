@@ -33,6 +33,7 @@ handlers.GetEnergyPoint = function (args) {
         var updatedUserData = server.GetUserData(
         {
             "Data": {
+                "PlayFabId": currentPlayerId,
                 "LastEnergyRequestTime": userData.Data.LastEnergyRequestTime
             }
         });
