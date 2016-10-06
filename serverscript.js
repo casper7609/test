@@ -48,6 +48,24 @@ handlers.GetEnergyPoint = function (args) {
     var fiveMin = 1000 * 60 * 5;
     log.info("diff " + diff + " fiveMin " + fiveMin);
 
+    var userInv = server.GetUserInventory({
+        "PlayFabId": currentPlayerId
+    });
+    var baseEnergy = userInv.VirtualCurrency.BE;
+    var additionalEnergy = userInv.VirtualCurrency.AE;
+
+    var countToAdd = diff / fiveMin;
+    var timeLeftTillNextGen = diff % fiveMin;
+    log.info("countToAdd " + countToAdd);
+    log.info("timeLeftTillNextGen " + timeLeftTillNextGen);
+    if (countToAdd > 0) {
+        //need to add
+        log.info("Need to add " + countToAdd);
+    }
+    else
+    {
+        return { current: (additionalEnergy + baseEnergy), timeLeftTillNextGen: timeLeftTillNextGen };
+    }
     return;
 
     var userInv = server.GetUserInventory({
