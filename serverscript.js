@@ -29,7 +29,7 @@ handlers.GetEnergyPoint = function (args) {
     if (userData.Data.LastEnergyRequestTime == null) {
         userData.Data.LastEnergyRequestTime = new Date().getTime();
         log.info("Need to add currentTime as LastEnergyRequestTime " + userData.Data.LastEnergyRequestTime);
-        var updatedUserData = server.GetUserData(
+        var updatedUserData = server.UpdateUserData(
         {
             "PlayFabId": currentPlayerId,
             "Data": {
