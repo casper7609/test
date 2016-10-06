@@ -14,6 +14,106 @@ function range(min, max)
 function rand(from, to) {
     return Math.floor((Math.random() * to) + from);
 }
+
+
+function GetHigestLevel() {
+    var allCharacters = server.GetAllUsersCharacters(
+         {
+             "PlayFabId": currentPlayerId
+         }
+    );
+    var higestExp = 0;
+    for (var i = 0; i < allCharacters.Characters.length; i++)
+    {
+        var characterId = allCharacters.Characters[i].CharacterId;
+        var charStat = server.GetCharacterStatistics(
+            {
+                "PlayFabId": currentPlayerId,
+                "CharacterId": characterId
+            }
+        );
+        var accumulatedXP = charStat.AccumulatedXP;
+        higestExp = Math.max(higestExp, accumulatedXP);
+    }
+
+    log.info("higestExp " + higestExp);
+    var higestLevel = GetLevel(accumulatedXP);
+    log.info("higestLevel " + higestLevel);
+}
+function GetLevel(accumulatedXP)
+{
+    var currentLevel = 1;
+    var currentXp = accumulatedXP;
+    var xpToNextLevel = getXpToNextLevel(currentLevel);
+    while (currentXp > xpToNextLevel)
+    {
+        currentLevel++;
+        currentXp -= xpToNextLevel;
+        xpToNextLevel = getXpToNextLevel(currentLevel);
+    }
+    return currentLevel;
+}
+
+function getXpToNextLevel(level)
+{
+    return parseInt(((8 * level) + diff(level)) * mxp(level, 0) * rf(level));
+}
+function diff(level)
+{
+    if (level <= 28)
+    {
+        return 0;
+    }
+    else if (level == 29)
+    {
+        return 1;
+    }
+    else if (level == 30)
+    {
+        return 3;
+    }
+    else if (level == 31)
+    {
+        return 6;
+    }
+    else if (level >= 32 && level <= 59)
+    {
+        return 5 * (level - 30);
+    }
+    return 0;
+}
+function mxp(level, place)
+{
+    if(place == 0)
+        return 45 + (5 * level);
+    if(place == 1)
+        return 235 + (5 * level);
+    if(place == 2)
+        return 580 + (5 * level);
+    if(place == 3)
+        return 1878 + (5 * level);
+    return 45 + (5 * level);
+}
+function rf(level)
+{
+    if (level <= 10)
+    {
+        return 1;
+    }
+    else if (level >= 11 && level <= 27)
+    {
+        return (1 - (level - 10) / 100);
+    }
+    else if (level >= 28 && level <= 59)
+    {
+        return 0.82;
+    }
+    else if (level >= 60)
+    {
+        return 1;
+    }
+    return 0;
+}
 handlers.GetEnergyPoint = function (args) {
     log.info("GetEnergyPoint called PlayFabId " + currentPlayerId);
    
@@ -52,7 +152,7 @@ handlers.GetEnergyPoint = function (args) {
         "PlayFabId": currentPlayerId
     });
 
-    var highestLevel = 4;
+    var highestLevel = GetHigestLevel();
 
     var baseEnergy = userInv.VirtualCurrency.BE;
     var baseEnergyMax = 56;
