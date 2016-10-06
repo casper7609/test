@@ -32,6 +32,7 @@ function GetHigestLevel() {
                 "CharacterId": characterId
             }
         );
+        log.info("charStat " + JSON.stringify(charStat));
         var accumulatedXP = charStat.AccumulatedXP;
         higestExp = Math.max(higestExp, accumulatedXP);
     }
