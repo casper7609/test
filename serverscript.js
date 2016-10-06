@@ -33,7 +33,7 @@ function GetHigestLevel() {
             }
         );
         log.info("charStat " + JSON.stringify(charStat));
-        var accumulatedXP = charStat.AccumulatedXP == null ? 0 : charStat.AccumulatedXP;
+        var accumulatedXP = charStat.CharacterStatistics.AccumulatedXP == null ? 0 : charStat.CharacterStatistics.AccumulatedXP;
         higestExp = Math.max(higestExp, accumulatedXP);
     }
 
