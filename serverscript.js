@@ -54,17 +54,18 @@ handlers.GetEnergyPoint = function (args) {
     var baseEnergy = userInv.VirtualCurrency.BE;
     var additionalEnergy = userInv.VirtualCurrency.AE;
 
-    var countToAdd = diff / fiveMin;
-    var timeLeftTillNextGen = diff % fiveMin;
+    var countToAdd = parseInt(diff / fiveMin);
+    var timeSecondsLeftTillNextGen = diff % fiveMin;
     log.info("countToAdd " + countToAdd);
-    log.info("timeLeftTillNextGen " + timeLeftTillNextGen);
+    timeSecondsLeftTillNextGen = Math.ceil(timeSecondsLeftTillNextGen / 1000);
+    log.info("timeLeftTillNextGen " + timeSecondsLeftTillNextGen);
     if (countToAdd > 0) {
         //need to add
         log.info("Need to add " + countToAdd);
     }
     else
     {
-        return { current: (additionalEnergy + baseEnergy), timeLeftTillNextGen: timeLeftTillNextGen };
+        return { current: (additionalEnergy + baseEnergy), timeSecondsLeftTillNextGen: timeSecondsLeftTillNextGen };
     }
     return;
 
