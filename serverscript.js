@@ -41,8 +41,8 @@ handlers.GetEnergyPoint = function (args) {
     }
     else
     {
-        log.info("LastEnergyRequestTime " + userData.Data.LastEnergyRequestTime.Value);
-        lastUserCheckTime = userData.Data.LastEnergyRequestTime.Value + 0;
+        lastUserCheckTime = parseInt(userData.Data.LastEnergyRequestTime.Value);
+        log.info("LastEnergyRequestTime " + lastUserCheckTime);
     }
     var diff = currentTime - lastUserCheckTime;
     log.info("diff " + diff);
