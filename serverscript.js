@@ -51,11 +51,20 @@ handlers.GetEnergyPoint = function (args) {
     var userInv = server.GetUserInventory({
         "PlayFabId": currentPlayerId
     });
+
+    var highestLevel = 4;
+
     var baseEnergy = userInv.VirtualCurrency.BE;
+    var baseEnergyMax = userInv.VirtualCurrencyRechargeTimes.BE.RechargeMax;
     var additionalEnergy = userInv.VirtualCurrency.AE;
+    var additionalEnergyMax = highestLevel * 4;
 
     var countToAdd = parseInt(diff / fiveMin);
     var timeSecondsLeftTillNextGen = diff % fiveMin;
+
+    var newLastUserCheckTime = diff % fiveMin;
+    var isUpdated = false;
+
     timeSecondsLeftTillNextGen = fiveMin - timeSecondsLeftTillNextGen;
     log.info("countToAdd " + countToAdd);
     timeSecondsLeftTillNextGen = Math.ceil(timeSecondsLeftTillNextGen / 1000);
@@ -63,13 +72,88 @@ handlers.GetEnergyPoint = function (args) {
     if (countToAdd > 0) {
         //need to add
         log.info("Need to add " + countToAdd);
-        return { Current: (additionalEnergy + baseEnergy), TimeSecondsLeftTillNextGen: timeSecondsLeftTillNextGen };
+
+        if (baseEnergy >= baseEnergyMax) {
+            log.info("baseEnergy is full " + baseEnergy);
+            if (additionalEnergy >= additionalEnergyMax) {
+                log.info("additionalEnergy is full " + additionalEnergy + " nothing to do");
+            }
+            else
+            {
+                //additionalEnergy 11 / max : 20
+                //9 20
+                var additionalDiff = additionalEnergyMax - additionalEnergy;
+                additionalDiff = Math.min(additionalDiff, countToAdd);
+
+                server.AddUserVirtualCurrency(
+                    {
+                        "PlayFabId": currentPlayerId,
+                        "VirtualCurrency": "AE",
+                        "Amount": additionalDiff
+                    }
+                );
+
+                additionalEnergy += additionalDiff;
+                log.info("added " + additionalDiff + " to additionalEnergy, now " + additionalEnergy);
+
+                isUpdated = true;
+            }
+        }
+        else
+        {
+            //baseEnergyMax = 20
+            //baseEnergy = 11
+            //countToAdd = 20
+            //spaceOnBase = 9
+            //valueToAddToBase = 9
+            //valueToAddToAdditional = 11
+            var spaceOnBase = baseEnergyMax - baseEnergy;
+            var valueToAddToBase = Math.min(spaceOnBase, countToAdd);
+            var valueToAddToAdditional = countToAdd - valueToAddToBase;
+
+            if (valueToAddToBase > 0)
+            {
+                server.AddUserVirtualCurrency(
+                   {
+                       "PlayFabId": currentPlayerId,
+                       "VirtualCurrency": "BE",
+                       "Amount": valueToAddToBase
+                   }
+                );
+                baseEnergy += valueToAddToBase;
+                log.info("added " + valueToAddToBase + " to baseEnergy, now " + baseEnergy);
+                isUpdated = true;
+            }
+
+            var additionalDiff = additionalEnergyMax - additionalEnergy;
+            additionalDiff = Math.min(additionalDiff, valueToAddToAdditional);
+            if (additionalDiff > 0)
+            {
+                server.AddUserVirtualCurrency(
+                   {
+                       "PlayFabId": currentPlayerId,
+                       "VirtualCurrency": "AE",
+                       "Amount": additionalDiff
+                   }
+                );
+                additionalEnergy += additionalDiff;
+                log.info("added " + additionalDiff + " to additionalEnergy, now " + additionalEnergy);
+                isUpdated = true;
+            }
+        }
+
     }
-    else
+    if (isUpdated)
     {
-        return { Current: (additionalEnergy + baseEnergy), TimeSecondsLeftTillNextGen: timeSecondsLeftTillNextGen };
+        var updatedUserData = server.UpdateUserData({
+            "PlayFabId": currentPlayerId,
+            "Data": {
+                "LastEnergyRequestTime": newLastUserCheckTime + ''
+        }
+        });
     }
-    return;
+
+    return { Current: (additionalEnergy + baseEnergy), Max: (baseEnergyMax + additionalEnergyMax), TimeSecondsLeftTillNextGen: timeSecondsLeftTillNextGen };
 
     var userInv = server.GetUserInventory({
         "PlayFabId": currentPlayerId
