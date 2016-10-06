@@ -56,12 +56,14 @@ handlers.GetEnergyPoint = function (args) {
 
     var countToAdd = parseInt(diff / fiveMin);
     var timeSecondsLeftTillNextGen = diff % fiveMin;
+    timeSecondsLeftTillNextGen = fiveMin - timeSecondsLeftTillNextGen;
     log.info("countToAdd " + countToAdd);
     timeSecondsLeftTillNextGen = Math.ceil(timeSecondsLeftTillNextGen / 1000);
     log.info("timeLeftTillNextGen " + timeSecondsLeftTillNextGen);
     if (countToAdd > 0) {
         //need to add
         log.info("Need to add " + countToAdd);
+        return { current: (additionalEnergy + baseEnergy), timeSecondsLeftTillNextGen: timeSecondsLeftTillNextGen };
     }
     else
     {
