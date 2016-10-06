@@ -38,8 +38,9 @@ function GetHigestLevel() {
     }
 
     log.info("higestExp " + higestExp);
-    var higestLevel = GetLevel(accumulatedXP);
+    var higestLevel = GetLevel(higestExp);
     log.info("higestLevel " + higestLevel);
+    return higestLevel;
 }
 function GetLevel(accumulatedXP)
 {
