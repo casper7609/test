@@ -81,6 +81,7 @@ handlers.GetEnergyPoint = function (args) {
             log.info("baseEnergy is full " + baseEnergy);
             if (additionalEnergy >= additionalEnergyMax) {
                 log.info("additionalEnergy is full " + additionalEnergy + " nothing to do");
+                isUpdated = true;
             }
             else
             {
@@ -145,7 +146,6 @@ handlers.GetEnergyPoint = function (args) {
                 isUpdated = true;
             }
         }
-
     }
     if (isUpdated)
     {
