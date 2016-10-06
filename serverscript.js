@@ -58,17 +58,21 @@ handlers.GetEnergyPoint = function (args) {
     var baseEnergyMax = userInv.VirtualCurrencyRechargeTimes.BE.RechargeMax;
     var additionalEnergy = userInv.VirtualCurrency.AE;
     var additionalEnergyMax = highestLevel * 4;
+    log.info("baseEnergy " + baseEnergy);
+    log.info("baseEnergyMax " + baseEnergyMax);
+    log.info("additionalEnergy " + additionalEnergy);
+    log.info("additionalEnergyMax " + additionalEnergyMax);
 
     var countToAdd = parseInt(diff / fiveMin);
     var timeSecondsLeftTillNextGen = diff % fiveMin;
-
-    var newLastUserCheckTime = diff % fiveMin;
-    var isUpdated = false;
-
     timeSecondsLeftTillNextGen = fiveMin - timeSecondsLeftTillNextGen;
     log.info("countToAdd " + countToAdd);
     timeSecondsLeftTillNextGen = Math.ceil(timeSecondsLeftTillNextGen / 1000);
     log.info("timeLeftTillNextGen " + timeSecondsLeftTillNextGen);
+
+    var newLastUserCheckTime = currentTime - (diff % fiveMin);
+    var isUpdated = false;
+   
     if (countToAdd > 0) {
         //need to add
         log.info("Need to add " + countToAdd);
@@ -149,50 +153,11 @@ handlers.GetEnergyPoint = function (args) {
             "PlayFabId": currentPlayerId,
             "Data": {
                 "LastEnergyRequestTime": newLastUserCheckTime + ''
-        }
+            }
         });
     }
 
     return { Current: (additionalEnergy + baseEnergy), Max: (baseEnergyMax + additionalEnergyMax), TimeSecondsLeftTillNextGen: timeSecondsLeftTillNextGen };
-
-    var userInv = server.GetUserInventory({
-        "PlayFabId": currentPlayerId
-    });
-    if (userInv.VirtualCurrency.GD < gold) {
-        return;
-    }
-    
-    var alignment = userData.Data.Alignment.Value;
-    try {
-        var headers = {
-            "X-MyCustomHeader": "Some Value"
-        };
-
-        var body = {
-            townId: townId,
-            userId: currentPlayerId,
-            alignment: alignment,
-            count: gold
-        };
-
-        var url = "http://52.78.158.221:8080/investment";
-        var content = JSON.stringify(body);
-        var httpMethod = "post";
-        var contentType = "application/json";
-
-        // The pre-defined http object makes synchronous HTTP requests
-        var response = http.request(url, httpMethod, content, contentType, headers);
-        log.info("response", response);
-    } catch (err) {
-        log.info("err", err.message);
-    };
-    server.SubtractUserVirtualCurrency(
-        {
-            "PlayFabId": currentPlayerId,
-            "VirtualCurrency": "GD",
-            "Amount": gold
-        }
-    );
 };
 //Town_0_Invest
 handlers.InvestTown = function (args) {
