@@ -32,8 +32,8 @@ handlers.GetEnergyPoint = function (args) {
         log.info("Need to add currentTime as LastEnergyRequestTime " + userData.Data.LastEnergyRequestTime);
         var updatedUserData = server.GetUserData(
         {
+            "PlayFabId": currentPlayerId,
             "Data": {
-                "PlayFabId": currentPlayerId,
                 "LastEnergyRequestTime": userData.Data.LastEnergyRequestTime
             }
         });
