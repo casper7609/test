@@ -26,7 +26,7 @@ handlers.GetEnergyPoint = function (args) {
         }
     );
 
-    if (userData.Data.LastEnergyRequestTime.Value == null) {
+    if (userData.Data.LastEnergyRequestTime == null) {
         userData.Data.LastEnergyRequestTime = new Date().getTime();
         log.info("Need to add currentTime as LastEnergyRequestTime " + userData.Data.LastEnergyRequestTime);
         var updatedUserData = server.UpdateUserData(
