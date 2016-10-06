@@ -36,6 +36,7 @@ handlers.GetEnergyPoint = function (args) {
                 "LastEnergyRequestTime": userData.Data.LastEnergyRequestTime + ''
             }
         });
+        log.info("UpdateResult " + JSON.stringify(updatedUserData));
     }
     else
     {
