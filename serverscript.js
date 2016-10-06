@@ -63,11 +63,11 @@ handlers.GetEnergyPoint = function (args) {
     if (countToAdd > 0) {
         //need to add
         log.info("Need to add " + countToAdd);
-        return { current: (additionalEnergy + baseEnergy), timeSecondsLeftTillNextGen: timeSecondsLeftTillNextGen };
+        return { Current: (additionalEnergy + baseEnergy), TimeSecondsLeftTillNextGen: timeSecondsLeftTillNextGen };
     }
     else
     {
-        return { current: (additionalEnergy + baseEnergy), timeSecondsLeftTillNextGen: timeSecondsLeftTillNextGen };
+        return { Current: (additionalEnergy + baseEnergy), TimeSecondsLeftTillNextGen: timeSecondsLeftTillNextGen };
     }
     return;
 
