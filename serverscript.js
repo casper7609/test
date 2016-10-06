@@ -28,8 +28,16 @@ handlers.GetEnergyPoint = function (args) {
 
     if (userData.Data.LastEnergyRequestTime == null)
     {
-        log.info("Need to add currentTime as LastEnergyRequestTime " + new Date().getTime());
+        userData.Data.LastEnergyRequestTime = new Date().getTime();
+        log.info("Need to add currentTime as LastEnergyRequestTime " + userData.Data.LastEnergyRequestTime);
+        var updatedUserData = server.GetUserData(
+        {
+            "Data": {
+                "LastEnergyRequestTime": userData.Data.LastEnergyRequestTime
+            }
+        });
     }
+    var diff = currentTime - lastUserCheckTime;
 
     return;
 
