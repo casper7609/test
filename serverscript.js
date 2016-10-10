@@ -141,13 +141,16 @@ handlers.SpendEnergyPoint = function (args) {
     {
         //adventurePoint 10
         //additionalEnergy 4
-        server.SubtractUserVirtualCurrency(
-            {
-                "PlayFabId": currentPlayerId,
-                "VirtualCurrency": "AE",
-                "Amount": additionalEnergy
-            }
-        );
+        if (additionalEnergy > 0)
+        {
+            server.SubtractUserVirtualCurrency(
+                {
+                    "PlayFabId": currentPlayerId,
+                    "VirtualCurrency": "AE",
+                    "Amount": additionalEnergy
+                }
+            );
+        }
         var beToSubtract = adventurePoint - additionalEnergy;
         //beToSubtract 6
         server.SubtractUserVirtualCurrency(
