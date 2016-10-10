@@ -120,6 +120,8 @@ handlers.SpendEnergyPoint = function (args) {
     var townInfoData = townInfoDataList[parseInt(townId)];
     var adventurePoint = townInfoData.AdventurePoint;
 
+    log.info("adventurePoint " + adventurePoint);
+
     if ((baseEnergy + additionalEnergy) < adventurePoint)
     {
         return {"Error":"Insufficient Energy"};
