@@ -550,15 +550,8 @@ handlers.TotalOccupation = function (args) {
             "X-MyCustomHeader": "Some Value"
         };
 
-        var body = {
-            townId: args.TownId,
-            userId: currentPlayerId,
-            alignment: alignment,
-            count: totalAlignment
-        };
-
         var url = "http://52.78.158.221:8080/total/occupation";
-        var content = JSON.stringify(body);
+        var content = "";
         var httpMethod = "get";
         var contentType = "application/json";
 
