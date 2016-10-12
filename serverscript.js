@@ -542,6 +542,27 @@ handlers.ClearDungeon = function (args) {
         "Items": items
     };
 };
+handlers.SumOccupation = function (args) {
+    //Town_0_Occupation
+    //http://52.78.158.221:8080/occupation?townId=0&userId=playerA&alignment=Chaotic&count=1
+    try {
+        var headers = {
+            "X-MyCustomHeader": "Some Value"
+        };
+
+        var url = "http://52.78.158.221:8080/occupation/sum";
+        var content = "";
+        var httpMethod = "get";
+        var contentType = "application/json";
+
+        // The pre-defined http object makes synchronous HTTP requests
+        var response = http.request(url, httpMethod, content, contentType, headers);
+        log.info("response", response);
+        return response;
+    } catch (err) {
+        log.info("err", err.message);
+    };
+};
 handlers.TotalOccupation = function (args) {
     //Town_0_Occupation
     //http://52.78.158.221:8080/occupation?townId=0&userId=playerA&alignment=Chaotic&count=1
@@ -550,7 +571,7 @@ handlers.TotalOccupation = function (args) {
             "X-MyCustomHeader": "Some Value"
         };
 
-        var url = "http://52.78.158.221:8080/total/occupation";
+        var url = "http://52.78.158.221:8080/occupation/total";
         var content = "";
         var httpMethod = "get";
         var contentType = "application/json";
