@@ -542,6 +542,34 @@ handlers.ClearDungeon = function (args) {
         "Items": items
     };
 };
+handlers.TotalOccupation = function (args) {
+    //Town_0_Occupation
+    //http://52.78.158.221:8080/occupation?townId=0&userId=playerA&alignment=Chaotic&count=1
+    try {
+        var headers = {
+            "X-MyCustomHeader": "Some Value"
+        };
+
+        var body = {
+            townId: args.TownId,
+            userId: currentPlayerId,
+            alignment: alignment,
+            count: totalAlignment
+        };
+
+        var url = "http://52.78.158.221:8080/total/occupation";
+        var content = JSON.stringify(body);
+        var httpMethod = "get";
+        var contentType = "application/json";
+
+        // The pre-defined http object makes synchronous HTTP requests
+        var response = http.request(url, httpMethod, content, contentType, headers);
+        log.info("response", response);
+        return response;
+    } catch (err) {
+        log.info("err", err.message);
+    };
+};
 
 handlers.EnchantItem = function (args) {
     log.info("PlayFabId " + args.PlayFabId);
@@ -704,30 +732,6 @@ handlers.CloudSellItem = function (args) {
      );
     return { "GoldGainResult": goldGainResult, "ItemSoldResult": args.Items };
 };
-
-handlers.CloudSetTitleData = function (args) {
-    log.info("PlayFabId " + currentPlayerId);
-    log.info("Bias " + args.Bias);
-
-    var bias = args.Bias;
-
-    var serverTitleData = server.GetTitleData({ "Keys": [] });
-    log.info("serverTitleData " + JSON.stringify(serverTitleData));
-
-    var biasInInt = parseInt(serverTitleData.Data[bias]);
-    log.info("Previous bias " + bias + " " + biasInInt);
-    biasInInt += parseInt(args[bias]);
-    log.info("args[bias] " + bias + " " + args[bias]);
-    log.info("Current bias " + bias + " " + biasInInt);
-
-    //server.LogEvent(args);
-
-    return server.SetTitleData({
-        "Key": bias,
-        "Value": biasInInt.toString()
-    });
-};
-
 handlers.CloudUpdateUserInventoryItemCustomData = function (args) {
     log.info("PlayFabId " + args.PlayFabId);
     log.info("CharacterId " + args.CharacterId);
