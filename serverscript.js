@@ -571,7 +571,7 @@ handlers.OccupationPerTown = function (args) {
             "X-MyCustomHeader": "Some Value"
         };
 
-        var url = "http://52.78.158.221:8080/total/occupation?townId=" + args.TownId;
+        var url = "http://52.78.158.221:8080/occupation?townId=" + args.TownId;
         var content = "";
         var httpMethod = "get";
         var contentType = "application/json";
