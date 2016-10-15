@@ -739,8 +739,8 @@ handlers.CloudSellItem = function (args) {
     var characterId = args.CharacterId;
     var items = JSON.parse(args.Items);
     var catalogVersion = args.CatalogVersion;
-    log.info("characterId " + characterId);
-    log.info("items " + items.length);
+    //log.info("characterId " + characterId);
+    //log.info("items " + items.length);
 
     var catalogItems = server.GetCatalogItems({
         "CatalogVersion": catalogVersion
@@ -750,13 +750,13 @@ handlers.CloudSellItem = function (args) {
 
     for (var i = 0; i < catalogItems.Catalog.length; i++) {
         var item = catalogItems.Catalog[i];
-        log.info("catalogItems " + item);
+        //log.info("catalogItems " + item);
         for (var k = 0; k < items.length; k++) {
             var itemId = items[k].ItemId;
             var itemInstanceId = items[k].InstanceId;
-            log.info("itemId " + itemId);
-            log.info("itemInstanceId " + itemInstanceId);
-            log.info("catalogItems itemId " + item.ItemId);
+            //log.info("itemId " + itemId);
+            //log.info("itemInstanceId " + itemInstanceId);
+            //log.info("catalogItems itemId " + item.ItemId);
             if (item.ItemId == itemId) {
                 var storePrice = parseInt(item.VirtualCurrencyPrices.GD);
                 if (storePrice == 0)
@@ -764,14 +764,14 @@ handlers.CloudSellItem = function (args) {
                 else
                     storePrice = storePrice / 2;
                 gold += storePrice;
-                log.info("gold " + gold);
+                //log.info("gold " + gold);
                 var consumeItemResult = server.ConsumeItem({
                     "PlayFabId": currentPlayerId,
                     "ItemInstanceId": itemInstanceId,
                     //"CharacterId": characterId,
                     "ConsumeCount": 1
                 });
-                log.info("consumeItemResult " + consumeItemResult);
+                //log.info("consumeItemResult " + consumeItemResult);
                 break;
             }
         }
