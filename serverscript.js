@@ -768,7 +768,7 @@ handlers.CloudSellItem = function (args) {
                     "ConsumeCount": 1
                 });
                 log.info("consumeItemResult " + JSON.parse(consumeItemResult));
-                break;
+                //break;
             }
         }
     }
