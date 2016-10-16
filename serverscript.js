@@ -426,7 +426,7 @@ handlers.ClearDungeon = function (args) {
     var totalGold = 0;
     var totalAlignment = 0;
     var totalEmblem = args.EmblemCount;
-    var items = ["Dagger_00"];
+    var items = [];
     for (var i = 0; i < mobs.length; i++) {
         for (var k = 0; k < townMobs.length; k++) {
             if (townMobs[k].Name == mobs[i].Name) {
@@ -452,7 +452,7 @@ handlers.ClearDungeon = function (args) {
         }
     }
 
-    var realItem = server.GrantItemsToUser(
+    var realItems = server.GrantItemsToUser(
         {
             "CatalogVersion": catalogVersion,
             "PlayFabId": currentPlayerId,
@@ -558,7 +558,7 @@ handlers.ClearDungeon = function (args) {
         "TotalGold": totalGold,
         "TotalAlignment": totalAlignment,
         "TotalEmblem": totalEmblem,
-        "Items": items
+        "Items": realItems
     };
 };
 handlers.SumOccupation = function (args) {
