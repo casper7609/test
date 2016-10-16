@@ -740,7 +740,7 @@ handlers.CloudSellItem = function (args) {
     var items = JSON.parse(args.Items);
     var catalogVersion = args.CatalogVersion;
     //log.info("characterId " + characterId);
-    //log.info("items " + items.length);
+    log.info("items " + items.length);
 
     var catalogItems = server.GetCatalogItems({
         "CatalogVersion": catalogVersion
@@ -748,13 +748,13 @@ handlers.CloudSellItem = function (args) {
 
     var gold = 0;
 
-    for (var i = 0; i < catalogItems.Catalog.length; i++) {
-        var item = catalogItems.Catalog[i];
-        for (var k = 0; k < items.length; k++) {
-            var itemId = items[k].ItemId;
-            var itemInstanceId = items[k].InstanceId;
-            if (item.ItemId == itemId) {
-                var storePrice = parseInt(item.VirtualCurrencyPrices.GD);
+    for (var k = 0; k < items.length; k++) {
+        var itemId = items[k].ItemId;
+        var itemInstanceId = items[k].InstanceId;
+        for (var i = 0; i < catalogItems.Catalog.length; i++) {
+            var catalogItem = catalogItems.Catalog[i];
+            if (catalogItem.ItemId == itemId) {
+                var storePrice = parseInt(catalogItem.VirtualCurrencyPrices.GD);
                 if (storePrice == 0)
                     storePrice = 1;//free item gets 1 gold price when resell...
                 else
@@ -768,10 +768,11 @@ handlers.CloudSellItem = function (args) {
                     "ConsumeCount": 1
                 });
                 log.info("consumeItemResult " + JSON.parse(consumeItemResult));
-                //break;
+                break;
             }
         }
     }
+
 
     var goldGainResult = server.AddUserVirtualCurrency(
          {
