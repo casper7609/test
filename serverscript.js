@@ -36,7 +36,7 @@ function GetHigestLevel() {
     }
 
     log.info("higestExp " + higestExp);
-    var higestLevel = GetLevel(higestExp);
+    var higestLevel = GetLevel(higestExp).CurrentLevel;
     log.info("higestLevel " + higestLevel);
     return higestLevel;
 }
@@ -49,7 +49,7 @@ function GetLevel(accumulatedXP) {
         currentXp -= xpToNextLevel;
         xpToNextLevel = getXpToNextLevel(currentLevel);
     }
-    return currentLevel;
+    return { "CurrentLevel": currentLevel, "CurrentXp": currentXp, "XpToNextLevel": xpToNextLevel };
 }
 
 function getXpToNextLevel(level) {
@@ -464,6 +464,7 @@ handlers.ClearDungeon = function (args) {
         realItems = realItems["ItemGrantResults"];
     }
    
+    var expResult = [];
 
     for (var i = 0; i < partyMembers.length; i++) {
         var charStat = server.GetCharacterStatistics(
@@ -477,6 +478,8 @@ handlers.ClearDungeon = function (args) {
         if (previousExp == null) {
             previousExp = 0;
         }
+        var previousLevel = GetLevel(previousExp);
+        var currentLevel = GetLevel(previousExp + totalExp);
         server.UpdateCharacterStatistics(
             {
                 "PlayFabId": currentPlayerId,
@@ -486,6 +489,7 @@ handlers.ClearDungeon = function (args) {
                 }
             }
         );
+        expResult.push({ "CharacterId": partyMembers[i], "PreviousLevel": previousLevel, "PreviousLevel": currentLevel });
         log.info("eachExp " + totalExp + " for " + partyMembers[i]);
     }
 
@@ -560,6 +564,7 @@ handlers.ClearDungeon = function (args) {
 
     return {
         "TotalExp": totalExp,
+        "ExpResult": expResult,
         "TotalGold": totalGold,
         "TotalAlignment": totalAlignment,
         "TotalEmblem": totalEmblem,
