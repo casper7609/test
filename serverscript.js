@@ -451,14 +451,18 @@ handlers.ClearDungeon = function (args) {
             }
         }
     }
-
-    var realItems = server.GrantItemsToUser(
-        {
-            "CatalogVersion": catalogVersion,
-            "PlayFabId": currentPlayerId,
-            "ItemIds": items
-        }
-    );
+    var realItems = [];
+    if (items.length > 0)
+    {
+        realItems = server.GrantItemsToUser(
+            {
+               "CatalogVersion": catalogVersion,
+               "PlayFabId": currentPlayerId,
+               "ItemIds": items
+            }
+        );
+    }
+   
 
     for (var i = 0; i < partyMembers.length; i++) {
         var charStat = server.GetCharacterStatistics(
