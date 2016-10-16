@@ -767,7 +767,7 @@ handlers.CloudSellItem = function (args) {
                     //"CharacterId": characterId,
                     "ConsumeCount": 1
                 });
-                log.info("consumeItemResult " + JSON.parse(consumeItemResult));
+                //log.info("consumeItemResult " + JSON.parse(consumeItemResult));
                 break;
             }
         }
