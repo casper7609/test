@@ -489,7 +489,7 @@ handlers.ClearDungeon = function (args) {
                 }
             }
         );
-        expResult.push({ "CharacterId": partyMembers[i], "PreviousLevel": previousLevel, "PreviousLevel": currentLevel });
+        expResult.push({ "CharacterId": partyMembers[i], "PreviousLevel": previousLevel, "CurrentLevel": currentLevel });
         log.info("eachExp " + totalExp + " for " + partyMembers[i]);
     }
 
