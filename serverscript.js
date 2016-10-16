@@ -461,6 +461,7 @@ handlers.ClearDungeon = function (args) {
                "ItemIds": items
             }
         );
+        realItems = realItems["ItemGrantResults"];
     }
    
 
