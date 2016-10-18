@@ -443,6 +443,7 @@ handlers.ClearDungeon = function (args) {
                     );
 
                     if (randomItem.code == 400) {
+                        log.info("create drop table for " + townMobs[k].Name);
                         continue;
                     }
                     else
