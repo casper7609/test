@@ -434,24 +434,23 @@ handlers.ClearDungeon = function (args) {
                 totalGold += townMobs[k].Gold * mobs[i].Count;
                 totalAlignment += townMobs[k].Alignment * mobs[i].Count;
                 for (var j = 0; j < mobs[i].Count; j++) {
-                    var randomItem = server.EvaluateRandomResultTable(
-                        {
-                            "CatalogVersion": catalogVersion,
-                            "PlayFabId": currentPlayerId,
-                            "TableId": townMobs[k].Name
-                        }
-                    );
-
-                    if (randomItem.code == 400) {
-                        log.info("create drop table for " + townMobs[k].Name);
-                        continue;
-                    }
-                    else
+                    try
                     {
+                        var randomItem = server.EvaluateRandomResultTable(
+                            {
+                                "CatalogVersion": catalogVersion,
+                                "PlayFabId": currentPlayerId,
+                                "TableId": townMobs[k].Name
+                            }
+                        );
                         if (randomItem.ResultItemId != "Nothing") {
                             log.info("item " + JSON.stringify(randomItem));
                             items.push(randomItem.ResultItemId);
                         }
+                    }
+                    catch (err)
+                    {
+                        log.info("create drop table for " + townMobs[k].Name);
                     }
                 }
                 break;
