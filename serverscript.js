@@ -438,13 +438,19 @@ handlers.ClearDungeon = function (args) {
                         {
                             "CatalogVersion": catalogVersion,
                             "PlayFabId": currentPlayerId,
-                            "TableId": "WolfDropTable"
+                            "TableId": townMobs[k].Name
                         }
                     );
 
-                    if (randomItem.ResultItemId != "Nothing") {
-                        log.info("item " + JSON.stringify(randomItem));
-                        items.push(randomItem.ResultItemId);
+                    if (randomItem.code == 400) {
+                        continue;
+                    }
+                    else
+                    {
+                        if (randomItem.ResultItemId != "Nothing") {
+                            log.info("item " + JSON.stringify(randomItem));
+                            items.push(randomItem.ResultItemId);
+                        }
                     }
                 }
                 break;
