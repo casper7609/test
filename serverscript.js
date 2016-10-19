@@ -421,6 +421,8 @@ handlers.ClearDungeon = function (args) {
     log.info("ClearDungeon " + currentPlayerId);
     var partyMembers = JSON.parse(args.CharacterIds);
     var mobs = args.Mobs;
+    var scrolls = args.Scrolls;
+
 
     var totalExp = 0;
     var totalGold = 0;
@@ -458,6 +460,11 @@ handlers.ClearDungeon = function (args) {
             }
         }
     }
+    for (var i = 0; i < scrolls.length; i++)
+    {
+        items.push(scrolls[i]);
+    }
+
     var realItems = [];
     if (items.length > 0)
     {
