@@ -462,7 +462,10 @@ handlers.ClearDungeon = function (args) {
     }
     for (var i = 0; i < scrolls.length; i++)
     {
-        items.push(scrolls[i]);
+        for (var k = 0; k < scrolls[i].Count; k++)
+        {
+            items.push(scrolls[i].Name);
+        }
     }
 
     var realItems = [];
