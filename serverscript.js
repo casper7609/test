@@ -424,6 +424,7 @@ handlers.ClearDungeon = function (args) {
 
     var totalExp = 0;
     var totalGold = 0;
+    var tax = 0;
     var totalAlignment = 0;
     var totalEmblem = args.EmblemCount;
     var items = [];
@@ -499,6 +500,10 @@ handlers.ClearDungeon = function (args) {
         log.info("eachExp " + totalExp + " for " + partyMembers[i]);
     }
 
+    totalGold = parseInt(totalGold);
+    tax = parseInt(totalGold * 0.2);
+    totalGold = totalGold - tax;
+
     server.AddUserVirtualCurrency(
         {
             "PlayFabId": currentPlayerId,
@@ -553,6 +558,7 @@ handlers.ClearDungeon = function (args) {
             townId: args.TownId,
             userId: currentPlayerId,
             alignment: alignment,
+            tax: tax,
             count: totalAlignment
         };
 
@@ -572,6 +578,7 @@ handlers.ClearDungeon = function (args) {
         "TotalExp": totalExp,
         "ExpResult": expResult,
         "TotalGold": totalGold,
+        "Tax": tax,
         "TotalAlignment": totalAlignment,
         "TotalEmblem": totalEmblem,
         "Items": realItems
