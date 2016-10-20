@@ -207,7 +207,7 @@ handlers.GetEnergyPoint = function (args) {
     var baseEnergy = userInv.VirtualCurrency.BE;
     var baseEnergyMax = 56;
     var additionalEnergy = userInv.VirtualCurrency.AE;
-    var additionalEnergyMax = highestLevel * 4;
+    var additionalEnergyMax = highestLevel;
     log.info("baseEnergy " + baseEnergy);
     log.info("baseEnergyMax " + baseEnergyMax);
     log.info("additionalEnergy " + additionalEnergy);
@@ -398,6 +398,7 @@ handlers.InstantClearDungeon = function (args) {
         args.Mobs.push({ "Name": mob.Name, "Count": mobCount });
     }
     args.EmblemCount = townInfoData.EmblemCount;
+    args.Scrolls = [];
     return handlers.ClearDungeon(args);
 };
 handlers.ClearDungeon = function (args) {
