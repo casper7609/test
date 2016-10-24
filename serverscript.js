@@ -97,20 +97,16 @@ function saveClearedTownWithMembers(args)
 	if(userData.Data.ClearData == null)
 	{
 	    data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }] });
-	    log.info("saveClearedTownWithMembers no ClearData");
 	}
 	else
 	{
 	    data = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
-	    log.info("saveClearedTownWithMembers data " + JSON.stringify(data));
 	    if (data.length == 0)
 		{
 			data.push({"Id":townIdStr, "ClearList":[{"Id":idCombined, Count:1}]});
-			log.info("saveClearedTownWithMembers data.length == 0");
         }
 		else
 		{
-	        log.info("saveClearedTownWithMembers data.length != 0");
 	        var clearData = null;
 			for(var i = 0; i<data.length; i++)
 			{
@@ -123,19 +119,15 @@ function saveClearedTownWithMembers(args)
 			if(clearData == null)
 			{
 				data.push({"Id":townIdStr, "ClearList":[{"Id":idCombined, Count:1}]});
-				log.info("saveClearedTownWithMembers clearData == null");
             }
 			else
 			{
-			    log.info("saveClearedTownWithMembers clearData != null");
 				if(clearData.ClearList.length == 0)
 				{
 					clearData.ClearList.push({"Id":idCombined, Count:1});
-					log.info("saveClearedTownWithMembers clearData.ClearList.length == 0");
                 }
 				else
 				{
-				    log.info("saveClearedTownWithMembers clearData != null");
 				    var hasFound = false;
 					for(var k = 0; k< clearData.ClearList.length; k++)
 					{
@@ -143,21 +135,18 @@ function saveClearedTownWithMembers(args)
 						{
 							clearData.ClearList[k].Count++;
 							hasFound = true;
-							log.info("saveClearedTownWithMembers hasFound " + clearData.ClearList[k].Count);
 							break;
 						}
 					}
 					if(!hasFound)
 					{
 						clearData.ClearList.push({"Id":idCombined, Count:1});
-						log.info("saveClearedTownWithMembers !hasFound");
                     }
 				}
 			}
 		}
 	}
 	
-	log.info("saveClearedTownWithMembers " + JSON.stringify(data));
 	server.UpdateUserData(
 		{
 			"PlayFabId": currentPlayerId,
@@ -750,9 +739,11 @@ handlers.ClearDungeon = function (args) {
     }
 
     var realItems = [];
+    log.info("items.length " + items.length);
     if (items.length > 0)
     {
         var itemDoubleCount = (scrollOfItemEnabled && scrollOfItemVer) ? 2 : 1;
+        log.info("itemDoubleCount " + itemDoubleCount);
         for (var i = 0; i < itemDoubleCount; i++)
         {
             realItems = server.GrantItemsToUser(
@@ -763,6 +754,7 @@ handlers.ClearDungeon = function (args) {
                 }
             );
             realItems = realItems["ItemGrantResults"];
+            log.info("realItems " + JSON.stringify(realItems));
         }
     }
    
