@@ -101,7 +101,9 @@ function saveClearedTownWithMembers(args)
 	}
 	else
 	{
+	    log.info("saveClearedTownWithMembers userData.Data.ClearData " + userData.Data.ClearData);
 	    data = JSON.parse(userData.Data.ClearData.replace(/\\/g, ""));
+	    log.info("saveClearedTownWithMembers data " + JSON.stringify(data));
 	    if (data.length == 0)
 		{
 			data.push({"Id":townIdStr, "ClearList":[{"Id":idCombined, Count:1}]});
