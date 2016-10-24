@@ -101,8 +101,7 @@ function saveClearedTownWithMembers(args)
 	}
 	else
 	{
-	    log.info("saveClearedTownWithMembers userData.Data.ClearData " + userData.Data.ClearData);
-	    data = JSON.parse(userData.Data.ClearData.replace(/\\/g, ""));
+	    data = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
 	    log.info("saveClearedTownWithMembers data " + JSON.stringify(data));
 	    if (data.length == 0)
 		{
