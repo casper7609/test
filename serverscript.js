@@ -426,10 +426,10 @@ handlers.ClearDungeon = function (args) {
     var scrolls = args.Scrolls;
 
 
-    var scrollOfExperienceEnabled = townId.ScrollOfExperienceEnabled;
-    var scrollOfGoldEnabled = townId.ScrollOfGoldEnabled;
-    var scrollOfItemEnabled = townId.ScrollOfItemEnabled;
-    var scrollOfInstantEnabled = townId.ScrollOfInstantEnabled;
+    var scrollOfExperienceEnabled = args.ScrollOfExperienceEnabled;
+    var scrollOfGoldEnabled = args.ScrollOfGoldEnabled;
+    var scrollOfItemEnabled = args.ScrollOfItemEnabled;
+    var scrollOfInstantEnabled = args.ScrollOfInstantEnabled;
 
     var scrollOfExperienceVer = false;
     var scrollOfGoldVer = false;
@@ -479,38 +479,25 @@ handlers.ClearDungeon = function (args) {
             });
         }
     }
-    if (scrollOfExperienceEnabled == scrollOfExperienceVer)
+    if (scrollOfExperienceEnabled && !scrollOfExperienceVer)
     {
-        if (!scrollOfExperienceVer) {
-            //hack
-            log.info("hacking scrollOfExperienceVer " + currentPlayerId);
-            return;
-        }
+        log.info("hacking scrollOfExperienceVer " + currentPlayerId);
+        return;
     }
-    if (scrollOfGoldEnabled == scrollOfGoldVer)
+    if (scrollOfGoldEnabled && !scrollOfGoldVer)
     {
-        if (!scrollOfGoldVer) {
-            //hack
-            log.info("hacking scrollOfGoldVer " + currentPlayerId);
-            return;
-        }
+        log.info("hacking scrollOfGoldVer " + currentPlayerId);
+        return;
     }
-    if (scrollOfItemEnabled == scrollOfItemVer)
+    if (scrollOfItemEnabled && !scrollOfItemVer)
     {
-        if (!scrollOfItemVer) {
-            //hack
-            log.info("hacking scrollOfItemVer " + currentPlayerId);
-            return;
-        }
+        log.info("hacking scrollOfItemVer " + currentPlayerId);
+        return;
     }
-    if (scrollOfInstantEnabled)
+    if (scrollOfInstantEnabled && !scrollOfInstantVer)
     {
-        if (!scrollOfInstantVer)
-        {
-            //hack
-            log.info("hacking scrollOfInstantVer " + currentPlayerId);
-            return;
-        }
+        log.info("hacking scrollOfInstantVer " + currentPlayerId);
+        return;
     }
 
     var totalExp = 0;
@@ -560,17 +547,25 @@ handlers.ClearDungeon = function (args) {
     var realItems = [];
     if (items.length > 0)
     {
-        realItems = server.GrantItemsToUser(
-            {
-               "CatalogVersion": catalogVersion,
-               "PlayFabId": currentPlayerId,
-               "ItemIds": items
-            }
-        );
-        realItems = realItems["ItemGrantResults"];
+        var itemDoubleCount = (scrollOfItemEnabled && scrollOfItemVer) ? 2 : 1;
+        for (var i = 0; i < itemDoubleCount; i++)
+        {
+            realItems = server.GrantItemsToUser(
+                {
+                    "CatalogVersion": catalogVersion,
+                    "PlayFabId": currentPlayerId,
+                    "ItemIds": items
+                }
+            );
+            realItems = realItems["ItemGrantResults"];
+        }
     }
    
     var expResult = [];
+
+    if (scrollOfExperienceEnabled && scrollOfExperienceVer) {
+        totalExp *= 2;
+    }
 
     for (var i = 0; i < partyMembers.length; i++) {
         var charStat = server.GetCharacterStatistics(
