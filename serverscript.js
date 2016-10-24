@@ -51,8 +51,8 @@ function hasClearedTownWithMembers(args)
 		return false;
 	}
 	
-	var clearList = clearData.ClearList;
-	if(clearList == null || clearList.length == 0)
+	var clearData.ClearList = clearData.ClearList;
+	if(clearData.ClearList == null || clearData.ClearList.length == 0)
 	{
 		return false;
 	}
@@ -64,9 +64,9 @@ function hasClearedTownWithMembers(args)
 	{
 		idCombined += partyMembers[i] + "_";
 	}
-	for(var i = 0; i< clearList.length; i++)
+	for(var i = 0; i< clearData.ClearList.length; i++)
 	{
-		if(clearList[i].Id == idCombined && clearList[i].Count >= 10)
+		if(clearData.ClearList[i].Id == idCombined && clearData.ClearList[i].Count >= 10)
 		{
 			return true;
 		}
@@ -109,7 +109,8 @@ function saveClearedTownWithMembers(args)
         }
 		else
 		{
-			var clearData = null;
+	        log.info("saveClearedTownWithMembers data.length != 0");
+	        var clearData = null;
 			for(var i = 0; i<data.length; i++)
 			{
 				if(data[i].Id == townIdStr)
@@ -125,28 +126,29 @@ function saveClearedTownWithMembers(args)
             }
 			else
 			{
-				var clearList = clearData.ClearList;
-				if(clearList.length == 0)
+			    log.info("saveClearedTownWithMembers clearData != null");
+				if(clearData.ClearList.length == 0)
 				{
-					clearList.push({"Id":idCombined, Count:1});
-					log.info("saveClearedTownWithMembers clearList.length == 0");
+					clearData.ClearList.push({"Id":idCombined, Count:1});
+					log.info("saveClearedTownWithMembers clearData.ClearList.length == 0");
                 }
 				else
 				{
-					var hasFound = false;
-					for(var k = 0; k< clearList.length; k++)
+				    log.info("saveClearedTownWithMembers clearData != null");
+				    var hasFound = false;
+					for(var k = 0; k< clearData.ClearList.length; k++)
 					{
-						if(clearList[k].Id == idCombined)
+						if(clearData.ClearList[k].Id == idCombined)
 						{
-							clearList[k].Count++;
+							clearData.ClearList[k].Count++;
 							hasFound = true;
-							log.info("saveClearedTownWithMembers hasFound " + clearList[k].Count);
+							log.info("saveClearedTownWithMembers hasFound " + clearData.ClearList[k].Count);
 							break;
 						}
 					}
 					if(!hasFound)
 					{
-						clearList.push({"Id":idCombined, Count:1});
+						clearData.ClearList.push({"Id":idCombined, Count:1});
 						log.info("saveClearedTownWithMembers !hasFound");
                     }
 				}
