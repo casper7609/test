@@ -740,21 +740,20 @@ handlers.ClearDungeon = function (args) {
     }
 
     var realItems = [];
-    log.info("items.length " + items.length);
     if (items.length > 0)
     {
         var itemDoubleCount = (scrollOfItemEnabled && scrollOfItemVer) ? 2 : 1;
         log.info("itemDoubleCount " + itemDoubleCount);
         for (var i = 0; i < itemDoubleCount; i++)
         {
-            realItems = server.GrantItemsToUser(
+            var itemGrantResult = server.GrantItemsToUser(
                 {
                     "CatalogVersion": catalogVersion,
                     "PlayFabId": currentPlayerId,
                     "ItemIds": items
                 }
             );
-            realItems = realItems["ItemGrantResults"];
+            realItems = realItems.concat(itemGrantResult["ItemGrantResults"]);
             log.info("realItems " + JSON.stringify(realItems));
         }
     }
