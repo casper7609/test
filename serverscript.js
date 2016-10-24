@@ -407,6 +407,7 @@ handlers.ClearDungeon = function (args) {
     //house_alignment
     //gold
     //currentPlayerId
+    var result = { ScrollOfExperience: 0, ScrollOfGold: 0, ScrollOfItem: 0, ScrollOfInstant: 0 };
 
     var townId = args.TownId;
     var townIdStr = "Town_" + townId;
@@ -442,6 +443,7 @@ handlers.ClearDungeon = function (args) {
     var userInv = server.GetUserInventory({
         "PlayFabId": currentPlayerId
     });
+
     for (var i = 0; i < userInv.Inventory.length; i++)
     {
         var item = userInv.Inventory[i];
@@ -450,42 +452,73 @@ handlers.ClearDungeon = function (args) {
             continue;
         }
         log.info("scroll finding item " + JSON.stringify(item));
-        if (scrollOfExperienceEnabled && item.ItemId == "ScrollOfExperience" && item.RemainingUses > 0)
+        if (item.ItemId == "ScrollOfExperience")
         {
-            scrollOfExperienceVer = true;
-            var consumeItemResult = server.ConsumeItem({
-                "PlayFabId": currentPlayerId,
-                "ItemInstanceId": item.ItemInstanceId,
-                "ConsumeCount": 1
-            });
-            log.info("scrollOfExperienceVer " + scrollOfExperienceVer);
+            if (scrollOfExperienceEnabled && item.RemainingUses > 0) {
+                scrollOfExperienceVer = true;
+                var consumeItemResult = server.ConsumeItem({
+                    "PlayFabId": currentPlayerId,
+                    "ItemInstanceId": item.ItemInstanceId,
+                    "ConsumeCount": 1
+                });
+                log.info("scrollOfExperienceVer " + scrollOfExperienceVer);
+                result.ScrollOfExperience = item.RemainingUses - 1;
+            }
+            else
+            {
+                result.ScrollOfExperience = item.RemainingUses;
+            }
         }
-        if (scrollOfGoldEnabled && item.ItemId == "ScrollOfGold" && item.RemainingUses > 0) {
-            scrollOfGoldVer = true;
-            var consumeItemResult = server.ConsumeItem({
-                "PlayFabId": currentPlayerId,
-                "ItemInstanceId": item.ItemInstanceId,
-                "ConsumeCount": 1
-            });
-            log.info("scrollOfGoldVer " + scrollOfGoldVer);
+        if (item.ItemId == "ScrollOfGold")
+        {
+            if (scrollOfGoldEnabled && item.RemainingUses > 0) {
+                scrollOfGoldVer = true;
+                var consumeItemResult = server.ConsumeItem({
+                    "PlayFabId": currentPlayerId,
+                    "ItemInstanceId": item.ItemInstanceId,
+                    "ConsumeCount": 1
+                });
+                log.info("scrollOfGoldVer " + scrollOfGoldVer);
+                result.ScrollOfGold = item.RemainingUses - 1;
+            }
+            else
+            {
+                result.ScrollOfGold = item.RemainingUses;
+            }
         }
-        if (scrollOfItemEnabled && item.ItemId == "ScrollOfItem" && item.RemainingUses > 0) {
-            scrollOfItemVer = true;
-            var consumeItemResult = server.ConsumeItem({
-                "PlayFabId": currentPlayerId,
-                "ItemInstanceId": item.ItemInstanceId,
-                "ConsumeCount": 1
-            });
-            log.info("scrollOfItemVer " + scrollOfItemVer);
+        if (item.ItemId == "ScrollOfItem")
+        {
+            if (scrollOfItemEnabled && item.RemainingUses > 0) {
+                scrollOfItemVer = true;
+                var consumeItemResult = server.ConsumeItem({
+                    "PlayFabId": currentPlayerId,
+                    "ItemInstanceId": item.ItemInstanceId,
+                    "ConsumeCount": 1
+                });
+                log.info("scrollOfItemVer " + scrollOfItemVer);
+                result.ScrollOfItem = item.RemainingUses - 1;
+            }
+            else
+            {
+                result.ScrollOfItem = item.RemainingUses;
+            }
         }
-        if (scrollOfInstantEnabled && item.ItemId == "ScrollOfInstant" && item.RemainingUses > 0) {
-            scrollOfInstantVer = true;
-            var consumeItemResult = server.ConsumeItem({
-                "PlayFabId": currentPlayerId,
-                "ItemInstanceId": item.ItemInstanceId,
-                "ConsumeCount": 1
-            });
-            log.info("scrollOfInstantVer " + scrollOfInstantVer);
+        if(item.ItemId == "ScrollOfInstant")
+        {
+            if (scrollOfInstantEnabled && item.RemainingUses > 0) {
+                scrollOfInstantVer = true;
+                var consumeItemResult = server.ConsumeItem({
+                    "PlayFabId": currentPlayerId,
+                    "ItemInstanceId": item.ItemInstanceId,
+                    "ConsumeCount": 1
+                });
+                log.info("scrollOfInstantVer " + scrollOfInstantVer);
+                result.ScrollOfInstant = item.RemainingUses - 1;
+            }
+            else
+            {
+                result.ScrollOfInstant = item.RemainingUses;
+            }
         }
     }
     if (scrollOfExperienceEnabled && !scrollOfExperienceVer)
@@ -681,15 +714,15 @@ handlers.ClearDungeon = function (args) {
         log.info("err", err.message);
     };
 
-    return {
-        "TotalExp": totalExp,
-        "ExpResult": expResult,
-        "TotalGold": totalGold,
-        "Tax": tax,
-        "TotalAlignment": totalAlignment,
-        "TotalEmblem": totalEmblem,
-        "Items": realItems
-    };
+    result.TotalExp = totalExp;
+    result.ExpResult = expResult;
+    result.TotalGold = totalGold;
+    result.Tax = tax;
+    result.TotalAlignment = totalAlignment;
+    result.TotalEmblem = totalEmblem;
+    result.Items = realItems;
+
+    return result;
 };
 handlers.SumOccupation = function (args) {
     //Town_0_Occupation
