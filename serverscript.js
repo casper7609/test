@@ -96,18 +96,19 @@ function saveClearedTownWithMembers(args)
 	var data = [];
 	if(userData.Data.ClearData == null)
 	{
-		data.push({"Id":townIdStr, "ClearList":[{"Id":idCombined, Count:1}]});
+	    data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }] });
+	    log.info("saveClearedTownWithMembers no ClearData");
 	}
 	else
 	{
-		var clearDataList = JSON.parse(userData.Data.ClearData.replace(/\\/g, ""));
-		if(clearDataList == null || clearDataList.length == 0)
+	    data = JSON.parse(userData.Data.ClearData.replace(/\\/g, ""));
+	    if (data.length == 0)
 		{
 			data.push({"Id":townIdStr, "ClearList":[{"Id":idCombined, Count:1}]});
-		}
+			log.info("saveClearedTownWithMembers data.length == 0");
+        }
 		else
 		{
-			data = clearDataList;
 			var clearData = null;
 			for(var i = 0; i<data.length; i++)
 			{
@@ -120,14 +121,16 @@ function saveClearedTownWithMembers(args)
 			if(clearData == null)
 			{
 				data.push({"Id":townIdStr, "ClearList":[{"Id":idCombined, Count:1}]});
-			}
+				log.info("saveClearedTownWithMembers clearData == null");
+            }
 			else
 			{
 				var clearList = clearData.ClearList;
-				if(clearList == null || clearList.length == 0)
+				if(clearList.length == 0)
 				{
 					clearList.push({"Id":idCombined, Count:1});
-				}
+					log.info("saveClearedTownWithMembers clearList.length == 0");
+                }
 				else
 				{
 					var hasFound = false;
@@ -137,18 +140,21 @@ function saveClearedTownWithMembers(args)
 						{
 							clearList[k].Count++;
 							hasFound = true;
+							log.info("saveClearedTownWithMembers hasFound " + clearList[k].Count);
 							break;
 						}
 					}
 					if(!hasFound)
 					{
 						clearList.push({"Id":idCombined, Count:1});
-					}
+						log.info("saveClearedTownWithMembers !hasFound");
+                    }
 				}
 			}
 		}
 	}
 	
+	log.info("saveClearedTownWithMembers " + JSON.stringify(data));
 	server.UpdateUserData(
 		{
 			"PlayFabId": currentPlayerId,
