@@ -13,8 +13,151 @@ function range(min, max) {
 function rand(from, to) {
     return Math.floor((Math.random() * to) + from);
 }
-
-
+function hasClearedTownWithMembers(args)
+{
+	var townId = args.TownId;
+	var townIdStr = "Town_" + townId;
+	
+	var userData = server.GetUserData(
+		{
+			"PlayFabId": currentPlayerId,
+			"Keys": [
+                "ClearData"
+            ]
+		}
+	);
+	
+	if(userData.Data.ClearData == null)
+	{
+		return false;
+	}
+	
+	var clearDataList = JSON.parse(userData.Data.ClearData.replace(/\\/g, ""));
+	if(clearDataList == null || clearDataList.length == 0)
+	{
+		return false;
+	}
+	var clearData = null;
+	for(var i = 0; i<clearDataList.length; i++)
+	{
+		if(clearDataList[i].Id == townIdStr)
+		{
+			clearData = clearDataList[i];
+			break;
+		}
+	}
+	if(clearData == null)
+	{
+		return false;
+	}
+	
+	var clearList = clearData.ClearList;
+	if(clearList == null || clearList.length == 0)
+	{
+		return false;
+	}
+	
+	var partyMembers = JSON.parse(args.CharacterIds);
+	partyMembers.sort();
+	var idCombined = "";
+	for (var i = 0; i < partyMembers.length; i++)
+	{
+		idCombined += partyMembers[i] + "_";
+	}
+	for(var i = 0; i< clearList.length; i++)
+	{
+		if(clearList[i].Id == idCombined && clearList[i].Count >= 10)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+function saveClearedTownWithMembers(args)
+{
+	var townId = args.TownId;
+	var townIdStr = "Town_" + townId;
+	var partyMembers = JSON.parse(args.CharacterIds);
+	partyMembers.sort();
+	var idCombined = "";
+	for (var i = 0; i < partyMembers.length; i++)
+	{
+		idCombined += partyMembers[i] + "_";
+	}
+	
+	var userData = server.GetUserData(
+		{
+			"PlayFabId": currentPlayerId,
+			"Keys": [
+                "ClearData"
+            ],
+		}
+	);
+	var data = [];
+	if(userData.Data.ClearData == null)
+	{
+		data.push({"Id":townIdStr, "ClearList":[{"Id":idCombined, Count:1}]});
+	}
+	else
+	{
+		var clearDataList = JSON.parse(userData.Data.ClearData.replace(/\\/g, ""));
+		if(clearDataList == null || clearDataList.length == 0)
+		{
+			data.push({"Id":townIdStr, "ClearList":[{"Id":idCombined, Count:1}]});
+		}
+		else
+		{
+			data = clearDataList;
+			var clearData = null;
+			for(var i = 0; i<data.length; i++)
+			{
+				if(data[i].Id == townIdStr)
+				{
+					clearData = data[i];
+					break;
+				}
+			}
+			if(clearData == null)
+			{
+				data.push({"Id":townIdStr, "ClearList":[{"Id":idCombined, Count:1}]});
+			}
+			else
+			{
+				var clearList = clearData.ClearList;
+				if(clearList == null || clearList.length == 0)
+				{
+					clearList.push({"Id":idCombined, Count:1});
+				}
+				else
+				{
+					var hasFound = false;
+					for(var k = 0; k< clearList.length; k++)
+					{
+						if(clearList[k].Id == idCombined)
+						{
+							clearList[k].Count++;
+							hasFound = true;
+							break;
+						}
+					}
+					if(!hasFound)
+					{
+						clearList.push({"Id":idCombined, Count:1});
+					}
+				}
+			}
+		}
+	}
+	
+	server.UpdateUserData(
+		{
+			"PlayFabId": currentPlayerId,
+			"Data": {
+				"ClearData": JSON.stringify(data)
+			}
+		}
+	);
+}
 function GetHigestLevel() {
     var allCharacters = server.GetAllUsersCharacters(
          {
@@ -381,7 +524,13 @@ handlers.InstantClearDungeon = function (args) {
     var townIdStr = "Town_" + townId;
     var townInfo = server.GetTitleData({
         "Keys": ["Towns"]
-    });;
+    });
+    if (!hasClearedTownWithMembers(args))
+    {
+        log.info("hacked client " + currentPlayerId);
+        return;
+    }
+
     var townInfoDataList = JSON.parse(townInfo.Data.Towns.replace(/\\/g, ""));
     var townInfoData = townInfoDataList[parseInt(townId)];
     //log.info("Got TownInfo " + townInfoData);
@@ -540,6 +689,11 @@ handlers.ClearDungeon = function (args) {
     {
         log.info("hacking scrollOfInstantVer " + currentPlayerId);
         return;
+    }
+
+    if (!scrollOfInstantEnabled)
+    {
+        saveClearedTownWithMembers(args);
     }
 
     var totalExp = 0;
