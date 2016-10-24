@@ -207,7 +207,7 @@ handlers.GetEnergyPoint = function (args) {
     var baseEnergy = userInv.VirtualCurrency.BE;
     var baseEnergyMax = 56;
     var additionalEnergy = userInv.VirtualCurrency.AE;
-    var additionalEnergyMax = highestLevel;
+    var additionalEnergyMax = highestLevel * 2;
     log.info("baseEnergy " + baseEnergy);
     log.info("baseEnergyMax " + baseEnergyMax);
     log.info("additionalEnergy " + additionalEnergy);
@@ -399,6 +399,7 @@ handlers.InstantClearDungeon = function (args) {
     }
     args.EmblemCount = townInfoData.EmblemCount;
     args.Scrolls = [];
+    args.ScrollOfInstantEnabled = true;
     return handlers.ClearDungeon(args);
 };
 handlers.ClearDungeon = function (args) {
@@ -424,6 +425,93 @@ handlers.ClearDungeon = function (args) {
     var mobs = args.Mobs;
     var scrolls = args.Scrolls;
 
+
+    var scrollOfExperienceEnabled = townId.ScrollOfExperienceEnabled;
+    var scrollOfGoldEnabled = townId.ScrollOfGoldEnabled;
+    var scrollOfItemEnabled = townId.ScrollOfItemEnabled;
+    var scrollOfInstantEnabled = townId.ScrollOfInstantEnabled;
+
+    var scrollOfExperienceVer = false;
+    var scrollOfGoldVer = false;
+    var scrollOfItemVer = false;
+    var scrollOfInstantVer = false;
+    var userInv = server.GetUserInventory({
+        "PlayFabId": currentPlayerId
+    });
+    for (var i = 0; i < userInv.Inventory.length; i++)
+    {
+        var item = userInv.Inventory[i];
+        if (item.ItemClass != "Scroll")
+        {
+            continue;
+        }
+        if (scrollOfExperienceEnabled && item.ItemId == "ScrollOfExperience" && item.RemainingUses > 0)
+        {
+            scrollOfExperienceVer = true;
+            var consumeItemResult = server.ConsumeItem({
+                "PlayFabId": currentPlayerId,
+                "ItemInstanceId": item.ItemInstanceId,
+                "ConsumeCount": 1
+            });
+        }
+        if (scrollOfGoldEnabled && item.ItemId == "ScrollOfGold" && item.RemainingUses > 0) {
+            scrollOfGoldVer = true;
+            var consumeItemResult = server.ConsumeItem({
+                "PlayFabId": currentPlayerId,
+                "ItemInstanceId": item.ItemInstanceId,
+                "ConsumeCount": 1
+            });
+        }
+        if (scrollOfItemEnabled && item.ItemId == "ScrollOfItem" && item.RemainingUses > 0) {
+            scrollOfItemVer = true;
+            var consumeItemResult = server.ConsumeItem({
+                "PlayFabId": currentPlayerId,
+                "ItemInstanceId": item.ItemInstanceId,
+                "ConsumeCount": 1
+            });
+        }
+        if (scrollOfInstantEnabled && item.ItemId == "ScrollOfInstant" && item.RemainingUses > 0) {
+            scrollOfInstantVer = true;
+            var consumeItemResult = server.ConsumeItem({
+                "PlayFabId": currentPlayerId,
+                "ItemInstanceId": item.ItemInstanceId,
+                "ConsumeCount": 1
+            });
+        }
+    }
+    if (scrollOfExperienceEnabled == scrollOfExperienceVer)
+    {
+        if (!scrollOfExperienceVer) {
+            //hack
+            log.info("hacking scrollOfExperienceVer " + currentPlayerId);
+            return;
+        }
+    }
+    if (scrollOfGoldEnabled == scrollOfGoldVer)
+    {
+        if (!scrollOfGoldVer) {
+            //hack
+            log.info("hacking scrollOfGoldVer " + currentPlayerId);
+            return;
+        }
+    }
+    if (scrollOfItemEnabled == scrollOfItemVer)
+    {
+        if (!scrollOfItemVer) {
+            //hack
+            log.info("hacking scrollOfItemVer " + currentPlayerId);
+            return;
+        }
+    }
+    if (scrollOfInstantEnabled)
+    {
+        if (!scrollOfInstantVer)
+        {
+            //hack
+            log.info("hacking scrollOfInstantVer " + currentPlayerId);
+            return;
+        }
+    }
 
     var totalExp = 0;
     var totalGold = 0;
@@ -512,6 +600,10 @@ handlers.ClearDungeon = function (args) {
     }
 
     totalGold = parseInt(totalGold);
+    if (scrollOfGoldEnabled && scrollOfGoldVer)
+    {
+        totalGold *= 2;
+    }
     tax = parseInt(totalGold * 0.2);
     totalGold = totalGold - tax;
 
