@@ -430,6 +430,10 @@ handlers.ClearDungeon = function (args) {
     var scrollOfGoldEnabled = args.ScrollOfGoldEnabled;
     var scrollOfItemEnabled = args.ScrollOfItemEnabled;
     var scrollOfInstantEnabled = args.ScrollOfInstantEnabled;
+    log.info("scrollOfExperienceEnabled " + scrollOfExperienceEnabled);
+    log.info("scrollOfGoldEnabled " + scrollOfGoldEnabled);
+    log.info("scrollOfItemEnabled " + scrollOfItemEnabled);
+    log.info("scrollOfInstantEnabled " + scrollOfInstantEnabled);
 
     var scrollOfExperienceVer = false;
     var scrollOfGoldVer = false;
@@ -445,6 +449,7 @@ handlers.ClearDungeon = function (args) {
         {
             continue;
         }
+        log.info("scroll finding item " + JSON.stringify(item));
         if (scrollOfExperienceEnabled && item.ItemId == "ScrollOfExperience" && item.RemainingUses > 0)
         {
             scrollOfExperienceVer = true;
@@ -453,6 +458,7 @@ handlers.ClearDungeon = function (args) {
                 "ItemInstanceId": item.ItemInstanceId,
                 "ConsumeCount": 1
             });
+            log.info("scrollOfExperienceVer " + scrollOfExperienceVer);
         }
         if (scrollOfGoldEnabled && item.ItemId == "ScrollOfGold" && item.RemainingUses > 0) {
             scrollOfGoldVer = true;
@@ -461,6 +467,7 @@ handlers.ClearDungeon = function (args) {
                 "ItemInstanceId": item.ItemInstanceId,
                 "ConsumeCount": 1
             });
+            log.info("scrollOfGoldVer " + scrollOfGoldVer);
         }
         if (scrollOfItemEnabled && item.ItemId == "ScrollOfItem" && item.RemainingUses > 0) {
             scrollOfItemVer = true;
@@ -469,6 +476,7 @@ handlers.ClearDungeon = function (args) {
                 "ItemInstanceId": item.ItemInstanceId,
                 "ConsumeCount": 1
             });
+            log.info("scrollOfItemVer " + scrollOfItemVer);
         }
         if (scrollOfInstantEnabled && item.ItemId == "ScrollOfInstant" && item.RemainingUses > 0) {
             scrollOfInstantVer = true;
@@ -477,6 +485,7 @@ handlers.ClearDungeon = function (args) {
                 "ItemInstanceId": item.ItemInstanceId,
                 "ConsumeCount": 1
             });
+            log.info("scrollOfInstantVer " + scrollOfInstantVer);
         }
     }
     if (scrollOfExperienceEnabled && !scrollOfExperienceVer)
