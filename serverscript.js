@@ -51,8 +51,8 @@ function hasClearedTownWithMembers(args)
 		return false;
 	}
 	
-	var clearData.ClearList = clearData.ClearList;
-	if(clearData.ClearList == null || clearData.ClearList.length == 0)
+	var clearList = clearData.ClearList;
+	if(clearList == null || clearList.length == 0)
 	{
 		return false;
 	}
@@ -64,9 +64,9 @@ function hasClearedTownWithMembers(args)
 	{
 		idCombined += partyMembers[i] + "_";
 	}
-	for(var i = 0; i< clearData.ClearList.length; i++)
+	for(var i = 0; i< clearList.length; i++)
 	{
-		if(clearData.ClearList[i].Id == idCombined && clearData.ClearList[i].Count >= 10)
+		if(clearList[i].Id == idCombined && clearList[i].Count >= 10)
 		{
 			return true;
 		}
