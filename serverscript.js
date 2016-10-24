@@ -730,6 +730,7 @@ handlers.ClearDungeon = function (args) {
             }
         }
     }
+    log.info("scrolls " + JSON.stringify(scrolls));
     for (var i = 0; i < scrolls.length; i++)
     {
         for (var k = 0; k < scrolls[i].Count; k++)
