@@ -192,7 +192,6 @@ function GetLevel(accumulatedXP) {
     }
     return { "CurrentLevel": currentLevel, "CurrentXp": currentXp, "XpToNextLevel": xpToNextLevel };
 }
-
 function getXpToNextLevel(level) {
     return parseInt(((8 * level) + diff(level)) * mxp(level, 0) * rf(level));
 }
@@ -516,18 +515,21 @@ handlers.GetMyInvestment = function (args) {
         log.info("err", err.message);
     };
 };
-
 handlers.InstantClearDungeon = function (args) {
+    
+    log.info("InstantClearDungeon " + currentPlayerId);
     var townId = args.TownId;
     var townIdStr = "Town_" + townId;
     var townInfo = server.GetTitleData({
         "Keys": ["Towns"]
     });
+    log.info("InstantClearDungeon hasClearedTownWithMembers");
     if (!hasClearedTownWithMembers(args))
     {
         log.info("hacked client " + currentPlayerId);
         return;
     }
+    log.info("InstantClearDungeon getting townInfo");
 
     var townInfoDataList = JSON.parse(townInfo.Data.Towns.replace(/\\/g, ""));
     var townInfoData = townInfoDataList[parseInt(townId)];
