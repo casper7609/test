@@ -32,7 +32,7 @@ function hasClearedTownWithMembers(args)
 		return false;
 	}
 	
-	var clearDataList = JSON.parse(userData.Data.ClearData.replace(/\\/g, ""));
+	var clearDataList = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
 	if(clearDataList == null || clearDataList.length == 0)
 	{
 		return false;
