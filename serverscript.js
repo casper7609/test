@@ -705,7 +705,7 @@ handlers.ClearDungeon = function (args) {
     for (var i = 0; i < mobs.length; i++) {
         for (var k = 0; k < townMobs.length; k++) {
             if (townMobs[k].Name == mobs[i].Name) {
-                totalExp += townMobs[k].Exp * mobs[i].Count;
+                totalExp += townMobs[k].Level * (townMobs[k].IsUnique ? 10 : 5) * mobs[i].Count;
                 totalGold += townMobs[k].Gold * mobs[i].Count;
                 totalAlignment += townMobs[k].Alignment * mobs[i].Count;
                 for (var j = 0; j < mobs[i].Count; j++) {
@@ -715,7 +715,7 @@ handlers.ClearDungeon = function (args) {
                             {
                                 "CatalogVersion": catalogVersion,
                                 "PlayFabId": currentPlayerId,
-                                "TableId": townMobs[k].Name
+                                "TableId": townMobs[k].DropTable
                             }
                         );
                         if (randomItem.ResultItemId != "Nothing") {
@@ -725,7 +725,7 @@ handlers.ClearDungeon = function (args) {
                     }
                     catch (err)
                     {
-                        log.info("create drop table for " + townMobs[k].Name);
+                        log.info("create drop table for " + townMobs[k].DropTable);
                     }
                 }
                 break;
