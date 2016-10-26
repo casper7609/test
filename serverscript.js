@@ -547,7 +547,7 @@ handlers.InstantClearDungeon = function (args) {
         args.Mobs.push({ "Name": mob.Name, "Count": mobCount });
     }
     args.EmblemCount = townInfoData.EmblemCount;
-    args.Scrolls = [{ Name: "ScrollOfInstant" , Count: 1}];
+    args.Scrolls = [{ Name: "ScrollOfInstant" , Count: 3}];
     args.ScrollOfInstantEnabled = true;
     return handlers.ClearDungeon(args);
 };
@@ -758,6 +758,27 @@ handlers.ClearDungeon = function (args) {
             realItems = realItems.concat(itemGrantResult["ItemGrantResults"]);
             log.info("realItems " + JSON.stringify(realItems));
         }
+        try
+        {
+            for (var i = 0; i < realItems.length; i++) {
+                if (realItems[i].ItemId == "ScrollOfExperience") {
+                    result.ScrollOfExperience = realItems[i].RemainingUses;
+                }
+                else if (realItems[i].ItemId == "ScrollOfGold") {
+                    result.ScrollOfGold = realItems[i].RemainingUses;
+                }
+                else if (realItems[i].ItemId == "ScrollOfItem") {
+                    result.ScrollOfItem = realItems[i].RemainingUses;
+                }
+                else if (realItems[i].ItemId == "ScrollOfInstant") {
+                    result.ScrollOfInstant = realItems[i].RemainingUses;
+                }
+            }
+        }
+        catch (err) {
+            log.info("err", err.message);
+        };
+        
     }
    
     var expResult = [];
