@@ -547,7 +547,7 @@ handlers.InstantClearDungeon = function (args) {
         args.Mobs.push({ "Name": mob.Name, "Count": mobCount });
     }
     args.EmblemCount = townInfoData.EmblemCount;
-    args.Scrolls = ["ScrollOfInstant"];
+    args.Scrolls = [{ Name: "ScrollOfInstant" , Count: 1}];
     args.ScrollOfInstantEnabled = true;
     return handlers.ClearDungeon(args);
 };
