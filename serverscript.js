@@ -758,6 +758,25 @@ handlers.ClearDungeon = function (args) {
             realItems = realItems.concat(itemGrantResult["ItemGrantResults"]);
             log.info("realItems " + JSON.stringify(realItems));
         }
+        for (var i = 0; i < realItems.length; i++)
+        {
+            if (realItems[i].ItemId == "ScrollOfExperience")
+            {
+                result.ScrollOfExperience = realItems[i].RemainingUses;
+            }
+            else if (realItems[i].ItemId == "ScrollOfGold")
+            {
+                result.ScrollOfGold = realItems[i].RemainingUses;
+            }
+            else if (realItems[i].ItemId == "ScrollOfItem")
+            {
+                result.ScrollOfItem = realItems[i].RemainingUses;
+            }
+            else if (realItems[i].ItemId == "ScrollOfInstant")
+            {
+                result.ScrollOfInstant = realItems[i].RemainingUses;
+            }
+        }
     }
    
     var expResult = [];
