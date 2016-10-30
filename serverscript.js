@@ -830,6 +830,7 @@ handlers.ClearDungeon = function (args) {
         }
     );
     log.info("totalGold " + totalGold);
+    log.info("tax " + tax);
 
     server.AddUserVirtualCurrency(
         {
@@ -1097,7 +1098,7 @@ handlers.CloudSellItem = function (args) {
             if (catalogItem.ItemId == itemId) {
                 var storePrice = parseInt(catalogItem.VirtualCurrencyPrices.GD);
                 if (storePrice == 0)
-                    storePrice = 1;//free item gets 1 gold price when resell...
+                    storePrice = 50;//this is basic 100 gold weapons given as default
                 else
                     storePrice = storePrice / 2;
                 gold += storePrice;
