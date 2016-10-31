@@ -444,7 +444,6 @@ handlers.GetEnergyPoint = function (args) {
 
     return { Current: (additionalEnergy + baseEnergy), Max: (baseEnergyMax + additionalEnergyMax), TimeSecondsLeftTillNextGen: timeSecondsLeftTillNextGen };
 };
-//Town_0_Invest
 handlers.InvestTown = function (args) {
     log.info("InvestTown called PlayFabId " + currentPlayerId);
     var townId = args.TownId;
@@ -819,7 +818,7 @@ handlers.ClearDungeon = function (args) {
     {
         totalGold *= 2;
     }
-    tax = parseInt(totalGold * 0.2);
+    tax = parseInt(totalGold * 0.1);
     totalGold = totalGold - tax;
 
     server.AddUserVirtualCurrency(
@@ -966,7 +965,6 @@ handlers.OccupationPerTown = function (args) {
         log.info("err", err.message);
     };
 };
-
 handlers.EnchantItem = function (args) {
     log.info("PlayFabId " + args.PlayFabId);
     log.info("CharacterId " + args.CharacterId);
@@ -1075,8 +1073,6 @@ handlers.EnchantItem = function (args) {
     //3. break
     return { "EnchantResult": enchantResult, "EnchantValue": prevEnchant, "GoldSubtractResult": goldSubtractResult };
 };
-
-
 handlers.CloudSellItem = function (args) {
     var characterId = args.CharacterId;
     var items = JSON.parse(args.Items);
@@ -1141,7 +1137,6 @@ handlers.CloudUpdateUserInventoryItemCustomData = function (args) {
         Data: args.Data,
     });
 };
-
 handlers.EquipItem = function (args) {
     //unequip
     if (args.PrevItemInstanceId != "") {
@@ -1155,7 +1150,6 @@ handlers.EquipItem = function (args) {
         "ItemInstanceId": args.ItemToEquipInstanceId
     });
 };
-
 handlers.UnEquipItem = function (args) {
     log.info("PlayFabId " + args.PlayFabId);
     log.info("CharacterId " + args.CharacterId);
@@ -1165,6 +1159,34 @@ handlers.UnEquipItem = function (args) {
         "CharacterId": args.CharacterId,
         "ItemInstanceId": args.PrevItemInstanceId
     });
+};
+
+handlers.RewardRealmWar = function (args) {
+
+    var rewardContainerId = args.RewardContainerId;
+    var userIds = args.UserIds;
+    var result = {"userIds":[]};
+    for (var i = 0; i < userIds.length; i++)
+    {
+        var userId = userIds[i];
+        var itemGrantResult = server.GrantItemsToUser(
+            {
+                "CatalogVersion": catalogVersion,
+                "PlayFabId": userId,
+                "ItemIds": [rewardContainerId]
+            }
+        );
+        server.UpdateUserData(
+            {
+                "PlayFabId": userId,
+                "Data": {
+                    "Rank": rewardContainerId
+                }
+            }
+        );
+        result.userIds.push(userId);
+    }
+    return result;
 };
 
 // checks to see if an object has any properties
