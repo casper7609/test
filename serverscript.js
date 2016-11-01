@@ -1160,7 +1160,7 @@ handlers.UnEquipItem = function (args) {
         "ItemInstanceId": args.PrevItemInstanceId
     });
 };
-
+//called by java server
 handlers.RewardRealmWar = function (args) {
 
     var rewardContainerId = args.RewardContainerId;
@@ -1188,7 +1188,25 @@ handlers.RewardRealmWar = function (args) {
     }
     return result;
 };
+handlers.GetRealmWarTime = function (args) {
+    try {
+        var headers = {
+            "X-MyCustomHeader": "Some Value"
+        };
 
+        var url = "http://52.78.158.221:8080/realm/timeleft";
+        var content = "";
+        var httpMethod = "get";
+        var contentType = "application/json";
+
+        // The pre-defined http object makes synchronous HTTP requests
+        var response = http.request(url, httpMethod, content, contentType, headers);
+        log.info("response", response);
+        return response;
+    } catch (err) {
+        log.info("err", err.message);
+    };
+};
 // checks to see if an object has any properties
 // Returns true for empty objects and false for non-empty objects
 function isObjectEmpty(obj) {
