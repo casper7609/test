@@ -611,15 +611,16 @@ handlers.ClearDungeon = function (args) {
                 "ItemIds": [townInfoData.DropTable]
             }
         );
+        log.info("itemGrantResult " + JSON.stringify(itemGrantResult));
+        result.Items = result.Items.concat(itemGrantResult["ItemGrantResults"]);
+
         result.TotalGem = 0;
         result.TotalAdditionalEnergy = 0;
         result.TotalEmblem = 0;
-        result.TotalGold = totalGold;
+        result.TotalGold = 0;
         result.TotalExp = 0;
         result.Tax = 0;
         result.TotalAlignment = 0;
-
-        result.Items = result.Items.concat(itemGrantResult["ItemGrantResults"]);
 
         var virtualCurrencies = bundleItem.Bundle.BundledVirtualCurrencies;
         if (virtualCurrencies != null) {
@@ -629,7 +630,6 @@ handlers.ClearDungeon = function (args) {
             if (virtualCurrencies.GD != null) result.TotalGold = virtualCurrencies.GD;
         }
 
-        log.info("itemGrantResult " + JSON.stringify(itemGrantResult));
         //update player data
     }
     return result;
