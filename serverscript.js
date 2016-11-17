@@ -151,7 +151,7 @@ function saveClearedTownWithMembers(args, key)
 		{
 			"PlayFabId": currentPlayerId,
 			"Data": {
-				"ClearData": JSON.stringify(data)
+			    key: JSON.stringify(data)
 			}
 		}
 	);
