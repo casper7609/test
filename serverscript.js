@@ -586,6 +586,24 @@ handlers.ClearDungeon = function (args) {
     }
     else if (townInfoData.DungeonMode == 3)//tower of trial
     {
+        var partyMembers = JSON.parse(args.CharacterIds);
+        var expResult = [];
+        for (var i = 0; i < partyMembers.length; i++) {
+            var charStat = server.GetCharacterStatistics(
+                {
+                    "PlayFabId": currentPlayerId,
+                    "CharacterId": partyMembers[i]
+                }
+            );
+            var previousExp = charStat.CharacterStatistics.AccumulatedXP;
+            //fresh character
+            if (previousExp == null) {
+                previousExp = 0;
+            }
+            var previousLevel = GetLevel(previousExp);
+            expResult.push({ "CharacterId": partyMembers[i], "PreviousLevel": previousLevel, "CurrentLevel": previousLevel });
+        }
+        result.ExpResult = expResult;
         result.Items = [];
         var catalogItems = server.GetCatalogItems({
             "CatalogVersion": catalogVersion
