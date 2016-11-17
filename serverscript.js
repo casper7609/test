@@ -551,6 +551,7 @@ handlers.InstantClearDungeon = function (args) {
     return handlers.ClearDungeon(args);
 };
 handlers.ClearDungeon = function (args) {
+    log.info("ClearDungeon " + currentPlayerId);
     //town1_chaotic
     //house_alignment
     //gold
@@ -564,17 +565,40 @@ handlers.ClearDungeon = function (args) {
     });;
     //log.info("test " + townInfo.Data.Towns.replace(/\\/g, ""));
     var townInfoDataList = JSON.parse(townInfo.Data.Towns.replace(/\\/g, ""));
-    var townInfoData = townInfoDataList[parseInt(townId)];
+    var townInfoData = null;
+    for (var i = 0; i < townInfoDataList.length; i++)
+    {
+        if (townInfoDataList[i].Id == townId)
+        {
+            townInfoData = townInfoDataList[i];
+            break;
+        }
+    }
+
+    if (townInfoData == null)
+    {
+        return {"Error": "Town Not Found"};
+    }
+
+    if (townInfoData.DungeonMode == 2)
+    {
+        //grant townInfoData.DropTable
+        var itemGrantResult = server.GrantItemsToUser(
+            {
+                "CatalogVersion": catalogVersion,
+                "PlayFabId": currentPlayerId,
+                "ItemIds": [townInfoData.DropTable]
+            }
+        );
+        //update player data
+        return;
+    }
     //log.info("Got TownInfo " + townInfoData);
     var townMobs = townInfoData.Mobs;
-
-
-    log.info("ClearDungeon " + currentPlayerId);
     var partyMembers = JSON.parse(args.CharacterIds);
     var mobs = args.Mobs;
+
     var scrolls = args.Scrolls;
-
-
     var scrollOfExperienceEnabled = args.ScrollOfExperienceEnabled;
     var scrollOfGoldEnabled = args.ScrollOfGoldEnabled;
     var scrollOfItemEnabled = args.ScrollOfItemEnabled;
