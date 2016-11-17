@@ -586,6 +586,23 @@ handlers.ClearDungeon = function (args) {
     }
     else if (townInfoData.DungeonMode == 3)//tower of trial
     {
+        result.Items = [];
+        var catalogItems = server.GetCatalogItems({
+            "CatalogVersion": catalogVersion
+        });
+        var bundleItem = null;
+        for (var i = 0; i < catalogItems.Catalog.length; i++) {
+            var catalogItem = catalogItems.Catalog[i];
+            if (catalogItem.ItemId == townInfoData.DropTable) {
+                bundleItem = catalogItem;
+                break;
+            }
+        }
+        if (bundleItem == null)
+        {
+            return { "Error": "BundleItem Not Found" };
+        }
+
         //grant townInfoData.DropTable
         var itemGrantResult = server.GrantItemsToUser(
             {
@@ -594,7 +611,24 @@ handlers.ClearDungeon = function (args) {
                 "ItemIds": [townInfoData.DropTable]
             }
         );
-        
+        result.TotalGem = 0;
+        result.TotalAdditionalEnergy = 0;
+        result.TotalEmblem = 0;
+        result.TotalGold = totalGold;
+        result.TotalExp = 0;
+        result.Tax = 0;
+        result.TotalAlignment = 0;
+
+        result.Items = result.Items.concat(itemGrantResult["ItemGrantResults"]);
+
+        var virtualCurrencies = bundleItem.Bundle.BundledVirtualCurrencies;
+        if (virtualCurrencies != null) {
+            if (virtualCurrencies.GP != null) result.TotalGem = virtualCurrencies.GP;
+            if (virtualCurrencies.AE != null) result.TotalAdditionalEnergy = virtualCurrencies.AE;
+            if (virtualCurrencies.EB != null) result.TotalEmblem = virtualCurrencies.EB;
+            if (virtualCurrencies.GD != null) result.TotalGold = virtualCurrencies.GD;
+        }
+
         log.info("itemGrantResult " + JSON.stringify(itemGrantResult));
         //update player data
     }
