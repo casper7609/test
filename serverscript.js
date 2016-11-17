@@ -589,12 +589,12 @@ handlers.ClearDungeon = function (args) {
     }
     else if (townInfoData.DungeonMode == 3)//tower of trial
     {
-        result = handleTowerOfTrial(result);
+        result = handleTowerOfTrial(args, townInfoData, result);
         //update player data
     }
     return result;
 };
-function handleTowerOfTrial(args, result)
+function handleTowerOfTrial(args, townInfoData, result)
 {
     var partyMembers = JSON.parse(args.CharacterIds);
     var expResult = [];
