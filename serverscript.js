@@ -13,7 +13,7 @@ function range(min, max) {
 function rand(from, to) {
     return Math.floor((Math.random() * to) + from);
 }
-function hasClearedTownWithMembers(args)
+function hasClearedTownWithMembers(args, key)
 {
 	var townId = args.TownId;
 	var townIdStr = "Town_" + townId;
@@ -22,131 +22,131 @@ function hasClearedTownWithMembers(args)
 		{
 			"PlayFabId": currentPlayerId,
 			"Keys": [
-                "ClearData"
+                key
             ]
 		}
 	);
-	
-	if(userData.Data.ClearData == null)
-	{
-		return false;
-	}
-	
-	var clearDataList = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
-	if(clearDataList == null || clearDataList.length == 0)
-	{
-		return false;
-	}
-	var clearData = null;
-	for(var i = 0; i<clearDataList.length; i++)
-	{
-		if(clearDataList[i].Id == townIdStr)
-		{
-			clearData = clearDataList[i];
-			break;
-		}
-	}
-	if(clearData == null)
-	{
-		return false;
-	}
-	
-	var clearList = clearData.ClearList;
-	if(clearList == null || clearList.length == 0)
-	{
-		return false;
-	}
-	
-	var partyMembers = JSON.parse(args.CharacterIds);
-	partyMembers.sort();
-	var idCombined = "";
-	for (var i = 0; i < partyMembers.length; i++)
-	{
-		idCombined += partyMembers[i] + "_";
-	}
-	for(var i = 0; i< clearList.length; i++)
-	{
-		if(clearList[i].Id == idCombined && clearList[i].Count >= 10)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-function saveClearedTownWithMembers(args)
-{
-	var townId = args.TownId;
-	var townIdStr = "Town_" + townId;
-	var partyMembers = JSON.parse(args.CharacterIds);
-	partyMembers.sort();
-	var idCombined = "";
-	for (var i = 0; i < partyMembers.length; i++)
-	{
-		idCombined += partyMembers[i] + "_";
-	}
-	
-	var userData = server.GetUserData(
-		{
-			"PlayFabId": currentPlayerId,
-			"Keys": [
-                "ClearData"
-            ],
-		}
-	);
-	var data = [];
-	if(userData.Data.ClearData == null)
-	{
-	    data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }] });
+
+	if (key == "TowerOfTrial") {
+	    if (userData.Data.TowerOfTrial == null) {
+	        return false;
+	    }
+	    var clearDataList = JSON.parse(userData.Data.TowerOfTrial.Value.replace(/\\/g, ""));
+	    if (clearDataList == null || clearDataList.length == 0) {
+	        return false;
+	    }
+	    return (clearDataList.indexOf(townIdStr) >= 0);
 	}
 	else
 	{
-	    data = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
-	    if (data.length == 0)
-		{
-			data.push({"Id":townIdStr, "ClearList":[{"Id":idCombined, Count:1}]});
-        }
-		else
-		{
-	        var clearData = null;
-			for(var i = 0; i<data.length; i++)
-			{
-				if(data[i].Id == townIdStr)
-				{
-					clearData = data[i];
-					break;
-				}
-			}
-			if(clearData == null)
-			{
-				data.push({"Id":townIdStr, "ClearList":[{"Id":idCombined, Count:1}]});
-            }
-			else
-			{
-				if(clearData.ClearList.length == 0)
-				{
-					clearData.ClearList.push({"Id":idCombined, Count:1});
-                }
-				else
-				{
-				    var hasFound = false;
-					for(var k = 0; k< clearData.ClearList.length; k++)
-					{
-						if(clearData.ClearList[k].Id == idCombined)
-						{
-							clearData.ClearList[k].Count++;
-							hasFound = true;
-							break;
-						}
-					}
-					if(!hasFound)
-					{
-						clearData.ClearList.push({"Id":idCombined, Count:1});
-                    }
-				}
-			}
-		}
+	    if (userData.Data.ClearData == null) {
+	        return false;
+	    }
+
+	    var clearDataList = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
+	    if (clearDataList == null || clearDataList.length == 0) {
+	        return false;
+	    }
+	    var clearData = null;
+	    for (var i = 0; i < clearDataList.length; i++) {
+	        if (clearDataList[i].Id == townIdStr) {
+	            clearData = clearDataList[i];
+	            break;
+	        }
+	    }
+	    if (clearData == null) {
+	        return false;
+	    }
+
+	    var clearList = clearData.ClearList;
+	    if (clearList == null || clearList.length == 0) {
+	        return false;
+	    }
+
+	    var partyMembers = JSON.parse(args.CharacterIds);
+	    partyMembers.sort();
+	    var idCombined = "";
+	    for (var i = 0; i < partyMembers.length; i++) {
+	        idCombined += partyMembers[i] + "_";
+	    }
+	    for (var i = 0; i < clearList.length; i++) {
+	        if (clearList[i].Id == idCombined && clearList[i].Count >= 10) {
+	            return true;
+	        }
+	    }
 	}
-	
+	return false;
+}
+function saveClearedTownWithMembers(args, key)
+{
+	var townId = args.TownId;
+	var townIdStr = "Town_" + townId;
+
+	var userData = server.GetUserData(
+		{
+		    "PlayFabId": currentPlayerId,
+		    "Keys": [
+                key
+		    ],
+		}
+	);
+	var data = [];
+
+	if (key == "TowerOfTrial") {
+	    if (userData.Data.TowerOfTrial != null) {
+	        data = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
+	    }
+	    data.push(townIdStr);
+    }
+	else
+	{
+	    var partyMembers = JSON.parse(args.CharacterIds);
+	    partyMembers.sort();
+	    var idCombined = "";
+	    for (var i = 0; i < partyMembers.length; i++) {
+	        idCombined += partyMembers[i] + "_";
+	    }
+
+	    if (userData.Data.ClearData == null) {
+	        data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }] });
+	    }
+	    else {
+	        data = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
+	        if (data.length == 0) {
+	            data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }] });
+	        }
+	        else {
+	            var clearData = null;
+	            for (var i = 0; i < data.length; i++) {
+	                if (data[i].Id == townIdStr) {
+	                    clearData = data[i];
+	                    break;
+	                }
+	            }
+	            if (clearData == null) {
+	                data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }] });
+	            }
+	            else {
+	                if (clearData.ClearList.length == 0) {
+	                    clearData.ClearList.push({ "Id": idCombined, Count: 1 });
+	                }
+	                else {
+	                    var hasFound = false;
+	                    for (var k = 0; k < clearData.ClearList.length; k++) {
+	                        if (clearData.ClearList[k].Id == idCombined) {
+	                            clearData.ClearList[k].Count++;
+	                            hasFound = true;
+	                            break;
+	                        }
+	                    }
+	                    if (!hasFound) {
+	                        clearData.ClearList.push({ "Id": idCombined, Count: 1 });
+	                    }
+	                }
+	            }
+	        }
+	    }
+	}
 	server.UpdateUserData(
 		{
 			"PlayFabId": currentPlayerId,
@@ -523,7 +523,7 @@ handlers.InstantClearDungeon = function (args) {
         "Keys": ["Towns"]
     });
     log.info("InstantClearDungeon hasClearedTownWithMembers");
-    if (!hasClearedTownWithMembers(args))
+    if (!hasClearedTownWithMembers(args, "ClearData"))
     {
         log.info("hacked client " + currentPlayerId);
         return;
@@ -590,12 +590,17 @@ handlers.ClearDungeon = function (args) {
     else if (townInfoData.DungeonMode == 3)//tower of trial
     {
         result = handleTowerOfTrial(args, townInfoData, result);
-        //update player data
     }
     return result;
 };
 function handleTowerOfTrial(args, townInfoData, result)
 {
+    var hasClearedTowerOfTrial = hasClearedTownWithMembers(args, "TowerOfTrial");
+    if (hasClearedTowerOfTrial)
+    {
+        return { "Error": "AlreadyCleared" };
+    }
+
     var partyMembers = JSON.parse(args.CharacterIds);
     var expResult = [];
     for (var i = 0; i < partyMembers.length; i++) {
@@ -656,6 +661,9 @@ function handleTowerOfTrial(args, townInfoData, result)
         if (virtualCurrencies.EB != null) result.TotalEmblem = virtualCurrencies.EB;
         if (virtualCurrencies.GD != null) result.TotalGold = virtualCurrencies.GD;
     }
+    //update player data
+    saveClearedTownWithMembers(args, "TowerOfTrial");
+
     return result;
 }
 function handleNormalDungeon(result) {
@@ -767,7 +775,7 @@ function handleNormalDungeon(result) {
     }
 
     if (!scrollOfInstantEnabled) {
-        saveClearedTownWithMembers(args);
+        saveClearedTownWithMembers(args, "ClearData");
     }
 
     var totalExp = 0;
