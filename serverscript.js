@@ -94,7 +94,7 @@ function saveClearedTownWithMembers(args, key)
 
 	if (key == "TowerOfTrial") {
 	    if (userData.Data.TowerOfTrial != null) {
-	        data = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
+	        data = JSON.parse(userData.Data.TowerOfTrial.Value.replace(/\\/g, ""));
 	    }
 	    data.push(townIdStr);
     }
@@ -147,12 +147,12 @@ function saveClearedTownWithMembers(args, key)
 	        }
 	    }
 	}
+	var commitData = {};
+	commitData[key] = JSON.stringify(data);
 	server.UpdateUserData(
 		{
 			"PlayFabId": currentPlayerId,
-			"Data": {
-			    key: JSON.stringify(data)
-			}
+			"Data": commitData
 		}
 	);
 }
