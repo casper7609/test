@@ -1,6 +1,3 @@
-var openGames = "Async_LFG_Queue"; // put new and partial games here
-var fullGames = "Async_IP_Queue"; // put full and complete games here
-
 var enchantBrokenChance = 30;
 var enchantNothingChance = 60;
 var enchantSuccessChance = 100;
@@ -245,65 +242,74 @@ handlers.SpendEnergyPoint = function (args) {
         "PlayFabId": currentPlayerId
     });
 
-    var baseEnergy = userInv.VirtualCurrency.BE;
-    var additionalEnergy = userInv.VirtualCurrency.AE;
-    log.info("baseEnergy " + baseEnergy);
-    log.info("additionalEnergy " + additionalEnergy);
+    var townInfoData = getTownInfo(args);
 
-    var townId = args.TownId;
-    var townIdStr = "Town_" + townId;
-    var townInfo = server.GetTitleData({
-        "Keys": ["Towns"]
-    });;
-    //log.info("test " + townInfo.Data.Towns.replace(/\\/g, ""));
-    var townInfoDataList = JSON.parse(townInfo.Data.Towns.replace(/\\/g, ""));
-    var townInfoData = townInfoDataList[parseInt(townId)];
+    var raidPoint = townInfoData.RaidPoint;
     var adventurePoint = townInfoData.AdventurePoint;
-
-    log.info("adventurePoint " + adventurePoint);
-
-    if ((baseEnergy + additionalEnergy) < adventurePoint)
+    if (raidPoint != null)
     {
-        return {"Error":"Insufficient Energy"};
-    }
-
-    if (additionalEnergy >= adventurePoint) {
+        var currentRaidPoint = userInv.VirtualCurrency.RP;
+        if (currentRaidPoint < raidPoint) {
+            return { "Error": "Insufficient Energy" };
+        }
         server.SubtractUserVirtualCurrency(
             {
                 "PlayFabId": currentPlayerId,
-                "VirtualCurrency": "AE",
-                "Amount": adventurePoint
+                "VirtualCurrency": "RP",
+                "Amount": raidPoint
             }
         );
-        additionalEnergy -= adventurePoint;
+        return { Total: (currentRaidPoint - raidPoint) };
     }
-    else
+    else if (adventurePoint != null)
     {
-        //adventurePoint 10
-        //additionalEnergy 4
-        if (additionalEnergy > 0)
-        {
+        log.info("adventurePoint " + adventurePoint);
+
+        var baseEnergy = userInv.VirtualCurrency.BE;
+        var additionalEnergy = userInv.VirtualCurrency.AE;
+        log.info("baseEnergy " + baseEnergy);
+        log.info("additionalEnergy " + additionalEnergy);
+
+        if ((baseEnergy + additionalEnergy) < adventurePoint) {
+            return { "Error": "Insufficient Energy" };
+        }
+
+        if (additionalEnergy >= adventurePoint) {
             server.SubtractUserVirtualCurrency(
                 {
                     "PlayFabId": currentPlayerId,
                     "VirtualCurrency": "AE",
-                    "Amount": additionalEnergy
+                    "Amount": adventurePoint
                 }
             );
+            additionalEnergy -= adventurePoint;
         }
-        var beToSubtract = adventurePoint - additionalEnergy;
-        //beToSubtract 6
-        server.SubtractUserVirtualCurrency(
-           {
-               "PlayFabId": currentPlayerId,
-               "VirtualCurrency": "BE",
-               "Amount": beToSubtract
-           }
-       );
-        baseEnergy -= beToSubtract;
-        additionalEnergy = 0;
+        else {
+            //adventurePoint 10
+            //additionalEnergy 4
+            if (additionalEnergy > 0) {
+                server.SubtractUserVirtualCurrency(
+                    {
+                        "PlayFabId": currentPlayerId,
+                        "VirtualCurrency": "AE",
+                        "Amount": additionalEnergy
+                    }
+                );
+            }
+            var beToSubtract = adventurePoint - additionalEnergy;
+            //beToSubtract 6
+            server.SubtractUserVirtualCurrency(
+               {
+                   "PlayFabId": currentPlayerId,
+                   "VirtualCurrency": "BE",
+                   "Amount": beToSubtract
+               }
+           );
+            baseEnergy -= beToSubtract;
+            additionalEnergy = 0;
+        }
+        return { Total: (additionalEnergy + baseEnergy) };
     }
-    return { Total: (additionalEnergy + baseEnergy) };
 };
 handlers.GetEnergyPoint = function (args) {
     log.info("GetEnergyPoint called PlayFabId " + currentPlayerId);
@@ -550,14 +556,8 @@ handlers.InstantClearDungeon = function (args) {
     args.ScrollOfInstantEnabled = true;
     return handlers.ClearDungeon(args);
 };
-handlers.ClearDungeon = function (args) {
-    log.info("ClearDungeon " + currentPlayerId);
-    //town1_chaotic
-    //house_alignment
-    //gold
-    //currentPlayerId
-    var result = { ScrollOfExperience: 0, ScrollOfGold: 0, ScrollOfItem: 0, ScrollOfInstant: 0 };
-
+function getTownInfo(args)
+{
     var townId = args.TownId;
     var townIdStr = "Town_" + townId;
     var townInfo = server.GetTitleData({
@@ -566,14 +566,22 @@ handlers.ClearDungeon = function (args) {
     //log.info("test " + townInfo.Data.Towns.replace(/\\/g, ""));
     var townInfoDataList = JSON.parse(townInfo.Data.Towns.replace(/\\/g, ""));
     var townInfoData = null;
-    for (var i = 0; i < townInfoDataList.length; i++)
-    {
-        if (townInfoDataList[i].Id == townId)
-        {
+    for (var i = 0; i < townInfoDataList.length; i++) {
+        if (townInfoDataList[i].Id == townId) {
             townInfoData = townInfoDataList[i];
             break;
         }
     }
+    return townInfoData;
+}
+handlers.ClearDungeon = function (args) {
+    log.info("ClearDungeon " + currentPlayerId);
+    //town1_chaotic
+    //house_alignment
+    //gold
+    //currentPlayerId
+    var result = { ScrollOfExperience: 0, ScrollOfGold: 0, ScrollOfItem: 0, ScrollOfInstant: 0 };
+    var townInfoData = getTownInfo(args);
 
     if (townInfoData == null)
     {
@@ -1195,22 +1203,6 @@ handlers.CloudSellItem = function (args) {
      );
     return { "GoldGainResult": goldGainResult, "ItemSoldResult": args.Items };
 };
-handlers.CloudUpdateUserInventoryItemCustomData = function (args) {
-    log.info("PlayFabId " + args.PlayFabId);
-    log.info("CharacterId " + args.CharacterId);
-    log.info("ItemInstanceId " + args.ItemInstanceId);
-    log.info("Data " + args.Data);
-    log.info("KeysToRemove " + args.KeysToRemove);
-
-    //var customData = JSON.parse(args.Data);
-    //server.LogEvent(args);
-    return server.UpdateUserInventoryItemCustomData({
-        PlayFabId: currentPlayerId,
-        CharacterId: args.CharacterId,
-        ItemInstanceId: args.ItemInstanceId,
-        Data: args.Data,
-    });
-};
 handlers.EquipItem = function (args) {
     //unequip
     if (args.PrevItemInstanceId != "") {
@@ -1281,21 +1273,6 @@ handlers.GetRealmWarTime = function (args) {
         log.info("err", err.message);
     };
 };
-// checks to see if an object has any properties
-// Returns true for empty objects and false for non-empty objects
-function isObjectEmpty(obj) {
-    if (typeof obj === 'undefined') {
-        return true;
-    }
-
-    if (Object.getOwnPropertyNames(obj).length === 0) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
 // creates a standard GUID string
 function CreateGUID() {
     //http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
