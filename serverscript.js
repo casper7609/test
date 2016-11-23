@@ -597,6 +597,7 @@ handlers.ClearDungeon = function (args) {
     }
     else if (townInfoData.DungeonMode == 2)//TowerOfInfinity
     {
+        log.info("handleTowerOfInfinity " + townInfoData.DungeonMode);
         handleTowerOfInfinity(args);
     }
     else if (townInfoData.DungeonMode == 3)//tower of trial
@@ -614,14 +615,16 @@ function handleTowerOfInfinity(args) {
             ],
         }
     );
+    log.info("handleTowerOfInfinity got user data");
     var alignment = userData.Data.Alignment.Value;
     var highestLevel = GetHigestLevel();
+    log.info("handleTowerOfInfinity highestLevel " + highestLevel);
     var userAccountInfo = server.GetUserAccountInfo(
         {
             "PlayFabId": currentPlayerId
         }
     );
-    ;
+    log.info("handleTowerOfInfinity userAccountInfo " + JSON.stringify(userAccountInfo));
     try {
         var headers = {};
         var body = {
@@ -633,6 +636,7 @@ function handleTowerOfInfinity(args) {
             timeInSecond: args.TimeInSecond,
             stage: args.Stage
         };
+        log.info("handleTowerOfInfinity body " + JSON.stringify(body));
         var url = "http://52.78.158.221:8080/towerofinfinity";
         var content = JSON.stringify(body);
         var httpMethod = "post";
