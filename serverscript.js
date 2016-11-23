@@ -595,12 +595,54 @@ handlers.ClearDungeon = function (args) {
     else if (townInfoData.DungeonMode == 1)//Raid
     {
     }
+    else if (townInfoData.DungeonMode == 2)//TowerOfInfinity
+    {
+        handleTowerOfInfinity(args);
+    }
     else if (townInfoData.DungeonMode == 3)//tower of trial
     {
         result = handleTowerOfTrial(args, townInfoData, result);
     }
     return result;
 };
+function handleTowerOfInfinity(args) {
+    var userData = server.GetUserData(
+        {
+            "PlayFabId": currentPlayerId,
+            "Keys": [
+                "Alignment"
+            ],
+        }
+    );
+    var alignment = userData.Data.Alignment.Value;
+    var highestLevel = GetHigestLevel();
+    var userAccountInfo = server.GetUserAccountInfo(
+        {
+            "PlayFabId": currentPlayerId
+        }
+    );
+    ;
+    try {
+        var headers = {};
+        var body = {
+            userId: currentPlayerId,
+            houseName: userAccountInfo.UserInfo.TitleInfo.DisplayName,
+            alignment: alignment,
+            characters: args.Characters,
+            highestLevel: highestLevel,
+            timeInSecond: args.TimeInSecond,
+            stage: args.Stage
+        };
+        var url = "http://52.78.158.221:8080/towerofinfinity";
+        var content = JSON.stringify(body);
+        var httpMethod = "post";
+        var contentType = "application/json";
+        var response = http.request(url, httpMethod, content, contentType, headers);
+        log.info("response", response);
+    } catch (err) {
+        log.info("err", err.message);
+    };
+}
 function handleTowerOfTrial(args, townInfoData, result)
 {
     var hasClearedTowerOfTrial = hasClearedTownWithMembers(args, "TowerOfTrial");
