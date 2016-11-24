@@ -618,7 +618,7 @@ handlers.ClearDungeon = function (args) {
     log.info("ClearDungeon " + townInfoData.DungeonMode);
     if (townInfoData.DungeonMode == 0)//NormalDungeon
     {
-        result = handleNormalDungeon(result);
+        result = handleNormalDungeon(args, townInfoData, result);
     }
     else if (townInfoData.DungeonMode == 1)//Raid
     {
@@ -743,10 +743,10 @@ function handleTowerOfTrial(args, townInfoData, result)
 
     return result;
 }
-function handleNormalDungeon(result) {
+function handleNormalDungeon(args, townInfoData, result) {
     //log.info("Got TownInfo " + townInfoData);
-    var partyMembers = JSON.parse(args.CharacterIds);
     var townMobs = getMonsterInfo(townInfoData);
+    var partyMembers = JSON.parse(args.CharacterIds);
     var mobs = args.Mobs;
 
     var scrolls = args.Scrolls;
