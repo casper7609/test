@@ -575,24 +575,27 @@ function getTownInfo(args)
     return townInfoData;
 }
 function getMonsterInfo(townInfoData) {
+    log.info("getMonsterInfo " + JSON.stringify(townInfoData));
     var monsters = townInfoData.MonsterGenSequence[0].MonsterSet[0].Monsters;
     var townMobs = [];
     var titleData = server.GetTitleData({
         "Keys": ["Monsters"]
     });;
     var monsterList = JSON.parse(titleData.Data.Monsters.replace(/\\/g, ""));
-
+    log.info("monsterList " + JSON.stringify(monsterList));
     for (var i = 0; i < monsters.length ; i++)
     {
         for (var k = 0; k < monsterList.length; k++)
         {
             if(monsters[i].Name == monsterList[k].Name)
             {
+                log.info("townMobs.push " + JSON.stringify(monsterList[k]));
                 townMobs.push(monsterList[k]);
                 var recent = townMobs[townMobs.length - 1];
                 recent.Level = monsters[i].Level == null ? townInfoData.Level : monsters[i].Level;
                 recent.Gold = monsters[i].Gold == null ? townInfoData.Gold : monsters[i].Gold;
                 recent.IsUnique = monsters[i].IsUnique == null ? townInfoData.IsUnique : monsters[i].IsUnique;
+                log.info("recent " + JSON.stringify(recent));
                 break;
             }
         }
