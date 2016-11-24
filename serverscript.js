@@ -574,8 +574,33 @@ function getTownInfo(args)
     }
     return townInfoData;
 }
+function getMonsterInfo(townInfoData) {
+    var monsters = townInfoData.MonsterGenSequence[0].MonsterSet[0].Monsters;
+    var townMobs = [];
+    var titleData = server.GetTitleData({
+        "Keys": ["Monsters"]
+    });;
+    var monsterList = JSON.parse(titleData.Data.Monsters.replace(/\\/g, ""));
+
+    for (var i = 0; i < monsters.length ; i++)
+    {
+        for (var k = 0; k < monsterList.length; k++)
+        {
+            if(monsters[i].Name == monsterList[k].Name)
+            {
+                townMobs.push(monsterList[k]);
+                var recent = townMobs[townMobs.length - 1];
+                recent.Level = monsters[i].Level == null ? townInfoData.Level : monsters[i].Level;
+                recent.Gold = monsters[i].Gold == null ? townInfoData.Gold : monsters[i].Gold;
+                recent.IsUnique = monsters[i].IsUnique == null ? townInfoData.IsUnique : monsters[i].IsUnique;
+                break;
+            }
+        }
+    }
+    log.info("townMobs " + JSON.stringify(townMobs));
+    return townMobs;
+}
 handlers.ClearDungeon = function (args) {
-    log.info("ClearDungeon " + currentPlayerId);
     //town1_chaotic
     //house_alignment
     //gold
@@ -587,7 +612,7 @@ handlers.ClearDungeon = function (args) {
     {
         return {"Error": "Town Not Found"};
     }
-
+    log.info("ClearDungeon " + townInfoData.DungeonMode);
     if (townInfoData.DungeonMode == 0)//NormalDungeon
     {
         result = handleNormalDungeon(result);
@@ -717,8 +742,8 @@ function handleTowerOfTrial(args, townInfoData, result)
 }
 function handleNormalDungeon(result) {
     //log.info("Got TownInfo " + townInfoData);
-    var townMobs = townInfoData.Mobs;
     var partyMembers = JSON.parse(args.CharacterIds);
+    var townMobs = getMonsterInfo(townInfoData);
     var mobs = args.Mobs;
 
     var scrolls = args.Scrolls;
@@ -845,7 +870,7 @@ function handleNormalDungeon(result) {
                             {
                                 "CatalogVersion": catalogVersion,
                                 "PlayFabId": currentPlayerId,
-                                "TableId": townMobs[k].DropTable
+                                "TableId": townInfoData.DropTable
                             }
                         );
                         if (randomItem.ResultItemId != "Nothing") {
@@ -854,7 +879,7 @@ function handleNormalDungeon(result) {
                         }
                     }
                     catch (err) {
-                        log.info("create drop table for " + townMobs[k].DropTable);
+                        log.info("create drop table for " + townInfoData.DropTable);
                     }
                 }
                 break;
