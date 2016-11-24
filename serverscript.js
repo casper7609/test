@@ -597,7 +597,6 @@ handlers.ClearDungeon = function (args) {
     }
     else if (townInfoData.DungeonMode == 2)//TowerOfInfinity
     {
-        log.info("handleTowerOfInfinity " + townInfoData.DungeonMode);
         handleTowerOfInfinity(args);
     }
     else if (townInfoData.DungeonMode == 3)//tower of trial
@@ -615,16 +614,13 @@ function handleTowerOfInfinity(args) {
             ],
         }
     );
-    log.info("handleTowerOfInfinity got user data");
     var alignment = userData.Data.Alignment.Value;
     var highestLevel = GetHigestLevel();
-    log.info("handleTowerOfInfinity highestLevel " + highestLevel);
     var userAccountInfo = server.GetUserAccountInfo(
         {
             "PlayFabId": currentPlayerId
         }
     );
-    log.info("handleTowerOfInfinity userAccountInfo " + JSON.stringify(userAccountInfo));
     try {
         var headers = {};
         var body = {
@@ -636,7 +632,6 @@ function handleTowerOfInfinity(args) {
             timeInSecond: args.TimeInSecond,
             stage: args.Stage
         };
-        log.info("handleTowerOfInfinity body " + JSON.stringify(body));
         var url = "http://52.78.158.221:8080/towerofinfinity";
         var content = JSON.stringify(body);
         var httpMethod = "post";
@@ -1302,11 +1297,26 @@ handlers.RewardRealmWar = function (args) {
 };
 handlers.GetRealmWarTime = function (args) {
     try {
-        var headers = {
-            "X-MyCustomHeader": "Some Value"
-        };
+        var headers = {};
 
         var url = "http://52.78.158.221:8080/realm/timeleft";
+        var content = "";
+        var httpMethod = "get";
+        var contentType = "application/json";
+
+        // The pre-defined http object makes synchronous HTTP requests
+        var response = http.request(url, httpMethod, content, contentType, headers);
+        log.info("response", response);
+        return response;
+    } catch (err) {
+        log.info("err", err.message);
+    };
+};
+handlers.GetTowerOfInfinity = function (args) {
+    try {
+        var headers = {};
+
+        var url = "http://52.78.158.221:8080/towerofinfinity";
         var content = "";
         var httpMethod = "get";
         var contentType = "application/json";
