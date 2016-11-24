@@ -1316,7 +1316,7 @@ handlers.GetTowerOfInfinity = function (args) {
     try {
         var headers = {};
 
-        var url = "http://52.78.158.221:8080/towerofinfinity";
+        var url = "http://52.78.158.221:8080/towerofinfinity?userId=" + currentPlayerId;;
         var content = "";
         var httpMethod = "get";
         var contentType = "application/json";
