@@ -542,9 +542,7 @@ handlers.InstantClearDungeon = function (args) {
     args.Mobs = [];
     for (var i = 0; i < townMobs.length; i++) {
         var mob = townMobs[i];
-        var spawnCountPerTile = range(mob.SpawnMinCountPerTile, mob.SpawnMaxCountPerTile);
-        log.info(mob.Name + " " + spawnCountPerTile);
-        var mobCount = mob.IsUnique ? mob.SpawnRatePerDungeon * spawnCountPerTile : tileAvg * mob.SpawnRatePerTile * spawnCountPerTile;
+        var mobCount = mob.IsUnique ? 1 : tileAvg;
         log.info(mob.Name + " " + mobCount);
         args.Mobs.push({ "Name": mob.Name, "Count": mobCount });
     }
