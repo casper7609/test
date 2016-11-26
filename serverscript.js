@@ -14,7 +14,6 @@ function hasClearedTownWithMembers(args, key)
 {
 	var townId = args.TownId;
 	var townIdStr = "Town_" + townId;
-	log.info("hasClearedTownWithMembers " + townIdStr + " key " + key);
 
 	var userData = server.GetUserData(
 		{
@@ -37,13 +36,11 @@ function hasClearedTownWithMembers(args, key)
 	}
 	else
 	{
-	    log.info("userData.Data.ClearData " + userData.Data.ClearData);
 	    if (userData.Data.ClearData == null) {
 	        return false;
 	    }
 
 	    var clearDataList = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
-	    log.info("clearDataList " + clearDataList);
 	    if (clearDataList == null || clearDataList.length == 0) {
 	        return false;
 	    }
@@ -59,7 +56,6 @@ function hasClearedTownWithMembers(args, key)
 	    }
 
 	    var clearList = clearData.ClearList;
-	    log.info("clearList " + clearList);
 	    if (clearList == null || clearList.length == 0) {
 	        return false;
 	    }
@@ -528,26 +524,24 @@ handlers.GetMyInvestment = function (args) {
 handlers.InstantClearDungeon = function (args) {
     
     log.info("InstantClearDungeon " + currentPlayerId);
-    var townId = args.TownId;
-    var townIdStr = "Town_" + townId;
-    var townInfo = server.GetTitleData({
-        "Keys": ["Towns"]
-    });
+    
     if (!hasClearedTownWithMembers(args, "ClearData"))
     {
         log.info("hacked client " + currentPlayerId);
         return;
     }
+    var townInfoData = getTownInfo(args);
 
-    var townInfoDataList = JSON.parse(townInfo.Data.Towns.replace(/\\/g, ""));
-    var townInfoData = townInfoDataList[parseInt(townId)];
+    if (townInfoData == null) {
+        return { "Error": "Town Not Found" };
+    }
     //log.info("Got TownInfo " + townInfoData);
-    var mobs = townInfoData.Mobs;
+    var townMobs = getMonsterInfo(townInfoData);
     var tileAvg = range(townInfoData.TileMin, townInfoData.TileMax);
     log.info("tileAvg " + tileAvg);
     args.Mobs = [];
-    for (var i = 0; i < mobs.length; i++) {
-        var mob = mobs[i];
+    for (var i = 0; i < townMobs.length; i++) {
+        var mob = townMobs[i];
         var spawnCountPerTile = range(mob.SpawnMinCountPerTile, mob.SpawnMaxCountPerTile);
         log.info(mob.Name + " " + spawnCountPerTile);
         var mobCount = mob.IsUnique ? mob.SpawnRatePerDungeon * spawnCountPerTile : tileAvg * mob.SpawnRatePerTile * spawnCountPerTile;
