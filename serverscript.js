@@ -14,7 +14,8 @@ function hasClearedTownWithMembers(args, key)
 {
 	var townId = args.TownId;
 	var townIdStr = "Town_" + townId;
-	
+	log.info("hasClearedTownWithMembers " + townIdStr + " key " + key);
+
 	var userData = server.GetUserData(
 		{
 			"PlayFabId": currentPlayerId,
@@ -36,11 +37,13 @@ function hasClearedTownWithMembers(args, key)
 	}
 	else
 	{
+	    log.info("userData.Data.ClearData " + userData.Data.ClearData);
 	    if (userData.Data.ClearData == null) {
 	        return false;
 	    }
 
 	    var clearDataList = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
+	    log.info("clearDataList " + clearDataList);
 	    if (clearDataList == null || clearDataList.length == 0) {
 	        return false;
 	    }
@@ -56,6 +59,7 @@ function hasClearedTownWithMembers(args, key)
 	    }
 
 	    var clearList = clearData.ClearList;
+	    log.info("clearList " + clearList);
 	    if (clearList == null || clearList.length == 0) {
 	        return false;
 	    }
@@ -72,6 +76,7 @@ function hasClearedTownWithMembers(args, key)
 	        }
 	    }
 	}
+	log.info("return false ");
 	return false;
 }
 function saveClearedTownWithMembers(args, key)
@@ -528,13 +533,11 @@ handlers.InstantClearDungeon = function (args) {
     var townInfo = server.GetTitleData({
         "Keys": ["Towns"]
     });
-    log.info("InstantClearDungeon hasClearedTownWithMembers");
     if (!hasClearedTownWithMembers(args, "ClearData"))
     {
         log.info("hacked client " + currentPlayerId);
         return;
     }
-    log.info("InstantClearDungeon getting townInfo");
 
     var townInfoDataList = JSON.parse(townInfo.Data.Towns.replace(/\\/g, ""));
     var townInfoData = townInfoDataList[parseInt(townId)];
