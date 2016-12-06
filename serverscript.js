@@ -554,7 +554,6 @@ handlers.InstantClearDungeon = function (args) {
 function getTownInfo(args)
 {
     var townId = args.TownId;
-    var townIdStr = "Town_" + townId;
     var townInfo = server.GetTitleData({
         "Keys": ["Towns"]
     });;
@@ -1279,6 +1278,79 @@ handlers.UnEquipItem = function (args) {
         "PlayFabId": args.PlayFabId,
         "CharacterId": args.CharacterId,
         "ItemInstanceId": args.PrevItemInstanceId
+    });
+};
+
+handlers.PurchaseCharacter = function (args) {
+    log.info("PlayFabId " + args.PlayFabId);
+    log.info("ClassType " + args.ClassType);
+    log.info("ClassStatus " + args.ClassStatus);
+    var classType = args.ClassType;
+
+    var gemPrice = 0;
+    var allChars = server.GetAllUsersCharacters({
+        "PlayFabId": currentPlayerId
+    });
+    if (allChars.Characters.length < 3) {
+        gemPrice = 0;
+    }
+    else
+    {
+        gemPrice = 400 * Math.pow(2, (allChars.Characters.length - 3));
+    }
+    log.info("gemPrice " + gemPrice);
+
+    var userInv = server.GetUserInventory({
+        "PlayFabId": currentPlayerId
+    });
+    var currentGem = userInv.VirtualCurrency.GP;
+    if (currentGem < gemPrice) {
+        return { "Error": "Insufficient Gem" };
+    }
+    server.SubtractUserVirtualCurrency(
+        {
+            "PlayFabId": currentPlayerId,
+            "VirtualCurrency": "GP",
+            "Amount": gemPrice
+        }
+    );
+
+    var grantCharResult = server.GrantCharacterToUser({
+        "CatalogVersion": catalogVersion,
+        "CharacterName": classType,
+        "ItemId": classType
+    });
+    var characterId = grantCharResult.CharacterId;
+    log.info("characterId " + characterId);
+    server.UpdateCharacterData({
+        "CharacterId": characterId,
+        "Data": JSON.parse(args.ClassStatus)
+    });
+    var itemId = "";
+    if (classType == "Rogue")
+    {
+        itemId = "Dagger_00";
+    }
+    else if (classType == "Hunter")
+    {
+        itemId = "Bow_00";
+    }
+    else if (classType == "Warrior" || classType == "SpellSword" || classType == "Paladin")
+    {
+        itemId = "TwoHandSword_00";
+    }
+    else if (classType == "Sorcerer" || classType == "Warlock" || classType == "Priest") 
+    {
+        itemId = "Staff_00";
+    }
+    
+    log.info("itemId " + itemId);
+    server.PurchaseItem({
+        "CatalogVersion": catalogVersion,
+        "CharacterId": characterId,
+        "ItemId": itemId,
+        "VirtualCurrency": "GP",
+        "Price": 0,
     });
 };
 //called by java server
