@@ -1359,13 +1359,14 @@ handlers.PurchaseCharacter = function (args) {
     }
     
     log.info("itemId " + itemId);
-    server.GrantItemsToCharacter({
+    var grantItemResult = server.GrantItemsToCharacter({
         "Annotation": "Char Creation Basic Item",
         "CatalogVersion": catalogVersion,
         "PlayFabId": currentPlayerId,
         "CharacterId": characterId,
         "ItemIds": [ itemId ]
     });
+    log.info("grantItemResult " + JSON.stringify(grantItemResult));
 };
 //called by java server
 handlers.RewardRealmWar = function (args) {
