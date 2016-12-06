@@ -1319,8 +1319,10 @@ handlers.PurchaseCharacter = function (args) {
     }
 
     var grantCharResult = server.GrantCharacterToUser({
+        "PlayFabId": currentPlayerId,
         "CatalogVersion": catalogVersion,
         "CharacterName": classType,
+        "CharacterType": classType,
         "ItemId": classType
     });
     var characterId = grantCharResult.CharacterId;
