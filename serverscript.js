@@ -1359,12 +1359,12 @@ handlers.PurchaseCharacter = function (args) {
     }
     
     log.info("itemId " + itemId);
-    server.PurchaseItem({
+    server.GrantItemsToCharacter({
+        "Annotation": "Char Creation Basic Item",
         "CatalogVersion": catalogVersion,
+        "PlayFabId": currentPlayerId,
         "CharacterId": characterId,
-        "ItemId": itemId,
-        "VirtualCurrency": "GD",
-        "Price": 0,
+        "ItemIds": [ itemId ]
     });
 };
 //called by java server
