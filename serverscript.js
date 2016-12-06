@@ -1307,13 +1307,16 @@ handlers.PurchaseCharacter = function (args) {
     if (currentGem < gemPrice) {
         return { "Error": "Insufficient Gem" };
     }
-    server.SubtractUserVirtualCurrency(
-        {
-            "PlayFabId": currentPlayerId,
-            "VirtualCurrency": "GP",
-            "Amount": gemPrice
-        }
-    );
+    if (gemPrice > 0)
+    {
+        server.SubtractUserVirtualCurrency(
+            {
+                "PlayFabId": currentPlayerId,
+                "VirtualCurrency": "GP",
+                "Amount": gemPrice
+            }
+        );
+    }
 
     var grantCharResult = server.GrantCharacterToUser({
         "CatalogVersion": catalogVersion,
