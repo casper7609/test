@@ -1327,9 +1327,16 @@ handlers.PurchaseCharacter = function (args) {
     });
     var characterId = grantCharResult.CharacterId;
     log.info("characterId " + characterId);
+    var classStatus = JSON.parse(args.ClassStatus);
+    var luck = classStatus["Luck"];
+    delete classStatus["Luck"];
     server.UpdateCharacterData({
         "CharacterId": characterId,
         "Data": JSON.parse(args.ClassStatus)
+    });
+    server.UpdateCharacterData({
+        "CharacterId": characterId,
+        "Data": {"Luck":luck}
     });
     var itemId = "";
     if (classType == "Rogue")
