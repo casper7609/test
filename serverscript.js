@@ -1363,7 +1363,7 @@ handlers.PurchaseCharacter = function (args) {
         "CatalogVersion": catalogVersion,
         "CharacterId": characterId,
         "ItemId": itemId,
-        "VirtualCurrency": "GP",
+        "VirtualCurrency": "GD",
         "Price": 0,
     });
 };
