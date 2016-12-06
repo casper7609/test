@@ -1331,10 +1331,12 @@ handlers.PurchaseCharacter = function (args) {
     var luck = classStatus["Luck"];
     delete classStatus["Luck"];
     server.UpdateCharacterData({
+        "PlayFabId": currentPlayerId,
         "CharacterId": characterId,
-        "Data": JSON.parse(args.ClassStatus)
+        "Data": classStatus
     });
     server.UpdateCharacterData({
+        "PlayFabId": currentPlayerId,
         "CharacterId": characterId,
         "Data": {"Luck":luck}
     });
