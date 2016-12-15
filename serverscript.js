@@ -1280,7 +1280,6 @@ handlers.UnEquipItem = function (args) {
         "ItemInstanceId": args.PrevItemInstanceId
     });
 };
-
 handlers.PurchaseCharacter = function (args) {
     log.info("PlayFabId " + args.PlayFabId);
     log.info("ClassType " + args.ClassType);
@@ -1368,6 +1367,84 @@ handlers.PurchaseCharacter = function (args) {
     });
     log.info("grantItemResult " + JSON.stringify(grantItemResult));
 };
+handlers.SummonItem = function (args) {
+    log.info("PlayFabId " + args.PlayFabId);
+
+    var count = args.Count;
+    var gemPrice = count == 11 ? 3000 : 300;
+    var dropTableId = args.DropTableId;
+
+    log.info("gemPrice " + gemPrice);
+
+    var userInv = server.GetUserInventory({
+        "PlayFabId": currentPlayerId
+    });
+    var currentGem = userInv.VirtualCurrency.GP;
+    if (currentGem < gemPrice) {
+        return { "Error": "Insufficient Gem" };
+    }
+    if (gemPrice > 0) {
+        server.SubtractUserVirtualCurrency(
+            {
+                "PlayFabId": currentPlayerId,
+                "VirtualCurrency": "GP",
+                "Amount": gemPrice
+            }
+        );
+    }
+    var items = [];
+    for (var i = 0; i < count; i++)
+    {
+        var randomItem = server.EvaluateRandomResultTable(
+            {
+                "CatalogVersion": catalogVersion,
+                "PlayFabId": currentPlayerId,
+                "TableId": dropTableId
+            }
+        );
+        if (randomItem.ResultItemId != "Nothing") {
+            log.info("item " + JSON.stringify(randomItem));
+            items.push(randomItem.ResultItemId);
+        }
+    }
+    if (count == 11)
+    {
+        var hasAnyAboveFour = false;
+        for (var i = 0; i < items.length; i++)
+        {
+            var _str = items[i];
+            var str = _str.substr(_str.length - 2, 1);
+            if (parseInt(str) >= 4)
+            {
+                hasAnyAboveFour = true;
+                break;
+            }
+        }
+        if (!hasAnyAboveFour)
+        {
+            var randomItem = server.EvaluateRandomResultTable(
+                {
+                    "CatalogVersion": catalogVersion,
+                    "PlayFabId": currentPlayerId,
+                    "TableId": (dropTableId + "Bonus")
+                }
+            );
+            items.pop();
+            items.push(randomItem.ResultItemId);
+        }
+    }
+    var realItems = [];
+    var itemGrantResult = server.GrantItemsToUser(
+        {
+            "CatalogVersion": catalogVersion,
+            "PlayFabId": currentPlayerId,
+            "ItemIds": items
+        }
+    );
+    realItems = realItems.concat(itemGrantResult["ItemGrantResults"]);
+
+};
+
 //called by java server
 handlers.RewardRealmWar = function (args) {
 
