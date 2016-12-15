@@ -1214,7 +1214,6 @@ handlers.CloudSellItem = function (args) {
     var items = JSON.parse(args.Items);
     var catalogVersion = args.CatalogVersion;
     //log.info("characterId " + characterId);
-    log.info("items " + items.length);
 
     var catalogItems = server.GetCatalogItems({
         "CatalogVersion": catalogVersion
@@ -1237,15 +1236,12 @@ handlers.CloudSellItem = function (args) {
         else
             storePrice = storePrice / 2;
         gold += storePrice;
-        log.info("gold " + gold);
         var consumeItemResult = server.ConsumeItem({
             "PlayFabId": currentPlayerId,
             "ItemInstanceId": itemInstanceId,
-            //"CharacterId": characterId,
             "ConsumeCount": 1
         });
     }
-
 
     var goldGainResult = server.AddUserVirtualCurrency(
          {
