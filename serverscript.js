@@ -1220,31 +1220,30 @@ handlers.CloudSellItem = function (args) {
         "CatalogVersion": catalogVersion
     });
 
-    var gold = 0;
+    var catalogMap = {};
+    for (var i = 0; i < catalogItems.Catalog.length; i++) {
+        var catalogItem = catalogItems.Catalog[i];
+        catalogMap[catalogItem.ItemId] = catalogItem;
+    }
 
+    var gold = 0;
     for (var k = 0; k < items.length; k++) {
         var itemId = items[k].ItemId;
         var itemInstanceId = items[k].InstanceId;
-        for (var i = 0; i < catalogItems.Catalog.length; i++) {
-            var catalogItem = catalogItems.Catalog[i];
-            if (catalogItem.ItemId == itemId) {
-                var storePrice = parseInt(catalogItem.VirtualCurrencyPrices.GD);
-                if (storePrice == 0)
-                    storePrice = 50;//this is basic 100 gold weapons given as default
-                else
-                    storePrice = storePrice / 2;
-                gold += storePrice;
-                log.info("gold " + gold);
-                var consumeItemResult = server.ConsumeItem({
-                    "PlayFabId": currentPlayerId,
-                    "ItemInstanceId": itemInstanceId,
-                    //"CharacterId": characterId,
-                    "ConsumeCount": 1
-                });
-                //log.info("consumeItemResult " + JSON.parse(consumeItemResult));
-                break;
-            }
-        }
+        var catalogItem = catalogMap[itemId];
+        var storePrice = parseInt(catalogItem.VirtualCurrencyPrices.GD);
+        if (storePrice == 0)
+            storePrice = 50;//this is basic 100 gold weapons given as default
+        else
+            storePrice = storePrice / 2;
+        gold += storePrice;
+        log.info("gold " + gold);
+        var consumeItemResult = server.ConsumeItem({
+            "PlayFabId": currentPlayerId,
+            "ItemInstanceId": itemInstanceId,
+            //"CharacterId": characterId,
+            "ConsumeCount": 1
+        });
     }
 
 
