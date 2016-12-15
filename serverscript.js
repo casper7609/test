@@ -1442,7 +1442,9 @@ handlers.SummonItem = function (args) {
         }
     );
     realItems = realItems.concat(itemGrantResult["ItemGrantResults"]);
-
+    var result = {};
+    result.Items = realItems;
+    return result;
 };
 
 //called by java server
