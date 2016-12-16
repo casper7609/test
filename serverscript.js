@@ -1441,6 +1441,26 @@ handlers.SummonItem = function (args) {
     result.Items = realItems;
     return result;
 };
+handlers.GetRank = function (args) {
+    try {
+        var headers = {
+            "X-MyCustomHeader": "Some Value"
+        };
+
+        var url = "http://52.78.158.221:8080/rank";
+        var content = "";
+        var httpMethod = "get";
+        var contentType = "application/json";
+
+        // The pre-defined http object makes synchronous HTTP requests
+        var response = http.request(url, httpMethod, content, contentType, headers);
+        log.info("response", response);
+        return response;
+    } catch (err) {
+        log.info("err", err.message);
+    };
+};
+
 
 //called by java server
 handlers.RewardRealmWar = function (args) {
