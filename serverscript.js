@@ -1443,11 +1443,20 @@ handlers.SummonItem = function (args) {
 };
 handlers.GetRank = function (args) {
     try {
+        var userData = server.GetUserData(
+            {
+                "PlayFabId": currentPlayerId,
+                "Keys": [
+                    "Alignment"
+                ],
+            }
+        );
+        var alignment = userData.Data.Alignment.Value;
         var headers = {
             "X-MyCustomHeader": "Some Value"
         };
 
-        var url = "http://52.78.158.221:8080/rank";
+        var url = "http://52.78.158.221:8080/rank?userId=" + currentPlayerId + "&alignment=" + alignment;
         var content = "";
         var httpMethod = "get";
         var contentType = "application/json";
