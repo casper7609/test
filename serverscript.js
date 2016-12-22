@@ -488,7 +488,7 @@ handlers.InvestTown = function (args) {
         var httpMethod = "post";
         var contentType = "application/json";
 
-        // The pre-defined http object makes synchronous HTTP requests
+       
         var response = http.request(url, httpMethod, content, contentType, headers);
         log.info("response", response);
     } catch (err) {
@@ -513,7 +513,7 @@ handlers.GetMyInvestment = function (args) {
         var httpMethod = "get";
         var contentType = "application/json";
 
-        // The pre-defined http object makes synchronous HTTP requests
+       
         var response = http.request(url, httpMethod, content, contentType, headers);
         log.info("response", response);
         return response;
@@ -927,6 +927,7 @@ function handleNormalDungeon(args, townInfoData, result) {
     if (scrollOfExperienceEnabled && scrollOfExperienceVer) {
         totalExp *= 2;
     }
+    var prevHighestLevel = GetHigestLevel();
 
     for (var i = 0; i < partyMembers.length; i++) {
         var charStat = server.GetCharacterStatistics(
@@ -954,6 +955,9 @@ function handleNormalDungeon(args, townInfoData, result) {
         expResult.push({ "CharacterId": partyMembers[i], "PreviousLevel": previousLevel, "CurrentLevel": currentLevel });
         log.info("eachExp " + totalExp + " for " + partyMembers[i]);
     }
+
+    var curHighestLevel = GetHigestLevel();
+
 
     totalGold = parseInt(totalGold);
     if (scrollOfGoldEnabled && scrollOfGoldVer) {
@@ -1022,7 +1026,7 @@ function handleNormalDungeon(args, townInfoData, result) {
         var httpMethod = "post";
         var contentType = "application/json";
 
-        // The pre-defined http object makes synchronous HTTP requests
+       
         var response = http.request(url, httpMethod, content, contentType, headers);
         log.info("response", response);
     } catch (err) {
@@ -1051,7 +1055,7 @@ handlers.SumOccupation = function (args) {
         var httpMethod = "get";
         var contentType = "application/json";
 
-        // The pre-defined http object makes synchronous HTTP requests
+       
         var response = http.request(url, httpMethod, content, contentType, headers);
         log.info("response", response);
         return response;
@@ -1072,7 +1076,7 @@ handlers.TotalOccupation = function (args) {
         var httpMethod = "get";
         var contentType = "application/json";
 
-        // The pre-defined http object makes synchronous HTTP requests
+       
         var response = http.request(url, httpMethod, content, contentType, headers);
         log.info("response", response);
         return response;
@@ -1093,7 +1097,7 @@ handlers.OccupationPerTown = function (args) {
         var httpMethod = "get";
         var contentType = "application/json";
 
-        // The pre-defined http object makes synchronous HTTP requests
+       
         var response = http.request(url, httpMethod, content, contentType, headers);
         log.info("response", response);
         return response;
@@ -1102,11 +1106,6 @@ handlers.OccupationPerTown = function (args) {
     };
 };
 handlers.EnchantItem = function (args) {
-    log.info("PlayFabId " + args.PlayFabId);
-    log.info("CharacterId " + args.CharacterId);
-    log.info("ItemInstanceId " + args.ItemInstanceId);
-    log.info("CatalogVersion " + args.CatalogVersion);
-
     var characterId = args.CharacterId;
     var itemInstanceId = args.ItemInstanceId;
     var catalogVersion = args.CatalogVersion;
@@ -1213,7 +1212,6 @@ handlers.CloudSellItem = function (args) {
     var characterId = args.CharacterId;
     var items = JSON.parse(args.Items);
     var catalogVersion = args.CatalogVersion;
-    //log.info("characterId " + characterId);
 
     var catalogItems = server.GetCatalogItems({
         "CatalogVersion": catalogVersion
@@ -1257,7 +1255,6 @@ handlers.EquipItem = function (args) {
     if (args.PrevItemInstanceId != "") {
         handlers.UnEquipItem(args);
     }
-    log.info("ItemToEquipInstanceId " + args.ItemToEquipInstanceId);
     //equip
     server.MoveItemToCharacterFromUser({
         "PlayFabId": args.PlayFabId,
@@ -1266,9 +1263,6 @@ handlers.EquipItem = function (args) {
     });
 };
 handlers.UnEquipItem = function (args) {
-    log.info("PlayFabId " + args.PlayFabId);
-    log.info("CharacterId " + args.CharacterId);
-    log.info("PrevItemInstanceId " + args.PrevItemInstanceId);
     server.MoveItemToUserFromCharacter({
         "PlayFabId": args.PlayFabId,
         "CharacterId": args.CharacterId,
@@ -1460,17 +1454,12 @@ handlers.GetRank = function (args) {
         var content = "";
         var httpMethod = "get";
         var contentType = "application/json";
-
-        // The pre-defined http object makes synchronous HTTP requests
         var response = http.request(url, httpMethod, content, contentType, headers);
-        log.info("response", response);
         return response;
     } catch (err) {
         log.info("err", err.message);
     };
 };
-
-
 //called by java server
 handlers.RewardRealmWar = function (args) {
 
@@ -1508,7 +1497,7 @@ handlers.GetRealmWarTime = function (args) {
         var httpMethod = "get";
         var contentType = "application/json";
 
-        // The pre-defined http object makes synchronous HTTP requests
+       
         var response = http.request(url, httpMethod, content, contentType, headers);
         log.info("response", response);
         return response;
@@ -1525,7 +1514,7 @@ handlers.GetTowerOfInfinity = function (args) {
         var httpMethod = "get";
         var contentType = "application/json";
 
-        // The pre-defined http object makes synchronous HTTP requests
+       
         var response = http.request(url, httpMethod, content, contentType, headers);
         log.info("response", response);
         return response;
@@ -1533,8 +1522,3 @@ handlers.GetTowerOfInfinity = function (args) {
         log.info("err", err.message);
     };
 };
-// creates a standard GUID string
-function CreateGUID() {
-    //http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) { var r = Math.random() * 16 | 0, v = c == 'x' ? r : r & 0x3 | 0x8; return v.toString(16); });
-}
