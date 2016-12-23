@@ -4,6 +4,7 @@ var enchantSuccessChance = 100;
 var enchantPriceInGold = 100;
 var catalogVersion = "0.9";
 var LVL_UP_PAC = "LVL_UP_PAC";
+var MON_SUB_PAC = "MON_SUB_PAC";
 
 function range(min, max) {
     var offset = max - min;
@@ -1049,53 +1050,7 @@ function handleNormalDungeon(args, townInfoData, result) {
     result.Items = realItems;
     return result;
 }
-function checkLevelUpPackage(curHighestLevel)
-{
-    var getUserReadOnlyDataResponse = server.GetUserReadOnlyData({
-        "PlayFabId": currentPlayerId,
-        "Keys": [LVL_UP_PAC]
-    });
-    var tracker = {};
-    if (!getUserReadOnlyDataResponse.Data.hasOwnProperty(LVL_UP_PAC)) {
-        return;
-    }
-    else
-    {
-        tracker = JSON.parse(getUserReadOnlyDataResponse.Data[LVL_UP_PAC].Value);
 
-        var lvlFrom = 1;
-        if (tracker.Level != null)
-        {
-            lvlFrom = tracker.Level;
-        }
-        for (var i = lvlFrom; i < curHighestLevel; i++)
-        {
-            GrantItems("GP200", "Granted for level up to Lv. " + i);
-        }
-        
-        tracker.Level = curHighestLevel;
-        var UpdateUserReadOnlyDataRequest = {
-            "PlayFabId": currentPlayerId,
-            "Data": {}
-        };
-        UpdateUserReadOnlyDataRequest.Data[LVL_UP_PAC] = JSON.stringify(tracker);
-        server.UpdateUserReadOnlyData(UpdateUserReadOnlyDataRequest);
-    }
-}
-function GrantItems(items, annotation) {
-    log.info("Granting: " + items);
-    var parsed = Array.isArray(items) ? items : [items];
-
-    var GrantItemsToUserRequest = {
-        "CatalogVersion": catalogVersion,
-        "PlayFabId": currentPlayerId,
-        "ItemIds": parsed,
-        "Annotation": annotation
-    };
-
-    var GrantItemsToUserResult = server.GrantItemsToUser(GrantItemsToUserRequest);
-    return JSON.stringify(GrantItemsToUserResult.ItemGrantResults);
-}
 handlers.SumOccupation = function (args) {
     //Town_0_Occupation
     //http://52.78.158.221:8080/occupation?townId=0&userId=playerA&alignment=Chaotic&count=1
@@ -1276,19 +1231,57 @@ handlers.InAppPurchase = function (args) {
     }
     else if (args.ItemId == "monthlypackage")
     {
-    }
-    else
-    {
-        var GrantItemsToUserRequest = {
-            "CatalogVersion": catalogVersion,
+        var monUpdateUserReadOnlyDataRequest = {
             "PlayFabId": currentPlayerId,
-            "ItemIds": [args.ItemId],
-            "Annotation": "IAP " + args.TransactionId
+            "Data": {}
         };
-        var GrantItemsToUserResult = server.GrantItemsToUser(GrantItemsToUserRequest);
-        return JSON.stringify(GrantItemsToUserResult.ItemGrantResults);
+        monUpdateUserReadOnlyDataRequest.Data[MON_SUB_PAC] = JSON.stringify({ "TransactionId": args.TransactionId });
+        server.UpdateUserReadOnlyData(monUpdateUserReadOnlyDataRequest);
     }
 };
+function checkLevelUpPackage(curHighestLevel) {
+    var getUserReadOnlyDataResponse = server.GetUserReadOnlyData({
+        "PlayFabId": currentPlayerId,
+        "Keys": [LVL_UP_PAC]
+    });
+    var tracker = {};
+    if (!getUserReadOnlyDataResponse.Data.hasOwnProperty(LVL_UP_PAC)) {
+        return;
+    }
+    else {
+        tracker = JSON.parse(getUserReadOnlyDataResponse.Data[LVL_UP_PAC].Value);
+
+        var lvlFrom = 1;
+        if (tracker.Level != null) {
+            lvlFrom = tracker.Level;
+        }
+        for (var i = lvlFrom; i < curHighestLevel; i++) {
+            GrantItems("GP200", "Granted for level up to Lv. " + i);
+        }
+
+        tracker.Level = curHighestLevel;
+        var UpdateUserReadOnlyDataRequest = {
+            "PlayFabId": currentPlayerId,
+            "Data": {}
+        };
+        UpdateUserReadOnlyDataRequest.Data[LVL_UP_PAC] = JSON.stringify(tracker);
+        server.UpdateUserReadOnlyData(UpdateUserReadOnlyDataRequest);
+    }
+}
+function GrantItems(items, annotation) {
+    log.info("Granting: " + items);
+    var parsed = Array.isArray(items) ? items : [items];
+
+    var GrantItemsToUserRequest = {
+        "CatalogVersion": catalogVersion,
+        "PlayFabId": currentPlayerId,
+        "ItemIds": parsed,
+        "Annotation": annotation
+    };
+
+    var GrantItemsToUserResult = server.GrantItemsToUser(GrantItemsToUserRequest);
+    return JSON.stringify(GrantItemsToUserResult.ItemGrantResults);
+}
 handlers.CloudSellItem = function (args) {
     var characterId = args.CharacterId;
     var items = JSON.parse(args.Items);
