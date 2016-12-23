@@ -1251,16 +1251,24 @@ handlers.CloudSellItem = function (args) {
     return { "GoldGainResult": goldGainResult, "ItemSoldResult": args.Items };
 };
 handlers.EquipItem = function (args) {
-    //unequip
-    if (args.PrevItemInstanceId != "") {
-        handlers.UnEquipItem(args);
+    var itemSwapInfoStr = args.ItemSwapInfo;
+    var itemSwapInfos = JSON.parse(itemSwapInfoStr);
+    for (var i = 0; i < itemSwapInfos.length; i++)
+    {
+        var itemSwapInfo = itemSwapInfos[i];
+        //unequip
+        if (itemSwapInfo.PrevItemInstanceId != "") {
+            itemSwapInfo.PlayFabId = args.PlayFabId;
+            itemSwapInfo.CharacterId = args.CharacterId;
+            handlers.UnEquipItem(itemSwapInfo);
+        }
+        //equip
+        server.MoveItemToCharacterFromUser({
+            "PlayFabId": args.PlayFabId,
+            "CharacterId": args.CharacterId,
+            "ItemInstanceId": itemSwapInfo.ItemToEquipInstanceId
+        });
     }
-    //equip
-    server.MoveItemToCharacterFromUser({
-        "PlayFabId": args.PlayFabId,
-        "CharacterId": args.CharacterId,
-        "ItemInstanceId": args.ItemToEquipInstanceId
-    });
 };
 handlers.UnEquipItem = function (args) {
     server.MoveItemToUserFromCharacter({
