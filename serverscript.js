@@ -1068,8 +1068,10 @@ function checkLevelUpPackage(curHighestLevel)
         {
             lvlFrom = tracker.Level;
         }
-
-        GrantItems("GP200", (curHighestLevel - lvlFrom), "Granted for level up to Lv. " + curHighestLevel);
+        for (var i = lvlFrom; i < curHighestLevel; i++)
+        {
+            GrantItems("GP200", "Granted for level up to Lv. " + i);
+        }
         
         tracker.Level = curHighestLevel;
         server.UpdateUserReadOnlyData({
@@ -1078,11 +1080,12 @@ function checkLevelUpPackage(curHighestLevel)
         });
     }
 }
-function GrantItems(items, count, annotation) {
+function GrantItems(items, annotation) {
     log.info("Granting: " + items);
     var parsed = Array.isArray(items) ? items : [items];
 
     var GrantItemsToUserRequest = {
+        "CatalogVersion": catalogVersion,
         "PlayFabId": currentPlayerId,
         "ItemIds": parsed,
         "Annotation": annotation
