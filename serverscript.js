@@ -1074,10 +1074,12 @@ function checkLevelUpPackage(curHighestLevel)
         }
         
         tracker.Level = curHighestLevel;
-        server.UpdateUserReadOnlyData({
+        var UpdateUserReadOnlyDataRequest = {
             "PlayFabId": currentPlayerId,
-            "Data": JSON.stringify(tracker)
-        });
+            "Data": {}
+        };
+        UpdateUserReadOnlyDataRequest.Data[LVL_UP_PAC] = JSON.stringify(tracker);
+        server.UpdateUserReadOnlyData(UpdateUserReadOnlyDataRequest);
     }
 }
 function GrantItems(items, annotation) {
