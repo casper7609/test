@@ -3,6 +3,8 @@ var enchantNothingChance = 60;
 var enchantSuccessChance = 100;
 var enchantPriceInGold = 100;
 var catalogVersion = "0.9";
+var LVL_UP_PAC = "LVL_UP_PAC";
+
 function range(min, max) {
     var offset = max - min;
     return rand(0, offset) + min;
@@ -956,11 +958,13 @@ function handleNormalDungeon(args, townInfoData, result) {
         log.info("eachExp " + totalExp + " for " + partyMembers[i]);
     }
 
-    var curHighestLevel = GetHigestLevel();
-
-    if (prevHighestLevel < curHighestLevel)
+    if(prevHighestLevel < 50)
     {
-        log.info("prevHighestLevel " + prevHighestLevel + " curHighestLevel " + curHighestLevel + "Check level up package");
+        var curHighestLevel = GetHigestLevel();
+        if (prevHighestLevel < curHighestLevel)
+        {
+            checkLevelUpPackage(curHighestLevel);
+        }
     }
 
     totalGold = parseInt(totalGold);
@@ -1045,6 +1049,35 @@ function handleNormalDungeon(args, townInfoData, result) {
     result.TotalEmblem = totalEmblem;
     result.Items = realItems;
     return result;
+}
+function checkLevelUpPackage(curHighestLevel)
+{
+    var getUserReadOnlyDataResponse = server.GetUserReadOnlyData({
+        "PlayFabId": currentPlayerId,
+        "Keys": [LVL_UP_PAC]
+    });
+    var tracker = {};
+    if (!getUserReadOnlyDataResponse.Data.hasOwnProperty(LVL_UP_PAC)) {
+        return;
+    }
+    else
+    {
+        tracker = JSON.parse(getUserReadOnlyDataResponse.Data[LVL_UP_PAC].Value);
+        tracker.Level = curHighestLevel;
+
+        var GrantItemsToUserRequest = {
+            "PlayFabId": currentPlayerId,
+            "ItemIds": ["GP200"],
+            "Annotation": "Granted for level up to Lv. " + curHighestLevel + "."
+        };
+
+        var GrantItemsToUserResult = server.GrantItemsToUser(GrantItemsToUserRequest);
+
+        server.UpdateUserReadOnlyData({
+            "PlayFabId": currentPlayerId,
+            "Data": JSON.stringify(tracker)
+        });
+    }
 }
 handlers.SumOccupation = function (args) {
     //Town_0_Occupation
