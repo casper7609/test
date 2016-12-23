@@ -1262,6 +1262,33 @@ handlers.EnchantItem = function (args) {
     //3. break
     return { "EnchantResult": enchantResult, "EnchantValue": prevEnchant, "GoldSubtractResult": goldSubtractResult };
 };
+handlers.InAppPurchase = function (args) {
+    if (args.ItemId == "lvluppackage")
+    {
+        var UpdateUserReadOnlyDataRequest = {
+            "PlayFabId": currentPlayerId,
+            "Data": {}
+        };
+        UpdateUserReadOnlyDataRequest.Data[LVL_UP_PAC] = JSON.stringify({ "TransactionId": args.TransactionId });
+        server.UpdateUserReadOnlyData(UpdateUserReadOnlyDataRequest);
+        var curHighestLevel = GetHigestLevel();
+        checkLevelUpPackage(curHighestLevel);
+    }
+    else if (args.ItemId == "monthlypackage")
+    {
+    }
+    else
+    {
+        var GrantItemsToUserRequest = {
+            "CatalogVersion": catalogVersion,
+            "PlayFabId": currentPlayerId,
+            "ItemIds": [args.ItemId],
+            "Annotation": "IAP " + args.TransactionId
+        };
+        var GrantItemsToUserResult = server.GrantItemsToUser(GrantItemsToUserRequest);
+        return JSON.stringify(GrantItemsToUserResult.ItemGrantResults);
+    }
+};
 handlers.CloudSellItem = function (args) {
     var characterId = args.CharacterId;
     var items = JSON.parse(args.Items);
