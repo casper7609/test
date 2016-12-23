@@ -958,6 +958,10 @@ function handleNormalDungeon(args, townInfoData, result) {
 
     var curHighestLevel = GetHigestLevel();
 
+    if (prevHighestLevel < curHighestLevel)
+    {
+        log.info("prevHighestLevel " + prevHighestLevel + " curHighestLevel " + curHighestLevel + "Check level up package");
+    }
 
     totalGold = parseInt(totalGold);
     if (scrollOfGoldEnabled && scrollOfGoldVer) {
