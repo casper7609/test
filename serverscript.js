@@ -1033,7 +1033,6 @@ function handleNormalDungeon(args, townInfoData, result) {
         var content = JSON.stringify(body);
         var httpMethod = "post";
         var contentType = "application/json";
-
        
         var response = http.request(url, httpMethod, content, contentType, headers);
         log.info("response", response);
@@ -1063,21 +1062,34 @@ function checkLevelUpPackage(curHighestLevel)
     else
     {
         tracker = JSON.parse(getUserReadOnlyDataResponse.Data[LVL_UP_PAC].Value);
+
+        var lvlFrom = 1;
+        if (tracker.Level != null)
+        {
+            lvlFrom = tracker.Level;
+        }
+
+        GrantItems("GP200", (curHighestLevel - lvlFrom), "Granted for level up to Lv. " + curHighestLevel);
+        
         tracker.Level = curHighestLevel;
-
-        var GrantItemsToUserRequest = {
-            "PlayFabId": currentPlayerId,
-            "ItemIds": ["GP200"],
-            "Annotation": "Granted for level up to Lv. " + curHighestLevel + "."
-        };
-
-        var GrantItemsToUserResult = server.GrantItemsToUser(GrantItemsToUserRequest);
-
         server.UpdateUserReadOnlyData({
             "PlayFabId": currentPlayerId,
             "Data": JSON.stringify(tracker)
         });
     }
+}
+function GrantItems(items, count, annotation) {
+    log.info("Granting: " + items);
+    var parsed = Array.isArray(items) ? items : [items];
+
+    var GrantItemsToUserRequest = {
+        "PlayFabId": currentPlayerId,
+        "ItemIds": parsed,
+        "Annotation": annotation
+    };
+
+    var GrantItemsToUserResult = server.GrantItemsToUser(GrantItemsToUserRequest);
+    return JSON.stringify(GrantItemsToUserResult.ItemGrantResults);
 }
 handlers.SumOccupation = function (args) {
     //Town_0_Occupation
