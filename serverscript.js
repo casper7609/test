@@ -614,7 +614,9 @@ handlers.ClearDungeon = function (args) {
     }
     else if (townInfoData.DungeonMode == 1)//Raid
     {
+        log.info("handleNotNormalCommon before");
         result = handleNotNormalCommon(args, townInfoData, result);
+        log.info("handleNotNormalCommon " + JSON.stringify(result));
         result.Items = [];
         try {
             var randomItem = server.EvaluateRandomResultTable(
