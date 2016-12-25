@@ -1050,7 +1050,6 @@ function handleNormalDungeon(args, townInfoData, result) {
     result.Items = realItems;
     return result;
 }
-
 handlers.SumOccupation = function (args) {
     //Town_0_Occupation
     //http://52.78.158.221:8080/occupation?townId=0&userId=playerA&alignment=Chaotic&count=1
@@ -1235,8 +1234,59 @@ handlers.InAppPurchase = function (args) {
             "PlayFabId": currentPlayerId,
             "Data": {}
         };
-        monUpdateUserReadOnlyDataRequest.Data[MON_SUB_PAC] = JSON.stringify({ "TransactionId": args.TransactionId });
+        monUpdateUserReadOnlyDataRequest.Data[MON_SUB_PAC] = JSON.stringify({
+            "TransactionId": args.TransactionId,
+            "Date": 1,
+            "NextTime": getKoreanTomorrow()
+        });
+        GrantItems("GP200", "Granted for monthly subscription " + 0);
         server.UpdateUserReadOnlyData(monUpdateUserReadOnlyDataRequest);
+    }
+};
+function getKoreanTomorrow()
+{
+    var currentDate = new Date();
+    currentDate.setUTCDate(currentDate.getUTCDate() + 1);
+    currentDate.setUTCHours(15, 0, 0, 0);
+    return currentDate.getTime();
+}
+handlers.CheckMonthlySubscription = function (args) {
+    var getUserReadOnlyDataResponse = server.GetUserReadOnlyData({
+        "PlayFabId": currentPlayerId,
+        "Keys": [MON_SUB_PAC]
+    });
+    var tracker = {};
+    if (getUserReadOnlyDataResponse.Data.hasOwnProperty(MON_SUB_PAC))
+    {
+        tracker = JSON.parse(getUserReadOnlyDataResponse.Data[MON_SUB_PAC].Value);
+        var UpdateUserReadOnlyDataRequest = {
+            "PlayFabId": currentPlayerId,
+            "Data": {}
+        };
+        if (tracker.Date >= 30) {
+            //delete
+            UpdateUserReadOnlyDataRequest.KeysToRemove = [MON_SUB_PAC];
+        }
+        else//check time
+        {
+            var currentTime = new Date().getTime();
+            //after one day
+            if (tracker.NextTime < currentTime)
+            {
+                GrantItems("GP200", "Granted for monthly subscription " + tracker.Date);
+                tracker.NextTime = getKoreanTomorrow();
+                tracker.Date++;
+                if (tracker.Date >= 30)
+                {
+                    UpdateUserReadOnlyDataRequest.KeysToRemove = [MON_SUB_PAC];
+                }
+                else
+                {
+                    UpdateUserReadOnlyDataRequest.Data[MON_SUB_PAC] = JSON.stringify(tracker);
+                }
+            }
+        }
+        server.UpdateUserReadOnlyData(UpdateUserReadOnlyDataRequest);
     }
 };
 function checkLevelUpPackage(curHighestLevel) {
