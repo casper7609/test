@@ -614,6 +614,15 @@ handlers.ClearDungeon = function (args) {
     }
     else if (townInfoData.DungeonMode == 1)//Raid
     {
+        result.ExpResult = [];
+        result.Items = [];
+        result.TotalGem = 0;
+        result.TotalAdditionalEnergy = 0;
+        result.TotalEmblem = 0;
+        result.TotalGold = 0;
+        result.TotalExp = 0;
+        result.Tax = 0;
+        result.TotalAlignment = 0;
     }
     else if (townInfoData.DungeonMode == 2)//TowerOfInfinity
     {
