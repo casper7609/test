@@ -614,15 +614,7 @@ handlers.ClearDungeon = function (args) {
     }
     else if (townInfoData.DungeonMode == 1)//Raid
     {
-        result.ExpResult = [];
-        result.Items = [];
-        result.TotalGem = 0;
-        result.TotalAdditionalEnergy = 0;
-        result.TotalEmblem = 0;
-        result.TotalGold = 0;
-        result.TotalExp = 0;
-        result.Tax = 0;
-        result.TotalAlignment = 0;
+        result = handleNotNormalCommon(args, townInfoData, result);
     }
     else if (townInfoData.DungeonMode == 2)//TowerOfInfinity
     {
@@ -679,66 +671,8 @@ function handleTowerOfTrial(args, townInfoData, result)
         return { "Error": "AlreadyCleared" };
     }
 
-    var partyMembers = JSON.parse(args.CharacterIds);
-    var expResult = [];
-    for (var i = 0; i < partyMembers.length; i++) {
-        var charStat = server.GetCharacterStatistics(
-            {
-                "PlayFabId": currentPlayerId,
-                "CharacterId": partyMembers[i]
-            }
-        );
-        var previousExp = charStat.CharacterStatistics.AccumulatedXP;
-        //fresh character
-        if (previousExp == null) {
-            previousExp = 0;
-        }
-        var previousLevel = GetLevel(previousExp);
-        expResult.push({ "CharacterId": partyMembers[i], "PreviousLevel": previousLevel, "CurrentLevel": previousLevel });
-    }
-    result.ExpResult = expResult;
-    result.Items = [];
-    var catalogItems = server.GetCatalogItems({
-        "CatalogVersion": catalogVersion
-    });
-    var bundleItem = null;
-    for (var i = 0; i < catalogItems.Catalog.length; i++) {
-        var catalogItem = catalogItems.Catalog[i];
-        if (catalogItem.ItemId == townInfoData.DropTable) {
-            bundleItem = catalogItem;
-            break;
-        }
-    }
-    if (bundleItem == null) {
-        return { "Error": "BundleItem Not Found" };
-    }
+    handleNotNormalCommon(args, townInfoData, result);
 
-    //grant townInfoData.DropTable
-    var itemGrantResult = server.GrantItemsToUser(
-        {
-            "CatalogVersion": catalogVersion,
-            "PlayFabId": currentPlayerId,
-            "ItemIds": [townInfoData.DropTable]
-        }
-    );
-    log.info("itemGrantResult " + JSON.stringify(itemGrantResult));
-    result.Items = result.Items.concat(itemGrantResult["ItemGrantResults"]);
-
-    result.TotalGem = 0;
-    result.TotalAdditionalEnergy = 0;
-    result.TotalEmblem = 0;
-    result.TotalGold = 0;
-    result.TotalExp = 0;
-    result.Tax = 0;
-    result.TotalAlignment = 0;
-
-    var virtualCurrencies = bundleItem.Bundle.BundledVirtualCurrencies;
-    if (virtualCurrencies != null) {
-        if (virtualCurrencies.GP != null) result.TotalGem = virtualCurrencies.GP;
-        if (virtualCurrencies.AE != null) result.TotalAdditionalEnergy = virtualCurrencies.AE;
-        if (virtualCurrencies.EB != null) result.TotalEmblem = virtualCurrencies.EB;
-        if (virtualCurrencies.GD != null) result.TotalGold = virtualCurrencies.GD;
-    }
     //update player data
     saveClearedTownWithMembers(args, "TowerOfTrial");
 
@@ -1058,6 +992,68 @@ function handleNormalDungeon(args, townInfoData, result) {
     result.TotalEmblem = totalEmblem;
     result.Items = realItems;
     return result;
+}
+function handleNotNormalCommon(args, townInfoData, result) {
+    var partyMembers = JSON.parse(args.CharacterIds);
+    var expResult = [];
+    for (var i = 0; i < partyMembers.length; i++) {
+        var charStat = server.GetCharacterStatistics(
+            {
+                "PlayFabId": currentPlayerId,
+                "CharacterId": partyMembers[i]
+            }
+        );
+        var previousExp = charStat.CharacterStatistics.AccumulatedXP;
+        //fresh character
+        if (previousExp == null) {
+            previousExp = 0;
+        }
+        var previousLevel = GetLevel(previousExp);
+        expResult.push({ "CharacterId": partyMembers[i], "PreviousLevel": previousLevel, "CurrentLevel": previousLevel });
+    }
+    result.ExpResult = expResult;
+    result.Items = [];
+    var catalogItems = server.GetCatalogItems({
+        "CatalogVersion": catalogVersion
+    });
+    var bundleItem = null;
+    for (var i = 0; i < catalogItems.Catalog.length; i++) {
+        var catalogItem = catalogItems.Catalog[i];
+        if (catalogItem.ItemId == townInfoData.DropTable) {
+            bundleItem = catalogItem;
+            break;
+        }
+    }
+    if (bundleItem == null) {
+        return { "Error": "BundleItem Not Found" };
+    }
+
+    //grant townInfoData.DropTable
+    var itemGrantResult = server.GrantItemsToUser(
+        {
+            "CatalogVersion": catalogVersion,
+            "PlayFabId": currentPlayerId,
+            "ItemIds": [townInfoData.DropTable]
+        }
+    );
+    log.info("itemGrantResult " + JSON.stringify(itemGrantResult));
+    result.Items = result.Items.concat(itemGrantResult["ItemGrantResults"]);
+
+    result.TotalGem = 0;
+    result.TotalAdditionalEnergy = 0;
+    result.TotalEmblem = 0;
+    result.TotalGold = 0;
+    result.TotalExp = 0;
+    result.Tax = 0;
+    result.TotalAlignment = 0;
+
+    var virtualCurrencies = bundleItem.Bundle.BundledVirtualCurrencies;
+    if (virtualCurrencies != null) {
+        if (virtualCurrencies.GP != null) result.TotalGem = virtualCurrencies.GP;
+        if (virtualCurrencies.AE != null) result.TotalAdditionalEnergy = virtualCurrencies.AE;
+        if (virtualCurrencies.EB != null) result.TotalEmblem = virtualCurrencies.EB;
+        if (virtualCurrencies.GD != null) result.TotalGold = virtualCurrencies.GD;
+    }
 }
 handlers.SumOccupation = function (args) {
     //Town_0_Occupation
