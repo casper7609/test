@@ -143,7 +143,8 @@ function saveClearedTownWithMembers(args, key)
 	                            {
 	                                clearData.TotalCount = 0;
 	                                //grant some gem
-	                                var gem = (args.townId % 3) * 10;
+	                                var gem = Math.max((parseInt(args.townId) + 1) * 10, 100);
+	                                log.info("Gem Grant " + gem);
 	                                server.AddUserVirtualCurrency(
                                         {
                                             "PlayFabId": currentPlayerId,
