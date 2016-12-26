@@ -110,12 +110,12 @@ function saveClearedTownWithMembers(args, key)
 	    }
 
 	    if (userData.Data.ClearData == null) {
-	        data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }], "TotalCount" : 0 });
+	        data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }], "TotalCount" : 1 });
 	    }
 	    else {
 	        data = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
 	        if (data.length == 0) {
-	            data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }], "TotalCount": 0 });
+	            data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }], "TotalCount": 1 });
 	        }
 	        else {
 	            var clearData = null;
@@ -126,7 +126,7 @@ function saveClearedTownWithMembers(args, key)
 	                }
 	            }
 	            if (clearData == null) {
-	                data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }], "TotalCount": 0 });
+	                data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }], "TotalCount": 1 });
 	            }
 	            else {
 	                if (clearData.ClearList.length == 0) {
@@ -159,6 +159,7 @@ function saveClearedTownWithMembers(args, key)
 	                    }
 	                    if (!hasFound) {
 	                        clearData.ClearList.push({ "Id": idCombined, Count: 1 });
+	                        clearData.TotalCount = 0;
 	                    }
 	                }
 	            }
