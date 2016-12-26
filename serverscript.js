@@ -101,6 +101,7 @@ function saveClearedTownWithMembers(args, key)
     }
 	else
 	{
+	    args.TotalGem = 0;
 	    var partyMembers = JSON.parse(args.CharacterIds);
 	    partyMembers.sort();
 	    var idCombined = "";
@@ -109,12 +110,12 @@ function saveClearedTownWithMembers(args, key)
 	    }
 
 	    if (userData.Data.ClearData == null) {
-	        data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }] });
+	        data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }], "TotalCount" : 0 });
 	    }
 	    else {
 	        data = JSON.parse(userData.Data.ClearData.Value.replace(/\\/g, ""));
 	        if (data.length == 0) {
-	            data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }] });
+	            data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }], "TotalCount": 0 });
 	        }
 	        else {
 	            var clearData = null;
@@ -125,17 +126,33 @@ function saveClearedTownWithMembers(args, key)
 	                }
 	            }
 	            if (clearData == null) {
-	                data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }] });
+	                data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }], "TotalCount": 0 });
 	            }
 	            else {
 	                if (clearData.ClearList.length == 0) {
 	                    clearData.ClearList.push({ "Id": idCombined, Count: 1 });
+	                    clearData.TotalCount = 0;
 	                }
 	                else {
 	                    var hasFound = false;
 	                    for (var k = 0; k < clearData.ClearList.length; k++) {
 	                        if (clearData.ClearList[k].Id == idCombined) {
 	                            clearData.ClearList[k].Count++;
+	                            clearData.TotalCount++;
+	                            if (clearData.TotalCount == 10)
+	                            {
+	                                clearData.TotalCount = 0;
+	                                //grant some gem
+	                                var gem = (args.townId % 3) * 10;
+	                                server.AddUserVirtualCurrency(
+                                        {
+                                            "PlayFabId": currentPlayerId,
+                                            "VirtualCurrency": "GP",
+                                            "Amount": gem
+                                        }
+                                    );
+	                                args.TotalGem = gem;
+	                            }
 	                            hasFound = true;
 	                            break;
 	                        }
@@ -600,7 +617,7 @@ handlers.ClearDungeon = function (args) {
     //house_alignment
     //gold
     //currentPlayerId
-    var result = { ScrollOfExperience: 0, ScrollOfGold: 0, ScrollOfItem: 0, ScrollOfInstant: 0 };
+    var result = { ScrollOfExperience: 0, ScrollOfGold: 0, ScrollOfItem: 0, ScrollOfInstant: 0, TotalGem : 0 };
     var townInfoData = getTownInfo(args);
 
     if (townInfoData == null)
@@ -642,6 +659,7 @@ handlers.ClearDungeon = function (args) {
     }
     else if (townInfoData.DungeonMode == 2)//TowerOfInfinity
     {
+        handleNotNormalCommon(args, townInfoData, result);
         handleTowerOfInfinity(args);
     }
     else if (townInfoData.DungeonMode == 3)//tower of trial
@@ -844,9 +862,7 @@ function handleNormalDungeon(args, townInfoData, result) {
         return;
     }
 
-    if (!scrollOfInstantEnabled) {
-        saveClearedTownWithMembers(args, "ClearData");
-    }
+    saveClearedTownWithMembers(args, "ClearData");
 
     var totalExp = 0;
     var totalGold = 0;
@@ -1049,6 +1065,7 @@ function handleNormalDungeon(args, townInfoData, result) {
     result.TotalAlignment = totalAlignment;
     result.TotalEmblem = totalEmblem;
     result.Items = realItems;
+    result.TotalGem = args.TotalGem;
     return result;
 }
 function handleNotNormalCommon(args, townInfoData, result) {
