@@ -1711,7 +1711,7 @@ handlers.IncreaseSkill = function (args) {
         ]
     });
 
-    var skillLevelStatusList = JSON.parse(charData.Data.SkillLevelStatus.replace(/\\/g, ""));
+    var skillLevelStatusList = JSON.parse(charData.Data.SkillLevelStatus.Value.replace(/\\/g, ""));
     for (var i = 0; i < skillLevelStatusList.length; i++) {
         if (skillLevelStatusList[i].Index == args.SkillIndex) {
             skillLevelStatusList[i].Level++;
