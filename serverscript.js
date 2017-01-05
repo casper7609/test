@@ -1728,6 +1728,7 @@ handlers.IncreaseSkill = function (args) {
     );
 
     server.UpdateCharacterData({
+        "PlayFabId": currentPlayerId,
         "CharacterId": args.CharacterId,
         "Data": {
             "SkillLevelStatus": JSON.stringify(skillLevelStatusList)
