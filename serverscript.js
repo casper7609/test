@@ -1701,3 +1701,36 @@ handlers.GetTowerOfInfinity = function (args) {
         log.info("err", err.message);
     };
 };
+handlers.IncreaseSkill = function (args) {
+
+    var charData = server.GetCharacterData({
+        "PlayFabId": currentPlayerId,
+        "CharacterId": args.CharacterId,
+        "Keys": [
+          "SkillLevelStatus"
+        ]
+    });
+
+    var skillLevelStatusList = JSON.parse(charData.Data.SkillLevelStatus.replace(/\\/g, ""));
+    for (var i = 0; i < skillLevelStatusList.length; i++) {
+        if (skillLevelStatusList[i].Index == args.SkillIndex) {
+            skillLevelStatusList[i].Level++;
+            break;
+        }
+    }
+
+    server.SubtractUserVirtualCurrency(
+        {
+            "PlayFabId": currentPlayerId,
+            "VirtualCurrency": "GD",
+            "Amount": args.Gold
+        }
+    );
+
+    server.UpdateCharacterData({
+        "CharacterId": args.CharacterId,
+        "Data": {
+            "SkillLevelStatus": JSON.stringify(skillLevelStatusList)
+        },
+    });
+};
