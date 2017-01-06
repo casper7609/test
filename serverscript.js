@@ -142,7 +142,7 @@ function saveClearedTownWithMembers(args, key)
 	                            clearData.TotalCount++;
 	                            if (args.DungeonLevel != null)
 	                            {
-	                                clearData.DungeonLevel = Math.max(clearData.DungeonLevel, args.DungeonLevel);
+	                                clearData.DungeonLevel = Math.max(clearData.DungeonLevel == null ? 0 : clearData.DungeonLevel, args.DungeonLevel);
 	                            }
 	                            if (clearData.TotalCount == 10)
 	                            {
