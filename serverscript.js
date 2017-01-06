@@ -126,12 +126,13 @@ function saveClearedTownWithMembers(args, key)
 	                }
 	            }
 	            if (clearData == null) {
-	                data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }], "TotalCount": 1 });
+	                data.push({ "Id": townIdStr, "ClearList": [{ "Id": idCombined, Count: 1 }], "TotalCount": 1, "DungeonLevel": 0 });
 	            }
 	            else {
 	                if (clearData.ClearList.length == 0) {
 	                    clearData.ClearList.push({ "Id": idCombined, Count: 1 });
 	                    clearData.TotalCount = 0;
+	                    clearData.DungeonLevel = 0;
 	                }
 	                else {
 	                    var hasFound = false;
@@ -139,6 +140,10 @@ function saveClearedTownWithMembers(args, key)
 	                        if (clearData.ClearList[k].Id == idCombined) {
 	                            clearData.ClearList[k].Count++;
 	                            clearData.TotalCount++;
+	                            if (args.DungeonLevel != null)
+	                            {
+	                                clearData.DungeonLevel = Math.max(clearData.DungeonLevel, args.DungeonLevel);
+	                            }
 	                            if (clearData.TotalCount == 10)
 	                            {
 	                                clearData.TotalCount = 0;
@@ -160,7 +165,8 @@ function saveClearedTownWithMembers(args, key)
 	                    if (!hasFound) {
 	                        clearData.ClearList.push({ "Id": idCombined, Count: 1 });
 	                        clearData.TotalCount = 0;
-	                    }
+	                        clearData.DungeonLevel = 0;
+                        }
 	                }
 	            }
 	        }
