@@ -880,8 +880,8 @@ function handleNormalDungeon(args, townInfoData, result) {
     for (var i = 0; i < mobs.length; i++) {
         for (var k = 0; k < townMobs.length; k++) {
             if (townMobs[k].Name == mobs[i].Name) {
-                totalExp += parseInt(townMobs[k].Level * (townMobs[k].IsUnique ? 10 : 5) * mobs[i].Count);
-                totalGold += parseInt(townMobs[k].Gold * mobs[i].Count);
+                totalExp += parseInt(mobs[i].Level * (townMobs[k].IsUnique ? 10 : 5) * mobs[i].Count);
+                totalGold += parseInt(mobs[i].Level * townMobs[k].Gold * mobs[i].Count);
                 totalAlignment += parseInt(townMobs[k].Alignment * mobs[i].Count);
                 for (var j = 0; j < mobs[i].Count; j++) {
                     try {
