@@ -671,7 +671,7 @@ handlers.OpenTreasureBox = function (args) {
         }
     }
 
-    var result = { "Items": JSON.stringify(realItems) };
+    var result = { "Items": realItems };
     return result;
 };
 handlers.ClearDungeon = function (args) {
