@@ -619,6 +619,45 @@ function getMonsterInfo(townInfoData) {
     }
     return townMobs;
 }
+handlers.OpenTreasureBox = function (args) {
+    //args.TownId should be int
+    var tier = args.TownId / 3;
+    var remainder = args.TownId % 3;
+    var thisTownId = "Town_" + (tier * 3 + remainder);
+    var nextTownId = "Town_" + ((tier + 1) * 3 + remainder);
+    if (args.TownId >= 15 && args.TownId <= 16)
+    {
+        nextTownId = "Town_" + args.TownId;
+    }
+    log.info("thisTownId " + thisTownId);
+    log.info("nextTownId " + nextTownId);
+    var items = [];
+    var thisTownItem = server.EvaluateRandomResultTable(
+        {
+            "CatalogVersion": catalogVersion,
+            "PlayFabId": currentPlayerId,
+            "TableId": thisTownId
+        }
+    );
+    if (thisTownItem.ResultItemId != "Nothing") {
+        log.info("item " + JSON.stringify(thisTownItem));
+        items.push(thisTownItem.ResultItemId);
+    }
+
+    var nextTownItem = server.EvaluateRandomResultTable(
+        {
+            "CatalogVersion": catalogVersion,
+            "PlayFabId": currentPlayerId,
+            "TableId": nextTownId
+        }
+    );
+    if (nextTownItem.ResultItemId != "Nothing") {
+        log.info("item " + JSON.stringify(nextTownItem));
+        items.push(nextTownItem.ResultItemId);
+    }
+    var result = { "Items": JSON.stringify(items) };
+    return result;
+};
 handlers.ClearDungeon = function (args) {
     //town1_chaotic
     //house_alignment
