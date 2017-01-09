@@ -655,7 +655,23 @@ handlers.OpenTreasureBox = function (args) {
         log.info("item " + JSON.stringify(nextTownItem));
         items.push(nextTownItem.ResultItemId);
     }
-    var result = { "Items": JSON.stringify(items) };
+
+    var realItems = [];
+    if (items.length > 0) {
+        for (var i = 0; i < items.length; i++) {
+            var itemGrantResult = server.GrantItemsToUser(
+                {
+                    "CatalogVersion": catalogVersion,
+                    "PlayFabId": currentPlayerId,
+                    "ItemIds": items
+                }
+            );
+            realItems = realItems.concat(itemGrantResult["ItemGrantResults"]);
+            log.info("realItems " + JSON.stringify(realItems));
+        }
+    }
+
+    var result = { "Items": JSON.stringify(realItems) };
     return result;
 };
 handlers.ClearDungeon = function (args) {
