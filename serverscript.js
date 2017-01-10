@@ -583,7 +583,7 @@ function getTownInfo(args)
     var townId = args.TownId;
     var townInfo = server.GetTitleData({
         "Keys": ["Towns"]
-    });;
+    });
     //log.info("test " + townInfo.Data.Towns.replace(/\\/g, ""));
     var townInfoDataList = JSON.parse(townInfo.Data.Towns.replace(/\\/g, ""));
     var townInfoData = null;
@@ -926,6 +926,11 @@ function handleNormalDungeon(args, townInfoData, result) {
 
     saveClearedTownWithMembers(args, "ClearData");
 
+    var rewardInfo = server.GetTitleData({
+        "Keys": ["Rewards"]
+    });
+    var rewardInfoData = JSON.parse(townInfo.Data.Rewards.replace(/\\/g, ""));
+
     var totalExp = 0;
     var totalGold = 0;
     var tax = 0;
@@ -935,8 +940,8 @@ function handleNormalDungeon(args, townInfoData, result) {
     for (var i = 0; i < mobs.length; i++) {
         for (var k = 0; k < townMobs.length; k++) {
             if (townMobs[k].Name == mobs[i].Name) {
-                totalExp += parseInt(mobs[i].Level * (townMobs[k].IsUnique ? 10 : 5) * mobs[i].Count);
-                totalGold += parseInt(mobs[i].Level * townMobs[k].Gold * mobs[i].Count);
+                totalExp += parseInt(mobs[i].Level * (townMobs[k].IsUnique ? (rewardInfoData.Exp * 2) : rewardInfoData.Exp) * mobs[i].Count);
+                totalGold += parseInt(mobs[i].Level * (townMobs[k].IsUnique ? (rewardInfoData.Gold * 2) : rewardInfoData.Gold) * mobs[i].Count);
                 totalAlignment += parseInt(townMobs[k].Alignment * mobs[i].Count);
                 for (var j = 0; j < mobs[i].Count; j++) {
                     try {
