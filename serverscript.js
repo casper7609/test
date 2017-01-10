@@ -929,7 +929,8 @@ function handleNormalDungeon(args, townInfoData, result) {
     var rewardInfo = server.GetTitleData({
         "Keys": ["Rewards"]
     });
-    var rewardInfoData = JSON.parse(townInfo.Data.Rewards.replace(/\\/g, ""));
+
+    var rewardInfoData = JSON.parse(rewardInfo.Data.Rewards.replace(/\\/g, ""));
 
     var totalExp = 0;
     var totalGold = 0;
