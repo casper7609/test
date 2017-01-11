@@ -621,7 +621,7 @@ function getMonsterInfo(townInfoData) {
 }
 handlers.OpenTreasureBox = function (args) {
     //args.TownId should be int
-    var tier = args.TownId / 3;
+    var tier = parseInt(args.TownId / 3);
     var remainder = args.TownId % 3;
     var thisTownId = "Town_" + (tier * 3 + remainder);
     var nextTownId = "Town_" + ((tier + 1) * 3 + remainder);
