@@ -1236,14 +1236,6 @@ handlers.EnchantItem = function (args) {
         "PlayFabId": currentPlayerId
     });
 
-    //check if sufficient fund
-    if (userInventory.VirtualCurrency == null
-        || userInventory.VirtualCurrency.GD == null
-        || parseInt(userInventory.VirtualCurrency.GD) < enchantPriceInGold) {
-        log.info("Insufficient Fund");
-        return { "Error": "Insufficient Fund" };
-    }
-
     var itemToEnchant = null;
     if (characterId == "") {
         for (var i = 0; i < userInventory.Inventory.length; i++) {
@@ -1273,13 +1265,38 @@ handlers.EnchantItem = function (args) {
         return { "Error": "Item Not Found" };
     }
 
+    var itemRank = 0;
+    var actualGoldToEnchant = enchantPriceInGold * Math.pow(2, itemRank);
+    var emblemToEnchant = 1 * Math.pow(2, itemRank);
+
+    //check if sufficient fund
+    if (userInventory.VirtualCurrency == null
+        || userInventory.VirtualCurrency.GD == null
+        || parseInt(userInventory.VirtualCurrency.GD) < actualGoldToEnchant) {
+        log.info("Insufficient Fund");
+        return { "Error": "Insufficient Fund" };
+    }
+    if (userInventory.VirtualCurrency == null
+        || userInventory.VirtualCurrency.EB == null
+        || parseInt(userInventory.VirtualCurrency.EB) < emblemToEnchant) {
+        log.info("Insufficient Fund");
+        return { "Error": "Insufficient Fund" };
+    }
+
     var enchantResult = 0;
     var prevEnchant = 0;
     var goldSubtractResult = null;
+    var emblemSubtractResult = null;
     goldSubtractResult = server.SubtractUserVirtualCurrency({
         "PlayFabId": currentPlayerId,
         "VirtualCurrency": "GD",
-        "Amount": enchantPriceInGold
+        "Amount": actualGoldToEnchant
+    });
+
+    emblemSubtractResult = server.SubtractUserVirtualCurrency({
+        "PlayFabId": currentPlayerId,
+        "VirtualCurrency": "EB",
+        "Amount": emblemToEnchant
     });
 
     var odd = Math.floor((Math.random() * 100) + 1);
@@ -1328,7 +1345,7 @@ handlers.EnchantItem = function (args) {
     //1. enchant success
     //2. nothing
     //3. break
-    return { "EnchantResult": enchantResult, "EnchantValue": prevEnchant, "GoldSubtractResult": goldSubtractResult };
+    return { "EnchantResult": enchantResult, "EnchantValue": prevEnchant, "GoldSubtractResult": goldSubtractResult, "EmblemSubtractResult": emblemSubtractResult };
 };
 handlers.InAppPurchase = function (args) {
     if (args.ItemId == "lvluppackage")
