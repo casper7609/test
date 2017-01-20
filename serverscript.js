@@ -621,11 +621,18 @@ function getMonsterInfo(townInfoData) {
 }
 handlers.OpenTreasureBox = function (args) {
     //args.TownId should be int
-    var tier = parseInt(args.TownId / 3);
-    var remainder = args.TownId % 3;
-    var thisTownId = "Town_" + (tier * 3 + remainder);
-    var nextTownId = "Town_" + ((tier + 1) * 3 + remainder);
-    if (args.TownId >= 15 && args.TownId <= 16)
+    var tier = 0;
+    var denominator = 4;
+    var thisTownId = "Town_" + args.TownId;
+    var nextTownId = "Town_" + args.TownId;
+    if (args.TownId < 4) {
+        nextTownId = "Town_" + (args.TownId * 2 + 4);
+    }
+    else
+    {
+        nextTownId = "Town_" + (args.TownId + 8);
+    }
+    if (args.TownId >= 28 && args.TownId <= 35)
     {
         nextTownId = "Town_" + args.TownId;
     }
@@ -941,9 +948,9 @@ function handleNormalDungeon(args, townInfoData, result) {
     for (var i = 0; i < mobs.length; i++) {
         for (var k = 0; k < townMobs.length; k++) {
             if (townMobs[k].Name == mobs[i].Name) {
-                totalExp += parseInt(mobs[i].Level * (townMobs[k].IsUnique ? (rewardInfoData.Exp * 2) : rewardInfoData.Exp) * mobs[i].Count);
-                totalGold += parseInt(mobs[i].Level * (townMobs[k].IsUnique ? (rewardInfoData.Gold * 2) : rewardInfoData.Gold) * mobs[i].Count);
-                totalAlignment += parseInt(townMobs[k].Alignment * mobs[i].Count);
+                totalExp += parseInt(mobs[i].Level * (townMobs[k].IsUnique ? (townInfoData.Exp * rewardInfoData.Exp * 2) : townInfoData.Exp * rewardInfoData.Exp) * mobs[i].Count);
+                totalGold += parseInt(mobs[i].Level * (townMobs[k].IsUnique ? (townInfoData.Gold * rewardInfoData.Gold * 2) : townInfoData.Gold * rewardInfoData.Gold) * mobs[i].Count);
+                totalAlignment += parseInt(mobs[i].Level * (townMobs[k].IsUnique ? (townInfoData.Alignment * rewardInfoData.Alignment * 2) : townInfoData.Alignment * rewardInfoData.Alignment) * mobs[i].Count);
                 for (var j = 0; j < mobs[i].Count; j++) {
                     try {
                         var randomItem = server.EvaluateRandomResultTable(
