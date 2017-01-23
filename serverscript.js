@@ -950,7 +950,7 @@ function handleNormalDungeon(args, townInfoData, result) {
         totalGold += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Gold * rewardInfoData.Gold * 2) : townInfoData.Gold * rewardInfoData.Gold) * mobs[i].Count);
         totalAlignment += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Alignment * rewardInfoData.Alignment * 2) : townInfoData.Alignment * rewardInfoData.Alignment) * mobs[i].Count);
 
-        if (inventoryFull)
+        if (inventoryFull || items.length > 3)
         {
             continue;
         }
@@ -1732,7 +1732,6 @@ handlers.GetRank = function (args) {
 };
 //called by java server
 handlers.RewardRealmWar = function (args) {
-
     var rewardContainerId = args.RewardContainerId;
     var userIds = args.UserIds;
     var result = {"userIds":[]};
@@ -1758,6 +1757,18 @@ handlers.RewardRealmWar = function (args) {
     }
     return result;
 };
+handlers.SetWinner = function (args) {
+    var realm = args.Realm;
+    var result = { "Realm": Realm };
+    server.SetTitleData(
+        {
+            "Key": "PrevailingRealm",
+            "Value": Realm
+        }
+    );
+    return result;
+};
+
 handlers.GetRealmWarTime = function (args) {
     try {
         var headers = {};
