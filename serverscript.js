@@ -566,13 +566,6 @@ handlers.InstantClearDungeon = function (args) {
     var townMobs = getMonsterInfo(townInfoData);
     var tileAvg = range(townInfoData.TileMin, townInfoData.TileMax);
     log.info("tileAvg " + tileAvg);
-    args.Mobs = [];
-    for (var i = 0; i < townMobs.length; i++) {
-        var mob = townMobs[i];
-        var mobCount = mob.IsUnique ? 1 : tileAvg;
-        log.info(mob.Name + " " + mobCount);
-        args.Mobs.push({ "Name": mob.Name, "Count": mobCount });
-    }
     args.EmblemCount = townInfoData.EmblemCount;
     args.Scrolls = [{ Name: "ScrollOfInstant", Count: range(0, 1) }, { Name: "ScrollOfExperience", Count: range(0, 1) }, { Name: "ScrollOfGold", Count: range(0, 1) }, { Name: "ScrollOfItem", Count: range(0, 1) }];
     args.ScrollOfInstantEnabled = true;
@@ -597,7 +590,7 @@ function getTownInfo(args)
 }
 function getMonsterInfo(townInfoData) {
     var monsters = townInfoData.MonsterGenSequence[0].MonsterSet[0].Monsters;
-    var townMobs = [];
+    var townMobs = {};
     var titleData = server.GetTitleData({
         "Keys": ["Monsters"]
     });;
@@ -608,11 +601,11 @@ function getMonsterInfo(townInfoData) {
         {
             if(monsters[i].Name == monsterList[k].Name)
             {
-                townMobs.push(monsterList[k]);
-                var recent = townMobs[townMobs.length - 1];
+                var recent = {};
                 recent.Level = monsters[i].Level == null ? townInfoData.Level : monsters[i].Level;
                 recent.Gold = monsters[i].Gold == null ? townInfoData.Gold : monsters[i].Gold;
                 recent.IsUnique = monsters[i].IsUnique == null ? townInfoData.IsUnique : monsters[i].IsUnique;
+                townMobs[monsters[i].Name] = recent;
                 break;
             }
         }
@@ -621,7 +614,6 @@ function getMonsterInfo(townInfoData) {
 }
 handlers.OpenTreasureBox = function (args) {
     //args.TownId should be int
-    var tier = 0;
     var denominator = 4;
     var thisTownId = "Town_" + args.TownId;
     var nextTownId = "Town_" + args.TownId;
@@ -846,10 +838,12 @@ function handleNormalDungeon(args, townInfoData, result) {
     var userInv = server.GetUserInventory({
         "PlayFabId": currentPlayerId
     });
-
+    
+    var actualItemCount = 0;
     for (var i = 0; i < userInv.Inventory.length; i++) {
         var item = userInv.Inventory[i];
         if (item.ItemClass != "Scroll") {
+            actualItemCount++;
             continue;
         }
         log.info("scroll finding item " + JSON.stringify(item));
@@ -945,31 +939,37 @@ function handleNormalDungeon(args, townInfoData, result) {
     var totalAlignment = 0;
     var totalEmblem = args.EmblemCount;
     var items = [];
+
+    var grantAsGold = actualItemCount > 100;
+    var townTier = args.TownId < 4 ? 0 : parseInt((args.TownId - 4) / 8) + 1;
+
     for (var i = 0; i < mobs.length; i++) {
-        for (var k = 0; k < townMobs.length; k++) {
-            if (townMobs[k].Name == mobs[i].Name) {
-                totalExp += parseInt(mobs[i].Level * (townMobs[k].IsUnique ? (townInfoData.Exp * rewardInfoData.Exp * 2) : townInfoData.Exp * rewardInfoData.Exp) * mobs[i].Count);
-                totalGold += parseInt(mobs[i].Level * (townMobs[k].IsUnique ? (townInfoData.Gold * rewardInfoData.Gold * 2) : townInfoData.Gold * rewardInfoData.Gold) * mobs[i].Count);
-                totalAlignment += parseInt(mobs[i].Level * (townMobs[k].IsUnique ? (townInfoData.Alignment * rewardInfoData.Alignment * 2) : townInfoData.Alignment * rewardInfoData.Alignment) * mobs[i].Count);
-                for (var j = 0; j < mobs[i].Count; j++) {
-                    try {
-                        var randomItem = server.EvaluateRandomResultTable(
-                            {
-                                "CatalogVersion": catalogVersion,
-                                "PlayFabId": currentPlayerId,
-                                "TableId": townInfoData.DropTable
-                            }
-                        );
-                        if (randomItem.ResultItemId != "Nothing") {
-                            log.info("item " + JSON.stringify(randomItem));
-                            items.push(randomItem.ResultItemId);
-                        }
+
+        var monsterInfo = townMobs[mobs[i].Name];
+        totalExp += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Exp * rewardInfoData.Exp * 2) : townInfoData.Exp * rewardInfoData.Exp) * mobs[i].Count);
+        totalGold += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Gold * rewardInfoData.Gold * 2) : townInfoData.Gold * rewardInfoData.Gold) * mobs[i].Count);
+        totalAlignment += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Alignment * rewardInfoData.Alignment * 2) : townInfoData.Alignment * rewardInfoData.Alignment) * mobs[i].Count);
+
+        if (grantAsGold)
+        {
+            continue;
+        }
+        for (var j = 0; j < mobs[i].Count; j++) {
+            try {
+                var randomItem = server.EvaluateRandomResultTable(
+                    {
+                        "CatalogVersion": catalogVersion,
+                        "PlayFabId": currentPlayerId,
+                        "TableId": townInfoData.DropTable
                     }
-                    catch (err) {
-                        log.info("create drop table for " + townInfoData.DropTable);
-                    }
+                );
+                if (randomItem.ResultItemId != "Nothing") {
+                    log.info("item " + JSON.stringify(randomItem));
+                    items.push(randomItem.ResultItemId);
                 }
-                break;
+            }
+            catch (err) {
+                log.info("create drop table for " + townInfoData.DropTable);
             }
         }
     }
