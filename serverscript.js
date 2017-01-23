@@ -940,7 +940,7 @@ function handleNormalDungeon(args, townInfoData, result) {
     var totalEmblem = args.EmblemCount;
     var items = [];
 
-    var grantAsGold = actualItemCount > 100;
+    var inventoryFull = actualItemCount > 100;
     var townTier = args.TownId < 4 ? 0 : parseInt((args.TownId - 4) / 8) + 1;
 
     for (var i = 0; i < mobs.length; i++) {
@@ -950,7 +950,7 @@ function handleNormalDungeon(args, townInfoData, result) {
         totalGold += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Gold * rewardInfoData.Gold * 2) : townInfoData.Gold * rewardInfoData.Gold) * mobs[i].Count);
         totalAlignment += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Alignment * rewardInfoData.Alignment * 2) : townInfoData.Alignment * rewardInfoData.Alignment) * mobs[i].Count);
 
-        if (grantAsGold)
+        if (inventoryFull)
         {
             continue;
         }
