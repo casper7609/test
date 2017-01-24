@@ -986,8 +986,6 @@ function handleNormalDungeon(args, townInfoData, result) {
         }
     }
 
-    totalExp = parseInt(totalExp / 3);
-
     log.info("scrolls " + JSON.stringify(scrolls));
     for (var i = 0; i < scrolls.length; i++) {
         for (var k = 0; k < scrolls[i].Count; k++) {
