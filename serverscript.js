@@ -942,20 +942,27 @@ function handleNormalDungeon(args, townInfoData, result) {
 
     var inventoryFull = actualItemCount > 100;
     var townTier = args.TownId < 4 ? 0 : parseInt((args.TownId - 4) / 8) + 1;
+    var prevHighestLevel = GetHigestLevel();
 
     for (var i = 0; i < mobs.length; i++) {
 
         var monsterInfo = townMobs[mobs[i].Name];
-        totalExp += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Exp * rewardInfoData.Exp * 2) : townInfoData.Exp * rewardInfoData.Exp) * mobs[i].Count);
+        var exp = parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Exp * rewardInfoData.Exp * 2) : townInfoData.Exp * rewardInfoData.Exp) * mobs[i].Count);
+        if(prevHighestLevel > mobs[i].Level)
+        {
+            var diff = prevHighestLevel - mobs[i].Level;
+            exp = exp * (1 - diff / (10 + diff));
+        }
+        else if (prevHighestLevel < mobs[i].Level)
+        {
+            var diff = mobs[i].Level - prevHighestLevel;
+            exp = exp * (1 + 0.05 * diff);
+        }
+        totalExp += exp;
         totalGold += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Gold * rewardInfoData.Gold * 2) : townInfoData.Gold * rewardInfoData.Gold) * mobs[i].Count);
         totalAlignment += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Alignment * rewardInfoData.Alignment * 2) : townInfoData.Alignment * rewardInfoData.Alignment) * mobs[i].Count);
-        log.info("mobs[i].Name " + mobs[i].Name);
-        log.info("mobs[i].Level " + mobs[i].Level);
-        log.info("mobs[i].Count " + mobs[i].Count);
-        log.info("townInfoData.Exp " + townInfoData.Exp);
-        log.info("rewardInfoData.Exp " + rewardInfoData.Exp);
 
-        if (inventoryFull || items.length > 3)
+        if (inventoryFull || items.length >= 3)
         {
             continue;
         }
@@ -978,6 +985,9 @@ function handleNormalDungeon(args, townInfoData, result) {
             }
         }
     }
+
+    totalExp = parseInt(totalExp / 3);
+
     log.info("scrolls " + JSON.stringify(scrolls));
     for (var i = 0; i < scrolls.length; i++) {
         for (var k = 0; k < scrolls[i].Count; k++) {
@@ -1027,7 +1037,6 @@ function handleNormalDungeon(args, townInfoData, result) {
     if (scrollOfExperienceEnabled && scrollOfExperienceVer) {
         totalExp *= 2;
     }
-    var prevHighestLevel = GetHigestLevel();
 
     for (var i = 0; i < partyMembers.length; i++) {
         var charStat = server.GetCharacterStatistics(
