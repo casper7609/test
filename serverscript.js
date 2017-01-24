@@ -949,6 +949,11 @@ function handleNormalDungeon(args, townInfoData, result) {
         totalExp += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Exp * rewardInfoData.Exp * 2) : townInfoData.Exp * rewardInfoData.Exp) * mobs[i].Count);
         totalGold += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Gold * rewardInfoData.Gold * 2) : townInfoData.Gold * rewardInfoData.Gold) * mobs[i].Count);
         totalAlignment += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Alignment * rewardInfoData.Alignment * 2) : townInfoData.Alignment * rewardInfoData.Alignment) * mobs[i].Count);
+        log.info("mobs[i].Name " + mobs[i].Name);
+        log.info("mobs[i].Level " + mobs[i].Level);
+        log.info("mobs[i].Count " + mobs[i].Count);
+        log.info("townInfoData.Exp " + townInfoData.Exp);
+        log.info("rewardInfoData.Exp " + rewardInfoData.Exp);
 
         if (inventoryFull || items.length > 3)
         {
@@ -1768,7 +1773,6 @@ handlers.SetWinner = function (args) {
     );
     return result;
 };
-
 handlers.GetRealmWarTime = function (args) {
     try {
         var headers = {};
@@ -1812,6 +1816,13 @@ handlers.IncreaseSkill = function (args) {
           "SkillLevelStatus"
         ]
     });
+
+    var userInv = server.GetUserInventory({
+        "PlayFabId": currentPlayerId
+    });
+    if (userInv.VirtualCurrency.GD < args.Gold) {
+        return;
+    }
 
     var skillLevelStatusList = JSON.parse(charData.Data.SkillLevelStatus.Value.replace(/\\/g, ""));
     for (var i = 0; i < skillLevelStatusList.length; i++) {
