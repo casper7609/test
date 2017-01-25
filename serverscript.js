@@ -1344,6 +1344,8 @@ handlers.EnchantItem = function (args) {
         "Amount": emblemToEnchant
     });
 
+    log.info("enchantLevel " + enchantLevel);
+    log.info("itemRank " + itemRank);
     var odd = Math.floor((Math.random() * 100) + 1);
     var successAdj = parseInt((1 - (enchantLevel / enchantLevel + 6) - itemRank * 0.2) * 100);
     enchantNothingChance = 100 - successAdj;
