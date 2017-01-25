@@ -1284,7 +1284,33 @@ handlers.EnchantItem = function (args) {
         return { "Error": "Item Not Found" };
     }
 
+    var catalogItems = server.GetCatalogItems({
+        "CatalogVersion": catalogVersion
+    });
+
+    var catalogMap = {};
+    for (var i = 0; i < catalogItems.Catalog.length; i++) {
+        var catalogItem = catalogItems.Catalog[i];
+        catalogMap[catalogItem.ItemId] = catalogItem;
+    }
+
     var itemRank = 0;
+
+    if (itemToEnchant.ItemClass == "Weapon")
+    {
+        itemRank = parseInt(catalogMap[itemToEnchant.ItemId].Tags[1]);
+    }
+    else if (itemToEnchant.ItemClass == "Armor") {
+        itemRank = parseInt(catalogMap[itemToEnchant.ItemId].Tags[2]);
+    }
+
+    var enchantLevel = 0;
+
+    if (itemToEnchant.CustomData != null && itemToEnchant.CustomData.Enchant != null)
+    {
+        enchantLevel = parseInt(itemToEnchant.CustomData.Enchant);
+    }
+
     var actualGoldToEnchant = enchantPriceInGold * Math.pow(2, itemRank);
     var emblemToEnchant = 1 * Math.pow(2, itemRank);
 
@@ -1320,6 +1346,14 @@ handlers.EnchantItem = function (args) {
 
     var odd = Math.floor((Math.random() * 100) + 1);
     log.info("odd " + odd);
+    if (enchantLevel < (10 - itemRank))
+    {
+        if (odd < enchantBrokenChance)
+        {
+            odd = enchantNothingChance + 1;
+        }
+    }
+
     if (odd < enchantBrokenChance) {
         log.info("item broken");
         if (characterId == "") {
