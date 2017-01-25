@@ -1345,14 +1345,11 @@ handlers.EnchantItem = function (args) {
     });
 
     var odd = Math.floor((Math.random() * 100) + 1);
-    log.info("odd " + odd);
-    if (enchantLevel < (10 - itemRank))
-    {
-        if (odd < enchantBrokenChance)
-        {
-            odd = enchantNothingChance + 1;
-        }
-    }
+    var successAdj = parseInt((1 - (enchantLevel / enchantLevel + 6) - itemRank * 0.2) * 100);
+    enchantNothingChance = 100 - successAdj;
+    enchantBrokenChance = parseInt(enchantNothingChance / 2);
+
+    log.info("odd " + odd + " successAdj " + successAdj + " enchantBrokenChance " + enchantBrokenChance + " enchantNothingChance " + enchantNothingChance);
 
     if (odd < enchantBrokenChance) {
         log.info("item broken");
