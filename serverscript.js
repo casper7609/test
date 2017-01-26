@@ -816,7 +816,7 @@ function handleTowerOfTrial(args, townInfoData, result)
     return result;
 }
 function handleNormalDungeon(args, townInfoData, result) {
-    //log.info("Got TownInfo " + townInfoData);
+    ////log.info("Got TownInfo " + townInfoData);
     var townMobs = getMonsterInfo(townInfoData);
     var partyMembers = JSON.parse(args.CharacterIds);
     var mobs = args.Mobs;
@@ -826,10 +826,10 @@ function handleNormalDungeon(args, townInfoData, result) {
     var scrollOfGoldEnabled = args.ScrollOfGoldEnabled;
     var scrollOfItemEnabled = args.ScrollOfItemEnabled;
     var scrollOfInstantEnabled = args.ScrollOfInstantEnabled;
-    log.info("scrollOfExperienceEnabled " + scrollOfExperienceEnabled);
-    log.info("scrollOfGoldEnabled " + scrollOfGoldEnabled);
-    log.info("scrollOfItemEnabled " + scrollOfItemEnabled);
-    log.info("scrollOfInstantEnabled " + scrollOfInstantEnabled);
+    //log.info("scrollOfExperienceEnabled " + scrollOfExperienceEnabled);
+    //log.info("scrollOfGoldEnabled " + scrollOfGoldEnabled);
+    //log.info("scrollOfItemEnabled " + scrollOfItemEnabled);
+    //log.info("scrollOfInstantEnabled " + scrollOfInstantEnabled);
 
     var scrollOfExperienceVer = false;
     var scrollOfGoldVer = false;
@@ -846,7 +846,7 @@ function handleNormalDungeon(args, townInfoData, result) {
             actualItemCount++;
             continue;
         }
-        log.info("scroll finding item " + JSON.stringify(item));
+        //log.info("scroll finding item " + JSON.stringify(item));
         if (item.ItemId == "ScrollOfExperience") {
             if (scrollOfExperienceEnabled && item.RemainingUses > 0) {
                 scrollOfExperienceVer = true;
@@ -855,7 +855,7 @@ function handleNormalDungeon(args, townInfoData, result) {
                     "ItemInstanceId": item.ItemInstanceId,
                     "ConsumeCount": 1
                 });
-                log.info("scrollOfExperienceVer " + scrollOfExperienceVer);
+                //log.info("scrollOfExperienceVer " + scrollOfExperienceVer);
                 result.ScrollOfExperience = item.RemainingUses - 1;
             }
             else {
@@ -870,7 +870,7 @@ function handleNormalDungeon(args, townInfoData, result) {
                     "ItemInstanceId": item.ItemInstanceId,
                     "ConsumeCount": 1
                 });
-                log.info("scrollOfGoldVer " + scrollOfGoldVer);
+                //log.info("scrollOfGoldVer " + scrollOfGoldVer);
                 result.ScrollOfGold = item.RemainingUses - 1;
             }
             else {
@@ -885,7 +885,7 @@ function handleNormalDungeon(args, townInfoData, result) {
                     "ItemInstanceId": item.ItemInstanceId,
                     "ConsumeCount": 1
                 });
-                log.info("scrollOfItemVer " + scrollOfItemVer);
+                //log.info("scrollOfItemVer " + scrollOfItemVer);
                 result.ScrollOfItem = item.RemainingUses - 1;
             }
             else {
@@ -900,7 +900,7 @@ function handleNormalDungeon(args, townInfoData, result) {
                     "ItemInstanceId": item.ItemInstanceId,
                     "ConsumeCount": 1
                 });
-                log.info("scrollOfInstantVer " + scrollOfInstantVer);
+                //log.info("scrollOfInstantVer " + scrollOfInstantVer);
                 result.ScrollOfInstant = item.RemainingUses - 1;
             }
             else {
@@ -909,19 +909,19 @@ function handleNormalDungeon(args, townInfoData, result) {
         }
     }
     if (scrollOfExperienceEnabled && !scrollOfExperienceVer) {
-        log.info("hacking scrollOfExperienceVer " + currentPlayerId);
+        //log.info("hacking scrollOfExperienceVer " + currentPlayerId);
         return;
     }
     if (scrollOfGoldEnabled && !scrollOfGoldVer) {
-        log.info("hacking scrollOfGoldVer " + currentPlayerId);
+        //log.info("hacking scrollOfGoldVer " + currentPlayerId);
         return;
     }
     if (scrollOfItemEnabled && !scrollOfItemVer) {
-        log.info("hacking scrollOfItemVer " + currentPlayerId);
+        //log.info("hacking scrollOfItemVer " + currentPlayerId);
         return;
     }
     if (scrollOfInstantEnabled && !scrollOfInstantVer) {
-        log.info("hacking scrollOfInstantVer " + currentPlayerId);
+        //log.info("hacking scrollOfInstantVer " + currentPlayerId);
         return;
     }
 
@@ -976,17 +976,17 @@ function handleNormalDungeon(args, townInfoData, result) {
                     }
                 );
                 if (randomItem.ResultItemId != "Nothing") {
-                    log.info("item " + JSON.stringify(randomItem));
+                    //log.info("item " + JSON.stringify(randomItem));
                     items.push(randomItem.ResultItemId);
                 }
             }
             catch (err) {
-                log.info("create drop table for " + townInfoData.DropTable);
+                //log.info("create drop table for " + townInfoData.DropTable);
             }
         }
     }
 
-    log.info("scrolls " + JSON.stringify(scrolls));
+    //log.info("scrolls " + JSON.stringify(scrolls));
     for (var i = 0; i < scrolls.length; i++) {
         for (var k = 0; k < scrolls[i].Count; k++) {
             items.push(scrolls[i].Name);
@@ -996,7 +996,7 @@ function handleNormalDungeon(args, townInfoData, result) {
     var realItems = [];
     if (items.length > 0) {
         var itemDoubleCount = (scrollOfItemEnabled && scrollOfItemVer) ? 2 : 1;
-        log.info("itemDoubleCount " + itemDoubleCount);
+        //log.info("itemDoubleCount " + itemDoubleCount);
         for (var i = 0; i < itemDoubleCount; i++) {
             var itemGrantResult = server.GrantItemsToUser(
                 {
@@ -1006,7 +1006,7 @@ function handleNormalDungeon(args, townInfoData, result) {
                 }
             );
             realItems = realItems.concat(itemGrantResult["ItemGrantResults"]);
-            log.info("realItems " + JSON.stringify(realItems));
+            //log.info("realItems " + JSON.stringify(realItems));
         }
         try {
             for (var i = 0; i < realItems.length; i++) {
@@ -1025,7 +1025,7 @@ function handleNormalDungeon(args, townInfoData, result) {
             }
         }
         catch (err) {
-            log.info("err", err.message);
+            //log.info("err", err.message);
         };
 
     }
@@ -1060,7 +1060,7 @@ function handleNormalDungeon(args, townInfoData, result) {
             }
         );
         expResult.push({ "CharacterId": partyMembers[i], "PreviousLevel": previousLevel, "CurrentLevel": currentLevel });
-        log.info("eachExp " + totalExp + " for " + partyMembers[i]);
+        //log.info("eachExp " + totalExp + " for " + partyMembers[i]);
     }
 
     if(prevHighestLevel < 50)
@@ -1086,8 +1086,8 @@ function handleNormalDungeon(args, townInfoData, result) {
             "Amount": totalGold
         }
     );
-    log.info("totalGold " + totalGold);
-    log.info("tax " + tax);
+    //log.info("totalGold " + totalGold);
+    //log.info("tax " + tax);
 
     server.AddUserVirtualCurrency(
         {
@@ -1096,7 +1096,7 @@ function handleNormalDungeon(args, townInfoData, result) {
             "Amount": totalEmblem
         }
     );
-    log.info("totalEmblem " + totalEmblem);
+    //log.info("totalEmblem " + totalEmblem);
 
     totalAlignment = parseInt(totalAlignment, 10);
     server.UpdatePlayerStatistics(
@@ -1110,7 +1110,7 @@ function handleNormalDungeon(args, townInfoData, result) {
             ]
         }
     );
-    log.info("totalAlignment " + totalAlignment);
+    //log.info("totalAlignment " + totalAlignment);
 
     //Town_0_Occupation
     //http://52.78.158.221:8080/occupation?townId=0&userId=playerA&alignment=Chaotic&count=1
@@ -1140,9 +1140,9 @@ function handleNormalDungeon(args, townInfoData, result) {
         var contentType = "application/json";
        
         var response = http.request(url, httpMethod, content, contentType, headers);
-        log.info("response", response);
+        //log.info("response", response);
     } catch (err) {
-        log.info("err", err.message);
+        //log.info("err", err.message);
     };
 
     result.TotalExp = totalExp;
