@@ -1533,10 +1533,6 @@ handlers.CloudSellItem = function (args) {
         var itemInstanceId = items[k].InstanceId;
         var catalogItem = catalogMap[itemId];
         var storePrice = parseInt(catalogItem.VirtualCurrencyPrices.GD);
-        if (storePrice == 0)
-            storePrice = 50;//this is basic 100 gold weapons given as default
-        else
-            storePrice = storePrice / 2;
         gold += storePrice;
         var consumeItemResult = server.ConsumeItem({
             "PlayFabId": currentPlayerId,
