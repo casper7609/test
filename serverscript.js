@@ -1783,11 +1783,12 @@ handlers.RewardRealmWar = function (args) {
                 "ItemIds": [rewardContainerId]
             }
         );
+        var rank = parseInt(rewardContainerId.replace("RealmReward_", "")) - 1;
         server.UpdateUserData(
             {
                 "PlayFabId": userId,
                 "Data": {
-                    "Rank": rewardContainerId
+                    "Rank": rank
                 }
             }
         );
