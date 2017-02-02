@@ -951,8 +951,7 @@ function handleNormalDungeon(args, townInfoData, result) {
         if(prevHighestLevel > mobs[i].Level)
         {
             var diff = prevHighestLevel - mobs[i].Level;
-            exp = (exp / diff);
-            //exp = exp * (1 - diff / (10 + diff));
+            exp = exp * (1 - diff / (3 + diff));
         }
         else if (prevHighestLevel < mobs[i].Level)
         {
