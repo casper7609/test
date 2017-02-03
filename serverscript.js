@@ -953,7 +953,7 @@ function handleNormalDungeon(args, townInfoData, result) {
             var diff = prevHighestLevel - mobs[i].Level;
             exp = exp * (1 - diff / (3 + diff));
         }
-        else if (prevHighestLevel < mobs[i].Level)
+        else if (prevHighestLevel <= mobs[i].Level)
         {
             var diff = mobs[i].Level - prevHighestLevel;
             exp = exp * (1 + 0.05 * diff);
@@ -1419,7 +1419,7 @@ handlers.InAppPurchase = function (args) {
             "Date": 1,
             "NextTime": getKoreanTomorrow()
         });
-        GrantItems("GP200", "Granted for monthly subscription " + 0);
+        GrantItems("GP100", "Granted for monthly subscription " + 0);
         server.UpdateUserReadOnlyData(monUpdateUserReadOnlyDataRequest);
     }
 };
@@ -1453,7 +1453,7 @@ handlers.CheckMonthlySubscription = function (args) {
             //after one day
             if (tracker.NextTime < currentTime)
             {
-                GrantItems("GP200", "Granted for monthly subscription " + tracker.Date);
+                GrantItems("GP300", "Granted for monthly subscription " + tracker.Date);
                 tracker.NextTime = getKoreanTomorrow();
                 tracker.Date++;
                 if (tracker.Date >= 30)
