@@ -631,17 +631,6 @@ handlers.OpenTreasureBox = function (args) {
     log.info("thisTownId " + thisTownId);
     log.info("nextTownId " + nextTownId);
     var items = [];
-    var thisTownItem = server.EvaluateRandomResultTable(
-        {
-            "CatalogVersion": catalogVersion,
-            "PlayFabId": currentPlayerId,
-            "TableId": thisTownId
-        }
-    );
-    if (thisTownItem.ResultItemId != "Nothing") {
-        log.info("item " + JSON.stringify(thisTownItem));
-        items.push(thisTownItem.ResultItemId);
-    }
 
     var nextTownItem = server.EvaluateRandomResultTable(
         {
@@ -653,6 +642,20 @@ handlers.OpenTreasureBox = function (args) {
     if (nextTownItem.ResultItemId != "Nothing") {
         log.info("item " + JSON.stringify(nextTownItem));
         items.push(nextTownItem.ResultItemId);
+    }
+    else
+    {
+        var thisTownItem = server.EvaluateRandomResultTable(
+            {
+                "CatalogVersion": catalogVersion,
+                "PlayFabId": currentPlayerId,
+                "TableId": thisTownId
+            }
+        );
+        if (thisTownItem.ResultItemId != "Nothing") {
+            log.info("item " + JSON.stringify(thisTownItem));
+            items.push(thisTownItem.ResultItemId);
+        }
     }
 
     var realItems = [];
@@ -959,8 +962,8 @@ function handleNormalDungeon(args, townInfoData, result) {
             exp = exp * (1 + 0.05 * diff);
         }
         totalExp += parseInt(exp);
-        totalGold += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Gold * rewardInfoData.Gold * 2) : townInfoData.Gold * rewardInfoData.Gold) * mobs[i].Count);
-        totalAlignment += parseInt(mobs[i].Level * (monsterInfo.IsUnique ? (townInfoData.Alignment * rewardInfoData.Alignment * 2) : townInfoData.Alignment * rewardInfoData.Alignment) * mobs[i].Count);
+        totalGold += parseInt((monsterInfo.IsUnique ? (townInfoData.Gold * rewardInfoData.Gold * 2) : townInfoData.Gold * rewardInfoData.Gold) * mobs[i].Count);
+        totalAlignment += parseInt((monsterInfo.IsUnique ? (townInfoData.Alignment * rewardInfoData.Alignment * 2) : townInfoData.Alignment * rewardInfoData.Alignment) * mobs[i].Count);
 
         if (inventoryFull || items.length >= 3)
         {
