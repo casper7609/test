@@ -961,6 +961,12 @@ function handleNormalDungeon(args, townInfoData, result) {
             var diff = mobs[i].Level - prevHighestLevel;
             exp = exp * (1 + 0.05 * diff);
         }
+
+        if (prevHighestLevel < 15)
+        {
+            exp *= 3;
+        }
+
         totalExp += parseInt(exp);
         totalGold += parseInt((monsterInfo.IsUnique ? (townInfoData.Gold * rewardInfoData.Gold * 2) : townInfoData.Gold * rewardInfoData.Gold) * mobs[i].Count);
         totalAlignment += parseInt((monsterInfo.IsUnique ? (townInfoData.Alignment * rewardInfoData.Alignment * 2) : townInfoData.Alignment * rewardInfoData.Alignment) * mobs[i].Count);
