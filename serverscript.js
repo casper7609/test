@@ -1038,7 +1038,10 @@ function handleNormalDungeon(args, townInfoData, result) {
     if (scrollOfExperienceEnabled && scrollOfExperienceVer) {
         totalExp *= 2;
     }
-
+    var partyInfo = [];
+    var allChars = server.GetAllUsersCharacters({
+        "PlayFabId": currentPlayerId
+    });
     for (var i = 0; i < partyMembers.length; i++) {
         var charStat = server.GetCharacterStatistics(
             {
@@ -1062,6 +1065,16 @@ function handleNormalDungeon(args, townInfoData, result) {
                 }
             }
         );
+
+        for(var j = 0; j < allChars.Characters.length; j++)
+        {
+            if(allChars.Characters[j].CharacterId == partyMembers[i])
+            {
+                partyInfo.push({ "Class": allChars.Characters[j].CharacterType, "Level": currentLevel });
+                break;
+            }
+        }
+
         expResult.push({ "CharacterId": partyMembers[i], "PreviousLevel": previousLevel, "CurrentLevel": currentLevel });
         //log.info("eachExp " + totalExp + " for " + partyMembers[i]);
     }
@@ -1132,6 +1145,8 @@ function handleNormalDungeon(args, townInfoData, result) {
         var body = {
             townId: args.TownId,
             userId: currentPlayerId,
+            houseName: args.HouseName,
+            partyInfo: JSON.stringify(partyInfo),
             alignment: alignment,
             tax: tax,
             count: totalAlignment
@@ -1771,6 +1786,22 @@ handlers.GetRank = function (args) {
         log.info("err", err.message);
     };
 };
+handlers.GetCurrentRanking = function (args) {
+    try {
+        var headers = {
+            "X-MyCustomHeader": "Some Value"
+        };
+        var url = "http://52.78.158.221:8080/currentRank?userId=" + currentPlayerId + "&alignment=" + args.Alignment;
+        var content = "";
+        var httpMethod = "get";
+        var contentType = "application/json";
+        var response = http.request(url, httpMethod, content, contentType, headers);
+        return response;
+    } catch (err) {
+        log.info("err", err.message);
+    };
+};
+
 //called by java server
 handlers.RewardRealmWar = function (args) {
     var rewardContainerId = args.RewardContainerId;
