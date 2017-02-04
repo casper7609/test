@@ -1070,7 +1070,7 @@ function handleNormalDungeon(args, townInfoData, result) {
         {
             if(allChars.Characters[j].CharacterId == partyMembers[i])
             {
-                partyInfo.push({ "Class": allChars.Characters[j].CharacterType, "Level": currentLevel });
+                partyInfo.push({ "Class": allChars.Characters[j].CharacterType, "Level": currentLevel.CurrentLevel });
                 break;
             }
         }
