@@ -1611,12 +1611,12 @@ handlers.PurchaseCharacter = function (args) {
     var allChars = server.GetAllUsersCharacters({
         "PlayFabId": currentPlayerId
     });
-    if (allChars.Characters.length < 3) {
+    if (allChars.Characters.length < 4) {
         gemPrice = 0;
     }
     else
     {
-        gemPrice = 400 * Math.pow(2, (allChars.Characters.length - 3));
+        gemPrice = 400 * Math.pow(2, (allChars.Characters.length - 4));
     }
     log.info("gemPrice " + gemPrice);
 
