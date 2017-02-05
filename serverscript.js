@@ -1443,7 +1443,7 @@ handlers.InAppPurchase = function (args) {
             "Date": 1,
             "NextTime": getKoreanTomorrow()
         });
-        GrantItems("GP100", "Granted for monthly subscription " + 0);
+        GrantItems(currentPlayerId, "GP100", "30일 패키지 보상입니다. ( " + 0 + "일)");
         server.UpdateUserReadOnlyData(monUpdateUserReadOnlyDataRequest);
     }
 };
@@ -1477,7 +1477,7 @@ handlers.CheckMonthlySubscription = function (args) {
             //after one day
             if (tracker.NextTime < currentTime)
             {
-                GrantItems("GP300", "Granted for monthly subscription " + tracker.Date);
+                GrantItems(currentPlayerId, "GP300", "30일 패키지 보상입니다. (" + tracker.Date + " 일)");
                 tracker.NextTime = getKoreanTomorrow();
                 tracker.Date++;
                 if (tracker.Date >= 30)
@@ -1510,7 +1510,7 @@ function checkLevelUpPackage(curHighestLevel) {
             lvlFrom = tracker.Level;
         }
         for (var i = lvlFrom; i < curHighestLevel; i++) {
-            GrantItems("GP200", "Granted for level up to Lv. " + i);
+            GrantItems(currentPlayerId, "GP200", "Lv." + i + " 레벨업 패키지 보상입니다.");
         }
 
         tracker.Level = curHighestLevel;
@@ -1522,18 +1522,25 @@ function checkLevelUpPackage(curHighestLevel) {
         server.UpdateUserReadOnlyData(UpdateUserReadOnlyDataRequest);
     }
 }
-function GrantItems(items, annotation) {
+function GrantItems(userId, items, annotation) {
     log.info("Granting: " + items);
     var parsed = Array.isArray(items) ? items : [items];
 
     var GrantItemsToUserRequest = {
         "CatalogVersion": catalogVersion,
-        "PlayFabId": currentPlayerId,
+        "PlayFabId": userId,
         "ItemIds": parsed,
         "Annotation": annotation
     };
 
     var GrantItemsToUserResult = server.GrantItemsToUser(GrantItemsToUserRequest);
+
+    var updateReasonResult = server.UpdateUserInventoryItemCustomData({
+        PlayFabId: userId,
+        ItemInstanceId: GrantItemsToUserResult.ItemGrantResults.ItemInstanceId,
+        Data: { "Reason": annotation },
+    });
+
     return JSON.stringify(GrantItemsToUserResult.ItemGrantResults);
 }
 handlers.CloudSellItem = function (args) {
@@ -1816,13 +1823,8 @@ handlers.RewardRealmWar = function (args) {
     for (var i = 0; i < userIds.length; i++)
     {
         var userId = userIds[i];
-        var itemGrantResult = server.GrantItemsToUser(
-            {
-                "CatalogVersion": catalogVersion,
-                "PlayFabId": userId,
-                "ItemIds": [rewardContainerId]
-            }
-        );
+        GrantItems(userId, rewardContainerId, "렐름전 보상입니다.");
+
         var rank = parseInt(rewardContainerId.replace("RealmReward_", "")) - 1;
         server.UpdateUserData(
             {
