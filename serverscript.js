@@ -1531,7 +1531,7 @@ function GrantItems(userId, items, annotation) {
         "PlayFabId": userId,
         "ItemIds": parsed,
         "Annotation": annotation
-    };
+    }; 
 
     var GrantItemsToUserResult = server.GrantItemsToUser(GrantItemsToUserRequest);
 
