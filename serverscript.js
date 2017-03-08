@@ -1,4 +1,4 @@
-var enchantBrokenChance = 30;
+ï»¿var enchantBrokenChance = 30;
 var enchantNothingChance = 60;
 var enchantSuccessChance = 100;
 var enchantPriceInGold = 100;
@@ -13,8 +13,7 @@ function range(min, max) {
 function rand(from, to) {
     return Math.floor((Math.random() * to) + from);
 }
-function getTownInfo(args)
-{
+function getTownInfo(args) {
     var townId = args.TownId;
     var townInfo = server.GetTitleData({
         "Keys": ["Towns"]
@@ -38,12 +37,10 @@ handlers.OpenTreasureBox = function (args) {
     if (args.TownId < 4) {
         nextTownId = "Town_" + (args.TownId * 2 + 4);
     }
-    else
-    {
+    else {
         nextTownId = "Town_" + (args.TownId + 8);
     }
-    if (args.TownId >= 28 && args.TownId <= 35)
-    {
+    if (args.TownId >= 28 && args.TownId <= 35) {
         nextTownId = "Town_" + args.TownId;
     }
     log.info("thisTownId " + thisTownId);
@@ -61,8 +58,7 @@ handlers.OpenTreasureBox = function (args) {
         log.info("item " + JSON.stringify(nextTownItem));
         items.push(nextTownItem.ResultItemId);
     }
-    else
-    {
+    else {
         var thisTownItem = server.EvaluateRandomResultTable(
             {
                 "CatalogVersion": catalogVersion,
@@ -99,12 +95,11 @@ handlers.ClearDungeon = function (args) {
     //house_alignment
     //gold
     //currentPlayerId
-    var result = { ScrollOfExperience: 0, ScrollOfGold: 0, ScrollOfItem: 0, ScrollOfInstant: 0, TotalGem : 0 };
+    var result = { ScrollOfExperience: 0, ScrollOfGold: 0, ScrollOfItem: 0, ScrollOfInstant: 0, TotalGem: 0 };
     var townInfoData = getTownInfo(args);
 
-    if (townInfoData == null)
-    {
-        return {"Error": "Town Not Found"};
+    if (townInfoData == null) {
+        return { "Error": "Town Not Found" };
     }
     log.info("ClearDungeon " + townInfoData.DungeonMode);
     if (townInfoData.DungeonMode == 0)//NormalDungeon
@@ -162,8 +157,7 @@ handlers.EnchantItem = function (args) {
 
     var itemRank = 0;
 
-    if (itemToEnchant.ItemClass == "Weapon")
-    {
+    if (itemToEnchant.ItemClass == "Weapon") {
         itemRank = parseInt(catalogMap[itemToEnchant.ItemId].Tags[1]);
     }
     else if (itemToEnchant.ItemClass == "Armor") {
@@ -172,8 +166,7 @@ handlers.EnchantItem = function (args) {
 
     var enchantLevel = 0;
 
-    if (itemToEnchant.CustomData != null && itemToEnchant.CustomData.Enchant != null)
-    {
+    if (itemToEnchant.CustomData != null && itemToEnchant.CustomData.Enchant != null) {
         enchantLevel = parseInt(itemToEnchant.CustomData.Enchant);
     }
 
@@ -263,8 +256,7 @@ handlers.EnchantItem = function (args) {
     return { "EnchantResult": enchantResult, "EnchantValue": prevEnchant, "GoldSubtractResult": goldSubtractResult, "EmblemSubtractResult": emblemSubtractResult };
 };
 handlers.InAppPurchase = function (args) {
-    if (args.ItemId == "lvluppackage")
-    {
+    if (args.ItemId == "lvluppackage") {
         var UpdateUserReadOnlyDataRequest = {
             "PlayFabId": currentPlayerId,
             "Data": {}
@@ -274,8 +266,7 @@ handlers.InAppPurchase = function (args) {
         //var curHighestLevel = GetHigestLevel();
         //checkLevelUpPackage(curHighestLevel);
     }
-    else if (args.ItemId == "monthlypackage")
-    {
+    else if (args.ItemId == "monthlypackage") {
         var monUpdateUserReadOnlyDataRequest = {
             "PlayFabId": currentPlayerId,
             "Data": {}
@@ -285,12 +276,11 @@ handlers.InAppPurchase = function (args) {
             "Date": 1,
             "NextTime": getKoreanTomorrow()
         });
-        grantItems(currentPlayerId, "GP100", "30ÀÏ ÆÐÅ°Áö º¸»óÀÔ´Ï´Ù. ( " + 0 + "ÀÏ)");
+        grantItems(currentPlayerId, "GP100", "30ï¿½ï¿½ ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½. ( " + 0 + "ï¿½ï¿½)");
         server.UpdateUserReadOnlyData(monUpdateUserReadOnlyDataRequest);
     }
 };
-function getKoreanTomorrow()
-{
+function getKoreanTomorrow() {
     var currentDate = new Date();
     currentDate.setUTCDate(currentDate.getUTCDate() + 1);
     currentDate.setUTCHours(15, 0, 0, 0);
@@ -302,8 +292,7 @@ handlers.CheckMonthlySubscription = function (args) {
         "Keys": [MON_SUB_PAC]
     });
     var tracker = {};
-    if (getUserReadOnlyDataResponse.Data.hasOwnProperty(MON_SUB_PAC))
-    {
+    if (getUserReadOnlyDataResponse.Data.hasOwnProperty(MON_SUB_PAC)) {
         tracker = JSON.parse(getUserReadOnlyDataResponse.Data[MON_SUB_PAC].Value);
         var UpdateUserReadOnlyDataRequest = {
             "PlayFabId": currentPlayerId,
@@ -317,17 +306,14 @@ handlers.CheckMonthlySubscription = function (args) {
         {
             var currentTime = new Date().getTime();
             //after one day
-            if (tracker.NextTime < currentTime)
-            {
-                grantItems(currentPlayerId, "GP300", "30ÀÏ ÆÐÅ°Áö º¸»óÀÔ´Ï´Ù. (" + tracker.Date + " ÀÏ)");
+            if (tracker.NextTime < currentTime) {
+                grantItems(currentPlayerId, "GP300", "30ï¿½ï¿½ ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½. (" + tracker.Date + " ï¿½ï¿½)");
                 tracker.NextTime = getKoreanTomorrow();
                 tracker.Date++;
-                if (tracker.Date >= 30)
-                {
+                if (tracker.Date >= 30) {
                     UpdateUserReadOnlyDataRequest.KeysToRemove = [MON_SUB_PAC];
                 }
-                else
-                {
+                else {
                     UpdateUserReadOnlyDataRequest.Data[MON_SUB_PAC] = JSON.stringify(tracker);
                 }
             }
@@ -352,7 +338,7 @@ function checkLevelUpPackage(curHighestLevel) {
             lvlFrom = tracker.Level;
         }
         for (var i = lvlFrom; i < curHighestLevel; i++) {
-            grantItems(currentPlayerId, "GP200", "Lv." + i + " ·¹º§¾÷ ÆÐÅ°Áö º¸»óÀÔ´Ï´Ù.");
+            grantItems(currentPlayerId, "GP200", "Lv." + i + " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.");
         }
 
         tracker.Level = curHighestLevel;
@@ -430,8 +416,7 @@ handlers.CloudSellItem = function (args) {
 handlers.EquipItem = function (args) {
     var itemSwapInfoStr = args.ItemSwapInfo;
     var itemSwapInfos = JSON.parse(itemSwapInfoStr);
-    for (var i = 0; i < itemSwapInfos.length; i++)
-    {
+    for (var i = 0; i < itemSwapInfos.length; i++) {
         var itemSwapInfo = itemSwapInfos[i];
         //unequip
         if (itemSwapInfo.PrevItemInstanceId != "") {
@@ -467,8 +452,7 @@ handlers.PurchaseCharacter = function (args) {
     if (allChars.Characters.length < 4) {
         gemPrice = 0;
     }
-    else
-    {
+    else {
         gemPrice = 400 * Math.pow(2, (allChars.Characters.length - 4));
     }
     log.info("gemPrice " + gemPrice);
@@ -480,8 +464,7 @@ handlers.PurchaseCharacter = function (args) {
     if (currentGem < gemPrice) {
         return { "Error": "Insufficient Gem" };
     }
-    if (gemPrice > 0)
-    {
+    if (gemPrice > 0) {
         server.SubtractUserVirtualCurrency(
             {
                 "PlayFabId": currentPlayerId,
@@ -511,33 +494,29 @@ handlers.PurchaseCharacter = function (args) {
     server.UpdateCharacterData({
         "PlayFabId": currentPlayerId,
         "CharacterId": characterId,
-        "Data": {"Luck":luck, "IsActive":"true"}
+        "Data": { "Luck": luck, "IsActive": "true" }
     });
     var itemId = "";
-    if (classType == "Rogue")
-    {
+    if (classType == "Rogue") {
         itemId = "Dagger_00";
     }
-    else if (classType == "Hunter")
-    {
+    else if (classType == "Hunter") {
         itemId = "Bow_00";
     }
-    else if (classType == "Warrior" || classType == "SpellSword" || classType == "Paladin")
-    {
+    else if (classType == "Warrior" || classType == "SpellSword" || classType == "Paladin") {
         itemId = "TwoHandSword_00";
     }
-    else if (classType == "Sorcerer" || classType == "Warlock" || classType == "Priest") 
-    {
+    else if (classType == "Sorcerer" || classType == "Warlock" || classType == "Priest") {
         itemId = "Staff_00";
     }
-    
+
     log.info("itemId " + itemId);
     var grantItemResult = server.GrantItemsToCharacter({
         "Annotation": "Char Creation Basic Item",
         "CatalogVersion": catalogVersion,
         "PlayFabId": currentPlayerId,
         "CharacterId": characterId,
-        "ItemIds": [ itemId ]
+        "ItemIds": [itemId]
     });
     log.info("grantItemResult " + JSON.stringify(grantItemResult));
 };
@@ -567,8 +546,7 @@ handlers.SummonItem = function (args) {
         );
     }
     var items = [];
-    for (var i = 0; i < count; i++)
-    {
+    for (var i = 0; i < count; i++) {
         var randomItem = server.EvaluateRandomResultTable(
             {
                 "CatalogVersion": catalogVersion,
@@ -581,21 +559,17 @@ handlers.SummonItem = function (args) {
             items.push(randomItem.ResultItemId);
         }
     }
-    if (count == 11)
-    {
+    if (count == 11) {
         var hasAnyAboveFour = false;
-        for (var i = 0; i < items.length; i++)
-        {
+        for (var i = 0; i < items.length; i++) {
             var _str = items[i];
             var str = _str.substr(_str.length - 2, 1);
-            if (parseInt(str) >= 4)
-            {
+            if (parseInt(str) >= 4) {
                 hasAnyAboveFour = true;
                 break;
             }
         }
-        if (!hasAnyAboveFour)
-        {
+        if (!hasAnyAboveFour) {
             var randomItem = server.EvaluateRandomResultTable(
                 {
                     "CatalogVersion": catalogVersion,
@@ -665,11 +639,10 @@ handlers.GetCurrentRanking = function (args) {
 handlers.RewardRealmWar = function (args) {
     var rewardContainerId = args.RewardContainerId;
     var userIds = args.UserIds;
-    var result = {"userIds":[]};
-    for (var i = 0; i < userIds.length; i++)
-    {
+    var result = { "userIds": [] };
+    for (var i = 0; i < userIds.length; i++) {
         var userId = userIds[i];
-        grantItems(userId, rewardContainerId, "·¼¸§Àü º¸»óÀÔ´Ï´Ù.");
+        grantItems(userId, rewardContainerId, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.");
 
         var rank = parseInt(rewardContainerId.replace("RealmReward_", "")) - 1;
         server.UpdateUserData(
@@ -704,7 +677,7 @@ handlers.GetRealmWarTime = function (args) {
         var httpMethod = "get";
         var contentType = "application/json";
 
-       
+
         var response = http.request(url, httpMethod, content, contentType, headers);
         log.info("response", response);
         return response;
@@ -721,7 +694,7 @@ handlers.GetTowerOfInfinity = function (args) {
         var httpMethod = "get";
         var contentType = "application/json";
 
-       
+
         var response = http.request(url, httpMethod, content, contentType, headers);
         log.info("response", response);
         return response;
